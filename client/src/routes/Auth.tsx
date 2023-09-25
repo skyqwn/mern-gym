@@ -1,18 +1,46 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Input } from "../components/Inputs/Input";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../components/Button";
-import axios from "axios";
+import { UserContext } from "../UserContext";
+import { UserContextTypes } from "../types/userContextTypes";
+import { instance } from "../api/apiconfig";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const { auth, onSignin } = useContext(UserContext) as UserContextTypes;
+  const navigate = useNavigate();
+  console.log(auth);
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm<FieldValues>({
+    defaultValues: {
+      email: "",
+      nickname: "",
+      password: "",
+      verifyPassword: "",
+    },
+  });
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    axios.post("http://localhost:8000/api/user/signup", data);
+    if (isLogin) {
+      instance
+        .post("/api/user/signin", data)
+        .then((res) => {
+          const {
+            data: { accessToken, userEmail, userNickname },
+          } = res;
+          onSignin(accessToken, userEmail, userNickname);
+          navigate("/");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      instance.post("/api/user/signup", data);
+    }
   };
   return (
     <div className="mt-20 mx-auto max-w-md space-y-5 flex flex-col">
@@ -67,6 +95,8 @@ const Auth = () => {
             : "아이디가 없으신가요? 회원가입 하러 가기  "
         }
       />
+      <button>카카오톡로그인</button>
+      <button>구글로그인</button>
     </div>
   );
 };
