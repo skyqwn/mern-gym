@@ -2,16 +2,24 @@ import React, { useContext, useState } from "react";
 import { Input } from "../components/Inputs/Input";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../components/Button";
-import { UserContext } from "../UserContext";
 import { UserContextTypes } from "../types/userContextTypes";
 import { instance } from "../api/apiconfig";
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
+import { getGoogleUrl } from "../utils/getGoogleUrl";
+import userErrorHandler from "../hooks/userErrorHandler";
+import { getKakaoUrl } from "../utils/getKakaoUrl";
+import { toast } from "react-toastify";
 
 const Auth = () => {
+  const errorHandler = userErrorHandler();
+  const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
   const { auth, onSignin } = useContext(UserContext) as UserContextTypes;
   const navigate = useNavigate();
-  console.log(auth);
+
+  let from = ((location.state as any)?.from?.pathname as string) || "/";
+
   const {
     handleSubmit,
     control,
@@ -33,15 +41,23 @@ const Auth = () => {
             data: { accessToken, userEmail, userNickname },
           } = res;
           onSignin(accessToken, userEmail, userNickname);
+          toast.success("로그인 성공");
           navigate("/");
         })
         .catch((error) => {
-          console.log(error);
+          errorHandler(error);
         });
     } else {
       instance.post("/api/user/signup", data);
+      setIsLogin(true);
+      toast.success("회원가입 성공");
     }
   };
+
+  if (auth?.isLogin) {
+    return <Navigate to={from} />;
+  }
+
   return (
     <div className="mt-20 mx-auto max-w-md space-y-5 flex flex-col">
       <Input
@@ -95,8 +111,13 @@ const Auth = () => {
             : "아이디가 없으신가요? 회원가입 하러 가기  "
         }
       />
+      <Link to={getGoogleUrl(from)}>
+        <Button label="구글로 로그인" theme="tertiary" onAction={() => {}} />
+      </Link>
+      <Link to={getKakaoUrl(from)}>
+        <img src="imgs/kakao_login_medium_narrow.png" />
+      </Link>
       <button>카카오톡로그인</button>
-      <button>구글로그인</button>
     </div>
   );
 };

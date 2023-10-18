@@ -1,5 +1,6 @@
 export interface UserContextTypes {
   auth: UserStateTypes;
+  loading: boolean;
   onSignin: (
     accessToken: string,
     userEmail: string,

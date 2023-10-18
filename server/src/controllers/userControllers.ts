@@ -1,8 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import jwt from "../libs/jwt";
+import oauth from "../libs/oauth";
+import createError from "../util/createError";
+import CONSTANT from "../constant";
+import axios from "axios";
 
 dotenv.config();
 
@@ -19,29 +23,47 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
       body: { email, password },
     } = req;
     if (!email || !password) {
-      return res.status(500).json({ message: " 빈칸을 다 채워주세요" });
+      return next(
+        createError(
+          CONSTANT.ERROR_MESSAGE.REQUIERED_INPUT,
+          CONSTANT.STATUS[500]
+        )
+      );
+      // return res.status(500).json({ message: " 빈칸을 다 채워주세요" });
     }
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      return res
-        .status(500)
-        .json({ message: "이메일과 비밀번호를 확인하세요" });
+      return next(
+        createError(CONSTANT.ERROR_MESSAGE.SIGNIN_ERROR, CONSTANT.STATUS[500])
+      );
+      // return res
+      //   .status(500)
+      //   .json({ message: "이메일과 비밀번호를 확인하세요" });
     }
 
-    const checkedPassword = bcrypt.compareSync(password, user.password);
+    const checkedPassword = bcrypt.compareSync(
+      password,
+      user.password as string
+    );
 
     if (!checkedPassword) {
-      return res
-        .status(500)
-        .json({ message: "이메일과 비밀번호를 확인하세요" });
+      return next(
+        createError(CONSTANT.ERROR_MESSAGE.SIGNIN_ERROR, CONSTANT.STATUS[500])
+      );
+      // return res
+      //   .status(500)
+      //   .json({ message: "이메일과 비밀번호를 확인하세요" });
     }
 
-    const accessToken = jwt.sign({ id: user.id }, ACCESS_TOKEN_SECRET, {
-      expiresIn: "30m",
-    });
-    const refreshToken = jwt.sign({ id: user.id }, REFRESH_TOKEN_SECRET, {
-      expiresIn: "7d",
+    const accessToken = jwt.signAccessToken(user.id);
+    const refreshToken = jwt.signRefreshToken();
+
+    const tokenUser = await prisma.user.update({
+      where: { email },
+      data: {
+        refreshToken,
+      },
     });
 
     res.cookie("refreshToken", refreshToken, {
@@ -55,7 +77,8 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
       accessToken,
     });
   } catch (error) {
-    console.log(error);
+    return next(error);
+    // return res.status(500).json({ message: "로그인중 서버에러" });
   } finally {
     await prisma.$disconnect();
   }
@@ -67,11 +90,31 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       body: { email, nickname, password, verifyPassword },
     } = req;
     if (!email || !nickname || !password || !verifyPassword) {
-      return res.status(500).json({ message: "빈칸 다 채워주세요" });
+      return next(
+        createError(
+          CONSTANT.ERROR_MESSAGE.REQUIERED_INPUT,
+          CONSTANT.STATUS[500]
+        )
+      );
+      // return res.status(500).json({ message: "빈칸 다 채워주세요" });
+    }
+    if (password !== verifyPassword) {
+      return next(
+        createError(
+          CONSTANT.ERROR_MESSAGE.UNMATCH_VERIFY_PASSWORD,
+          CONSTANT.STATUS[500]
+        )
+      );
+      // return res.status(500).json({ message: "비밀번호를 같게 입력해주세요" });
     }
 
-    if (password !== verifyPassword) {
-      return res.status(500).json({ message: "비밀번호를 같게 입력해주세요" });
+    const existUser = await prisma.user.findUnique({ where: { email } });
+
+    if (existUser) {
+      return next(
+        createError(CONSTANT.ERROR_MESSAGE.EXISTS_EMAIL, CONSTANT.STATUS[500])
+      );
+      // return res.status(500).json({ message: "이미 가입된 유저입니다." });
     }
 
     const hashedPw = bcrypt.hashSync(password, SALT_ROUND);
@@ -82,39 +125,184 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     console.log(newUser);
     return res.status(200).json({ newUser });
   } catch (error) {
-    console.log(error);
+    return next(error);
   } finally {
     await prisma.$disconnect();
   }
 };
 
 const refresh = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.cookies);
   if (req.cookies.refreshToken) {
     const {
       cookies: { refreshToken },
     } = req;
-    const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET) as {
-      id: string;
-      lat: number;
-      lng: number;
-    };
-    if (!decoded) {
-      res.status(500).json({ message: "인증안된 토큰입니다." });
+    try {
+      const ok = jwt.verifyRefreshToken(refreshToken);
+
+      if (!ok) {
+        return next(
+          createError(
+            CONSTANT.ERROR_MESSAGE.REFRESH_TOKEN,
+            CONSTANT.STATUS[403]
+          )
+        );
+        // return res.status(403).json({ message: "no verified refresh token" });
+      }
+
+      const user = await prisma.user.findFirst({ where: { refreshToken } });
+
+      if (!user) {
+        return next(
+          createError(
+            CONSTANT.ERROR_MESSAGE.REFRESH_TOKEN,
+            CONSTANT.STATUS[403]
+          )
+        );
+        // return res.status(403).json({ message: "no verified refresh token" });
+      }
+
+      const newAccessToken = jwt.signAccessToken(user.id);
+      const newRefreshToken = jwt.signRefreshToken();
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { refreshToken: newRefreshToken },
+      });
+
+      res.cookie("refreshToken", newRefreshToken, {
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      });
+
+      return res.status(200).json({
+        accessToken: newAccessToken,
+        userEmail: user.email,
+        userNickname: user.nickname,
+      });
+    } catch (error) {
+      return next(error);
+      // return res.status(500).json({ message: "서버 에러 발생" });
     }
-    const userId = decoded.id;
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
-      return res.status(500).json({ message: "인증안된 토큰입니다." });
-    }
-    const newAccessToken = jwt.sign({ id: userId }, ACCESS_TOKEN_SECRET);
-    res.status(200).json({
-      accessToken: newAccessToken,
-      userEmail: user.email,
-      userNickname: user.nickname,
-    });
   } else {
-    res.status(500).json(null);
+    return res.json(null);
   }
 };
 
-export default { signin, signup, refresh };
+const googleOauth = async (req: Request, res: Response, next: NextFunction) => {
+  const code = req.query.code as string;
+  const pathUrl = (req.query.state as string) || "/";
+  console.log(req.query);
+  const { id_token, access_token } = await oauth.getGoogleToken({ code });
+  const googleUser = await oauth.getGoogleUser({
+    id_token,
+    access_token,
+  });
+
+  const existUser = await prisma.user.findUnique({
+    where: { email: googleUser.email },
+  });
+
+  const refreshToken = jwt.signRefreshToken();
+
+  if (existUser) {
+    await prisma.user.update({
+      where: { email: googleUser.email },
+      data: {
+        provider: "GOOGLE",
+        refreshToken,
+      },
+    });
+  } else {
+    await prisma.user.create({
+      data: {
+        email: googleUser.email,
+        nickname: googleUser.name,
+        provider: "GOOGLE",
+        refreshToken,
+      },
+    });
+  }
+  res.cookie("refreshToken", refreshToken, {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  });
+
+  res.redirect(`http://localhost:3000${req.query.state}`);
+};
+
+const kakaoOauth = async (req: Request, res: Response, next: NextFunction) => {
+  const code = req.query.code as string;
+  const grantType = "authorization_code";
+  const pathUrl = (req.query.state as string) || "/";
+  const data = await oauth.getKakaoToken({ code, grantType });
+  if (!data) {
+    //error Redirect처리
+    return;
+  }
+  const kakaoUser = await oauth.getKakaoUser({
+    access_token: data.access_token,
+  });
+  const kakaoNickname = kakaoUser.kakao_account.profile.nickname;
+  const kakaoId = kakaoUser.id + "";
+  const kakaoEmail = kakaoUser.kakao_account.email || undefined;
+  const refreshToken = jwt.signRefreshToken();
+
+  if (kakaoEmail) {
+    const existUser = await prisma.user.findUnique({
+      where: { email: kakaoEmail },
+    });
+    if (existUser) {
+      await prisma.user.update({
+        where: { id: existUser.id },
+        data: {
+          provider: "KAKAO",
+          providerId: kakaoId,
+          refreshToken,
+          nickname: kakaoNickname,
+        },
+      });
+    } else {
+      await prisma.user.create({
+        data: {
+          provider: "KAKAO",
+          providerId: kakaoId,
+          refreshToken,
+          nickname: kakaoNickname,
+          email: kakaoEmail,
+        },
+      });
+    }
+  } else {
+    const existUser = await prisma.user.findFirst({
+      where: { providerId: kakaoId },
+    });
+    if (existUser) {
+      await prisma.user.update({
+        where: { id: existUser.id },
+        data: {
+          provider: "KAKAO",
+          providerId: kakaoId,
+          refreshToken,
+          nickname: kakaoNickname,
+        },
+      });
+    } else {
+      await prisma.user.create({
+        data: {
+          provider: "KAKAO",
+          providerId: kakaoId,
+          refreshToken,
+          nickname: kakaoNickname,
+          email: kakaoEmail,
+        },
+      });
+    }
+  }
+
+  res.cookie("refreshToken", refreshToken, {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  });
+
+  return res.redirect(`http://localhost:3000${req.query.state}`);
+};
+
+export default { signin, signup, refresh, googleOauth, kakaoOauth };

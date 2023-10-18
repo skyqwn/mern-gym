@@ -1,7 +1,9 @@
 import React from "react";
 import { instance } from "../api/apiconfig";
+import userErrorHandler from "../hooks/userErrorHandler";
 
 const Home = () => {
+  const errorHandler = userErrorHandler();
   return (
     <div>
       Home
@@ -10,7 +12,7 @@ const Home = () => {
           instance
             .post("/api/test")
             .then((res) => console.log(res))
-            .catch((error) => console.log(error));
+            .catch((error) => errorHandler(error));
         }}
       >
         test
