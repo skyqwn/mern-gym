@@ -139,6 +139,7 @@ const refresh = async (req: Request, res: Response, next: NextFunction) => {
     } = req;
     try {
       const ok = jwt.verifyRefreshToken(refreshToken);
+      console.log(ok);
 
       if (!ok) {
         return next(

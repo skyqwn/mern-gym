@@ -27,11 +27,12 @@ model User {
 }
 
 model Post {
-  id       String   @id @unique @default(uuid())
-  title    String   @db.VarChar(100)
-  desc     String   @db.VarChar(1000)
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  id       String           @id @unique @default(uuid())
+  title    String           @db.VarChar(100)
+  desc     String           @db.VarChar(1000)
+  createAt DateTime         @default(now())
+  updateAt DateTime         @updatedAt
+  category PostCategoryType @default(FREE)
 
   comments Comment[]
 
@@ -71,4 +72,12 @@ enum ProviderType {
   LOCAL
   GOOGLE
   KAKAO
+}
+
+enum PostCategoryType {
+  FREE
+  ASK
+  FLEX
+  REVIEW
+  SHAREING
 }

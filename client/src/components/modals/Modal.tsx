@@ -1,0 +1,77 @@
+import React from "react";
+import { AiOutlineClose } from "react-icons/ai";
+import { Button } from "../Button";
+import { motion, AnimatePresence } from "framer-motion";
+import { modalContainerVariants, modalItemVariants } from "../../libs/framer";
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onAction: () => void;
+  label: string;
+  actionLabel: string;
+  secondActionLabel?: string;
+  secondAction?: () => void;
+  body: React.ReactElement;
+}
+
+const Modal = ({
+  isOpen,
+  onClose,
+  onAction,
+  actionLabel,
+  label,
+  body,
+  secondActionLabel,
+  secondAction,
+}: ModalProps) => {
+  return (
+    <AnimatePresence>
+      {isOpen ? ( // modal continaer
+        <motion.div
+          variants={modalContainerVariants}
+          initial={modalContainerVariants.start}
+          animate={modalContainerVariants.end}
+          exit={modalContainerVariants.exit}
+          className="absolute top-0 left-0 w-screen h-screen z-10 bg-black/50 flex items-center justify-center overflow-hidden"
+        >
+          {/* modal body */}
+          <motion.div
+            variants={modalItemVariants}
+            initial={modalItemVariants.start}
+            animate={modalItemVariants.end}
+            exit={modalItemVariants.exit}
+            className="h-full sm:h-2/3 w-full sm:w-2/3 lg:w-1/2 bg-white rounded flex flex-col"
+          >
+            {/* modal head */}
+            <div className="relative  h-16 font-bold text-xl flex items-center justify-center">
+              <div className="text-center">{label}</div>
+              <div
+                className="absolute  h-full w-16 right-0 flex items-center justify-center"
+                onClick={onClose}
+              >
+                <AiOutlineClose size={24} />
+              </div>
+            </div>
+            {/* modal body */}
+            <div className="flex-1 px-6">{body}</div>
+            {/* modal footer */}
+            <div className="px-6 py-4 flex gap-6 ">
+              <Button label={actionLabel} onAction={onAction} small />
+              {secondActionLabel && secondAction && (
+                <Button
+                  label={secondActionLabel}
+                  onAction={secondAction}
+                  theme="secondary"
+                  small
+                />
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
+};
+
+export default Modal;

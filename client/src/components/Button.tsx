@@ -12,7 +12,7 @@ export const Button = ({
     <button
       onClick={onAction}
       className={cls(
-        "rounded font-bold",
+        "rounded font-bold w-full",
         small ? "p-3" : "p-5",
         theme === "primary"
           ? " bg-teal-500 text-white hover:bg-teal-400 transition"
