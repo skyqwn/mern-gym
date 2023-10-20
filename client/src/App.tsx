@@ -7,7 +7,6 @@ import Footer from "./components/Footer";
 import { UserContext } from "./context/UserContext";
 import { UserContextTypes } from "./types/userContextTypes";
 import Loader from "./components/Loader";
-import PostCreateModal from "./components/modals/PostCreateModal";
 
 const RefreshLoader = ({ children }: React.PropsWithChildren) => {
   const { loading } = useContext(UserContext) as UserContextTypes;

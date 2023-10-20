@@ -7,7 +7,9 @@ const Header = () => {
     <div className="bg-rose-300 h-14">
       <Container>
         <div className="h-full flex items-center justify-between mx-auto">
-          <div>Home</div>
+          <Link to={"/"}>
+            <div>Home</div>
+          </Link>
           <div className=" flex gap-5 items-center">
             <Link to={"/community"}>
               <div>커뮤니티</div>

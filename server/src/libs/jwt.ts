@@ -18,7 +18,7 @@ const signAccessToken = (id: string) => {
 const signRefreshToken = () => {
   try {
     return jwt.sign({}, REFRESH_TOKEN_SECRET, {
-      expiresIn: "20m",
+      expiresIn: "7d",
     });
   } catch (error) {
     console.log(error);

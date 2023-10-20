@@ -8,6 +8,7 @@ import { PrismaClient } from "@prisma/client";
 import jwt from "./src/libs/jwt";
 import createError from "./src/util/createError";
 import CONSTANT from "./src/constant";
+import postRouter from "./src/routes/postRouter";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -61,6 +62,7 @@ app.use(
   }
 );
 app.use("/api/user", userRouter);
+app.use("/api/post", postRouter);
 
 app.listen("8000", () => {
   console.log(`

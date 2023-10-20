@@ -9,16 +9,11 @@ import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { createPost } from "../../reducers/createPost";
 
-const defaultValues = {
-  title: "",
-  desc: "",
-  category: "FREE",
-};
-
-const PostCreateModal = () => {
+const PostEditModal = () => {
   const isOpen = useAppSelector((state) => state.postSlice.createModalIsOpen);
+  const post = useAppSelector((state) => state.postSlice.posts);
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -29,7 +24,11 @@ const PostCreateModal = () => {
     control,
     formState: { errors },
   } = useForm<FieldValues>({
-    defaultValues,
+    defaultValues: {
+      title: "",
+      desc: "",
+      category: "FREE",
+    },
   });
 
   const onClose = () => {
@@ -37,17 +36,7 @@ const PostCreateModal = () => {
   };
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    // dispatch(
-    //   postActions.addPost({
-    //     category: data.category,
-    //     desc: data.desc,
-    //     title: data.title,
-    //     id: uuidv4(),
-    //   })
-    // );
-    //@ts-ignore
-    dispatch(createPost(data));
-    // dispatch(postActions.addPost({ ...data, id: uuidv4() }));
+    // dispatch(postActions.addPost(data));
     navigate(`/`);
   };
 
@@ -78,4 +67,4 @@ const PostCreateModal = () => {
   );
 };
 
-export default PostCreateModal;
+export default PostEditModal;

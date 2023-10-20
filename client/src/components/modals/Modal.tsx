@@ -44,10 +44,10 @@ const Modal = ({
             className="h-full sm:h-2/3 w-full sm:w-2/3 lg:w-1/2 bg-white rounded flex flex-col"
           >
             {/* modal head */}
-            <div className="relative  h-16 font-bold text-xl flex items-center justify-center">
+            <div className="relative h-16 font-bold text-xl flex items-center justify-center">
               <div className="text-center">{label}</div>
               <div
-                className="absolute  h-full w-16 right-0 flex items-center justify-center"
+                className="absolute  h-full w-16 right-0 flex items-center justify-center hover:opacity-50"
                 onClick={onClose}
               >
                 <AiOutlineClose size={24} />
@@ -57,7 +57,6 @@ const Modal = ({
             <div className="flex-1 px-6">{body}</div>
             {/* modal footer */}
             <div className="px-6 py-4 flex gap-6 ">
-              <Button label={actionLabel} onAction={onAction} small />
               {secondActionLabel && secondAction && (
                 <Button
                   label={secondActionLabel}
@@ -66,6 +65,7 @@ const Modal = ({
                   small
                 />
               )}
+              <Button label={actionLabel} onAction={onAction} small />
             </div>
           </motion.div>
         </motion.div>

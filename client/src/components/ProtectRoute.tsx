@@ -5,7 +5,6 @@ import { Navigate } from "react-router-dom";
 
 const ProtectRoute = ({ children }: React.PropsWithChildren) => {
   const { auth, loading } = React.useContext(UserContext) as UserContextTypes;
-  console.log(auth);
   if (loading) {
     return <>Loading...</>;
   }
