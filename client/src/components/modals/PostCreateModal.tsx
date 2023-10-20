@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "./Modal";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { postActions } from "../../reducers/postSlice";
@@ -7,9 +7,8 @@ import TextArea from "../Inputs/TextArea";
 import { Input } from "../Inputs/Input";
 import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
-import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
 import { createPost } from "../../reducers/createPost";
+import { toast, Id } from "react-toastify";
 
 const defaultValues = {
   title: "",
@@ -18,11 +17,31 @@ const defaultValues = {
 };
 
 const PostCreateModal = () => {
-  const isOpen = useAppSelector((state) => state.postSlice.createModalIsOpen);
+  const postState = useAppSelector((state) => state.postSlice);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
+  const toastRef = React.useRef<Id>();
   const options = getOptions();
+
+  useEffect(() => {
+    if (toastRef.current) {
+      if (postState.status === "SUCCESS") {
+        toast.update(toastRef.current, {
+          type: "success",
+          render: "생성 성공!",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+      if (postState.status === "ERROR") {
+        toast.update(toastRef.current, {
+          type: "error",
+          render: "생성 실패!",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+    }
+  }, [postState.status]);
 
   const {
     handleSubmit,
@@ -37,18 +56,8 @@ const PostCreateModal = () => {
   };
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    // dispatch(
-    //   postActions.addPost({
-    //     category: data.category,
-    //     desc: data.desc,
-    //     title: data.title,
-    //     id: uuidv4(),
-    //   })
-    // );
-    //@ts-ignore
+    toastRef.current = toast.loading("로딩...");
     dispatch(createPost(data));
-    // dispatch(postActions.addPost({ ...data, id: uuidv4() }));
-    navigate(`/`);
   };
 
   const body = (
@@ -66,7 +75,7 @@ const PostCreateModal = () => {
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={postState.createModalIsOpen}
       onClose={onClose}
       label="글쓰기"
       actionLabel="제출"

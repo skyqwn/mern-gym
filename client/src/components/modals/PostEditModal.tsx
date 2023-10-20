@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "./Modal";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { postActions } from "../../reducers/postSlice";
@@ -7,17 +7,14 @@ import TextArea from "../Inputs/TextArea";
 import { Input } from "../Inputs/Input";
 import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
-import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
+import { createPost } from "../../reducers/createPost";
+import { Id, toast } from "react-toastify";
 
 const PostEditModal = () => {
-  const isOpen = useAppSelector((state) => state.postSlice.createModalIsOpen);
-  const post = useAppSelector((state) => state.postSlice.posts);
-
+  const postState = useAppSelector((state) => state.postSlice);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
   const options = getOptions();
+  const toastRef = React.useRef<Id>();
 
   const {
     handleSubmit,
@@ -31,13 +28,29 @@ const PostEditModal = () => {
     },
   });
 
+  useEffect(() => {
+    if (toastRef.current) {
+      if (postState.status === "SUCCESS") {
+        toast.update(toastRef.current, {
+          type: "success",
+          render: "생성 성공!",
+          isLoading: false,
+        });
+      }
+    }
+  }, []);
+
   const onClose = () => {
     dispatch(postActions.handleCreateModal(false));
   };
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    // dispatch(postActions.addPost(data));
-    navigate(`/`);
+    console.log(1);
+    // toastRef.current = toast.loading("로딩...");
+    // setTimeout(() => {
+    //   dispatch(createPost(data));
+    // }, 3000);
+    // onClose();
   };
 
   const body = (
@@ -55,7 +68,7 @@ const PostEditModal = () => {
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={postState.createModalIsOpen}
       onClose={onClose}
       label="글쓰기"
       actionLabel="제출"

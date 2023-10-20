@@ -1,21 +1,20 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid";
-import { AddPostDataType } from "../types/postTypes";
-import { createPost } from "./createPost";
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
+import { AddPostDataType, PostType } from "../types/postTypes";
+import { createPost, fetchPost } from "./createPost";
 
-interface PostType {
-  posts: [];
+interface PostStateType {
+  posts: PostType[];
   createModalIsOpen: boolean;
   handleEditModal: boolean;
-  loading: boolean;
-  error: string;
+  status: "" | "LOADING" | "SUCCESS" | "ERROR";
+  error: any;
 }
 
-const initialState: PostType = {
+const initialState: PostStateType = {
   posts: [],
   createModalIsOpen: false,
   handleEditModal: false,
-  loading: false,
+  status: "",
   error: "",
 };
 
@@ -29,32 +28,38 @@ export const postSlice = createSlice({
     handleEditModal: (state, action: PayloadAction<boolean>) => {
       state.createModalIsOpen = action.payload;
     },
-    addPost: (state, action: PayloadAction<AddPostDataType>) => {
-      //@ts-ignore
-      state.posts.push(action.payload);
-    },
-    // editPost:(state,action:PayloadAction<any>) => {
-    //   const existPost = state.posts.find()
-    // }
   },
   extraReducers: (builder) => {
-    builder.addCase(createPost.fulfilled, (state, action) => {
-      state.loading = false;
-    });
     builder.addCase(createPost.pending, (state, action) => {
-      state.loading = true;
+      state.status = "LOADING";
+    });
+    builder.addCase(createPost.fulfilled, (state, action) => {
+      state.status = "SUCCESS";
+      state.posts = [action.payload, ...state.posts];
+      state.createModalIsOpen = false;
     });
     builder.addCase(createPost.rejected, (state, action) => {
-      state.loading = true;
+      state.status = "ERROR";
+      state.error = action.error;
+    });
+    builder.addCase(fetchPost.pending, (state, action) => {
+      state.status = "LOADING";
+    });
+    builder.addCase(fetchPost.fulfilled, (state, action) => {
+      state.status = "SUCCESS";
+      state.posts = action.payload;
+    });
+    builder.addCase(fetchPost.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.error = action.error;
     });
   },
 });
 
-const { handleCreateModal, addPost } = postSlice.actions;
+const { handleCreateModal } = postSlice.actions;
 
 export const postActions = {
   handleCreateModal,
-  addPost,
 };
 
 export default postSlice;

@@ -4,10 +4,15 @@ import { Button } from "../components/Button";
 import { useAppDispatch, useAppSelector } from "../store";
 import { postActions } from "../reducers/postSlice";
 import PostCreateModal from "../components/modals/PostCreateModal";
+import { fetchPost } from "../reducers/createPost";
 
 const Community = () => {
-  const modal = useAppSelector((state) => state.postSlice.createModalIsOpen);
+  const postState = useAppSelector((state) => state.postSlice);
+  console.log(postState.posts);
   const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(fetchPost());
+  }, []);
   return (
     <Container>
       <PostCreateModal />
@@ -18,6 +23,10 @@ const Community = () => {
           dispatch(postActions.handleCreateModal(true));
         }}
       />
+      {postState.posts.length > 0 &&
+        postState.posts.map((post) => (
+          <div className="text-red-500">{post.title}</div>
+        ))}
     </Container>
   );
 };
