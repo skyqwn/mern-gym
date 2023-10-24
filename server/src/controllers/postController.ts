@@ -28,7 +28,12 @@ const create = async (
         title,
         desc,
         category,
-        authorId: user.id,
+        author: {
+          connect: {
+            id: user?.id,
+          },
+        },
+        // authorId: user.id,
       },
     });
 
@@ -45,7 +50,7 @@ const fetch = async (
 ) => {
   try {
     const posts = await prisma.post.findMany({
-      include: { author: true },
+      include: { author: { select: { id: true, nickname: true } } },
       orderBy: { createAt: "desc" },
     });
     return res.status(200).json(posts);
@@ -53,4 +58,74 @@ const fetch = async (
     return next(error);
   }
 };
-export default { create, fetch };
+
+const detail = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    params: { id },
+    user,
+  } = req;
+  try {
+    const post = await prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    res.status(200).json(post);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const edit = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    user,
+    params: { id },
+    body: { title, desc, category },
+  } = req;
+  try {
+    const newPost = await prisma.post.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        desc,
+        category,
+      },
+    });
+    console.log(newPost);
+    return res.status(200).json(newPost);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const remove = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    params: { id },
+  } = req;
+  try {
+    const deletePost = await prisma.post.delete({
+      where: {
+        id,
+      },
+    });
+    return res.status(200).json({ deletePost });
+  } catch (error) {
+    return next(error);
+  }
+};
+export default { create, fetch, detail, edit, remove };

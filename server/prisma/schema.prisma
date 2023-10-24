@@ -79,5 +79,5 @@ enum PostCategoryType {
   ASK
   FLEX
   REVIEW
-  SHAREING
+  SHARING
 }

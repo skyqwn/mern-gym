@@ -122,7 +122,6 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     const newUser = await prisma.user.create({
       data: { email, nickname, password: hashedPw },
     });
-    console.log(newUser);
     return res.status(200).json({ newUser });
   } catch (error) {
     return next(error);

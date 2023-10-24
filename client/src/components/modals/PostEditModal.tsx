@@ -7,30 +7,39 @@ import TextArea from "../Inputs/TextArea";
 import { Input } from "../Inputs/Input";
 import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
-import { createPost } from "../../reducers/createPost";
 import { Id, toast } from "react-toastify";
+import { detailPost, editPost } from "../../reducers/createPost";
+import { useParams } from "react-router-dom";
 
-const PostEditModal = () => {
-  const postState = useAppSelector((state) => state.postSlice);
+const PostEditModal = (postProps: any) => {
   const dispatch = useAppDispatch();
   const options = getOptions();
   const toastRef = React.useRef<Id>();
+  const postState = useAppSelector((state) => state.postSlice);
+  const post = useAppSelector((state) => state.postSlice.post);
+  useEffect(() => {
+    if (post.id) {
+      reset({
+        ...post,
+      });
+    }
+  }, [post]);
 
   const {
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
       title: "",
       desc: "",
-      category: "FREE",
+      category: "",
     },
   });
-
   useEffect(() => {
     if (toastRef.current) {
-      if (postState.status === "SUCCESS") {
+      if (post.status === "SUCCESS") {
         toast.update(toastRef.current, {
           type: "success",
           render: "생성 성공!",
@@ -41,16 +50,13 @@ const PostEditModal = () => {
   }, []);
 
   const onClose = () => {
-    dispatch(postActions.handleCreateModal(false));
+    dispatch(postActions.handleEditModal(false));
   };
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    console.log(1);
-    // toastRef.current = toast.loading("로딩...");
-    // setTimeout(() => {
-    //   dispatch(createPost(data));
-    // }, 3000);
-    // onClose();
+    toastRef.current = toast.loading("로딩...");
+    dispatch(editPost(data));
+    onClose();
   };
 
   const body = (
@@ -70,7 +76,7 @@ const PostEditModal = () => {
     <Modal
       isOpen={postState.createModalIsOpen}
       onClose={onClose}
-      label="글쓰기"
+      label="글수정"
       actionLabel="제출"
       onAction={handleSubmit(onValid)}
       body={body}

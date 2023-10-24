@@ -18,3 +18,8 @@ export interface AddPostDataType {
   desc: string;
   title: string;
 }
+
+export interface AddPostDataTypeWithUser extends AddPostDataType {
+  author: { id: string };
+  authorId: string;
+}

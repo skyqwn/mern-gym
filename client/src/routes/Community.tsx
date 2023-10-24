@@ -5,10 +5,10 @@ import { useAppDispatch, useAppSelector } from "../store";
 import { postActions } from "../reducers/postSlice";
 import PostCreateModal from "../components/modals/PostCreateModal";
 import { fetchPost } from "../reducers/createPost";
+import { Link } from "react-router-dom";
 
 const Community = () => {
   const postState = useAppSelector((state) => state.postSlice);
-  console.log(postState.posts);
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(fetchPost());
@@ -25,7 +25,11 @@ const Community = () => {
       />
       {postState.posts.length > 0 &&
         postState.posts.map((post) => (
-          <div className="text-red-500">{post.title}</div>
+          <Link to={`${post.id}`}>
+            <div key={post.id} className="text-red-500">
+              {post.title}
+            </div>
+          </Link>
         ))}
     </Container>
   );

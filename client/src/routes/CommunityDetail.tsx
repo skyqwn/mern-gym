@@ -1,29 +1,39 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store";
 import { Button } from "../components/Button";
 import Container from "../components/Container";
 import PostCreateModal from "../components/modals/PostCreateModal";
 import { postActions } from "../reducers/postSlice";
+import PostEditModal from "../components/modals/PostEditModal";
+import { detailPost, editPost, removePost } from "../reducers/createPost";
 
 const CommunityDetail = () => {
-  const isOpen = useAppSelector((state) => state.postSlice.createModalIsOpen);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { id } = useParams();
-  const posts = useAppSelector((state) => state.postSlice.posts);
-  const existPost: any = posts.find((post: any) => post.id === id);
-
+  const post = useAppSelector((state) => state.postSlice.post);
+  const navigate = useNavigate();
+  useEffect(() => {
+    dispatch(detailPost(id as string));
+  }, []);
   return (
     <Container>
-      <PostCreateModal />
-      <h3>{existPost.category}</h3>
-      <h1 className="text-4xl">{existPost.title}</h1>
-      <span>{existPost.desc}</span>
+      <button
+        onClick={() => {
+          dispatch(removePost(id + ""));
+          navigate("/community");
+        }}
+      >
+        delete
+      </button>
+      <PostEditModal />
+      <h3>{post?.category}</h3>
+      <h1 className="text-4xl">{post?.title}</h1>
+      <span>{post?.desc}</span>
       <Button
         label="수정"
         onAction={() => {
-          dispatch(postActions.handleCreateModal(true));
+          dispatch(postActions.handleEditModal(true));
         }}
       />
     </Container>
