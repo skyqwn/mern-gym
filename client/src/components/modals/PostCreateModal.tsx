@@ -52,13 +52,18 @@ const PostCreateModal = () => {
   });
 
   const onClose = () => {
-    dispatch(postActions.handleCreateModal(false));
+    dispatch(postActions.createModalClose);
   };
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
     toastRef.current = toast.loading("로딩...");
     dispatch(createPost(data));
   };
+
+  const isLoading = React.useMemo(
+    () => postState.status === "LOADING",
+    [postState.status]
+  );
 
   const body = (
     <div className="space-y-5">

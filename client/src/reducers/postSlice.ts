@@ -13,17 +13,17 @@ interface PostStateType {
   post: any;
   createModalIsOpen: boolean;
   editModalIsOpen: boolean;
-  handleEditModal: boolean;
+  deleteConfirmIsOpen: boolean;
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
-  error: any;
+  error?: any;
 }
 
 const initialState: PostStateType = {
   posts: [],
-  post: "",
+  post: undefined,
   createModalIsOpen: false,
   editModalIsOpen: false,
-  handleEditModal: false,
+  deleteConfirmIsOpen: false,
   status: "",
   error: "",
 };
@@ -32,11 +32,33 @@ export const postSlice = createSlice({
   name: "Post",
   initialState,
   reducers: {
-    handleCreateModal: (state, action: PayloadAction<boolean>) => {
-      state.createModalIsOpen = action.payload;
+    // handleCreateModal: (state, action: PayloadAction<boolean>) => {
+    //   state.createModalIsOpen = action.payload;
+    // },
+    // handleEditModal: (state, action: PayloadAction<boolean>) => {
+    //   state.createModalIsOpen = action.payload;
+    // },
+    createModalOpen: (state, action: PayloadAction<any>) => {
+      // state.createModalIsOpen = true;
+      state.createModalIsOpen = true;
     },
-    handleEditModal: (state, action: PayloadAction<boolean>) => {
-      state.createModalIsOpen = action.payload;
+    createModalClose: (state, action: PayloadAction<any>) => {
+      state.createModalIsOpen = false;
+    },
+    editModalOpen: (state, action: PayloadAction<any>) => {
+      state.editModalIsOpen = true;
+      state.post = action.payload;
+    },
+    editModalClose: (state, action: PayloadAction<any>) => {
+      state.editModalIsOpen = false;
+      state.post = "";
+    },
+    deleteConfirmOpen: (state, action: PayloadAction<any>) => {
+      state.deleteConfirmIsOpen = true;
+      state.post = action.payload;
+    },
+    deleteConfirmClose: (state, action: PayloadAction<any>) => {
+      state.deleteConfirmIsOpen = false;
     },
   },
   extraReducers: (builder) => {
@@ -87,7 +109,14 @@ export const postSlice = createSlice({
     });
     builder.addCase(editPost.fulfilled, (state, action) => {
       state.status = "SUCCESS";
+      state.posts = state.posts.map((post) => {
+        if (post.id === action.payload.id) {
+          post = action.payload;
+        }
+        return post;
+      });
       state.post = action.payload;
+      state.editModalIsOpen = false;
     });
     builder.addCase(editPost.rejected, (state, action) => {
       state.status = "ERROR";
@@ -100,7 +129,8 @@ export const postSlice = createSlice({
     });
     builder.addCase(removePost.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      // state.post = action.payload;
+      state.posts = state.posts.filter((post) => post.id !== action.payload.id);
+      state.deleteConfirmIsOpen = false;
     });
     builder.addCase(removePost.rejected, (state, action) => {
       state.status = "ERROR";
@@ -109,11 +139,22 @@ export const postSlice = createSlice({
   },
 });
 
-const { handleCreateModal, handleEditModal } = postSlice.actions;
+const {
+  editModalOpen,
+  editModalClose,
+  createModalOpen,
+  createModalClose,
+  deleteConfirmOpen,
+  deleteConfirmClose,
+} = postSlice.actions;
 
 export const postActions = {
-  handleCreateModal,
-  handleEditModal,
+  createModalOpen,
+  createModalClose,
+  editModalOpen,
+  editModalClose,
+  deleteConfirmOpen,
+  deleteConfirmClose,
 };
 
 export default postSlice;

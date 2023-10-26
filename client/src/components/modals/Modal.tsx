@@ -12,6 +12,7 @@ interface ModalProps {
   actionLabel: string;
   secondActionLabel?: string;
   secondAction?: () => void;
+  disabled?: boolean;
   body: React.ReactElement;
 }
 
@@ -24,6 +25,7 @@ const Modal = ({
   body,
   secondActionLabel,
   secondAction,
+  disabled,
 }: ModalProps) => {
   return (
     <AnimatePresence>
@@ -63,9 +65,15 @@ const Modal = ({
                   onAction={secondAction}
                   theme="secondary"
                   small
+                  disabled={disabled}
                 />
               )}
-              <Button label={actionLabel} onAction={onAction} small />
+              <Button
+                disabled={disabled}
+                label={actionLabel}
+                onAction={onAction}
+                small
+              />
             </div>
           </motion.div>
         </motion.div>

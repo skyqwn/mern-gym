@@ -66,7 +66,6 @@ const detail = async (
 ) => {
   const {
     params: { id },
-    user,
   } = req;
   try {
     const post = await prisma.post.findUnique({
@@ -87,7 +86,6 @@ const edit = async (
   next: NextFunction
 ) => {
   const {
-    user,
     params: { id },
     body: { title, desc, category },
   } = req;
@@ -102,7 +100,6 @@ const edit = async (
         category,
       },
     });
-    console.log(newPost);
     return res.status(200).json(newPost);
   } catch (error) {
     return next(error);
@@ -123,7 +120,7 @@ const remove = async (
         id,
       },
     });
-    return res.status(200).json({ deletePost });
+    return res.status(200).json(deletePost);
   } catch (error) {
     return next(error);
   }

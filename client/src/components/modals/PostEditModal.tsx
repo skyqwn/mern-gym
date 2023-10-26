@@ -9,26 +9,23 @@ import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
 import { Id, toast } from "react-toastify";
 import { detailPost, editPost } from "../../reducers/createPost";
-import { useParams } from "react-router-dom";
 
 const PostEditModal = (postProps: any) => {
   const dispatch = useAppDispatch();
   const options = getOptions();
   const toastRef = React.useRef<Id>();
   const postState = useAppSelector((state) => state.postSlice);
-  const post = useAppSelector((state) => state.postSlice.post);
-  useEffect(() => {
-    if (post.id) {
-      reset({
-        ...post,
-      });
-    }
-  }, [post]);
+  // useEffect(() => {
+  //   if (post.id) {
+  //     reset({
+  //       ...post,
+  //     });
+  //   }
 
+  // }, [post]);
   const {
     handleSubmit,
     control,
-    reset,
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
@@ -36,28 +33,36 @@ const PostEditModal = (postProps: any) => {
       desc: "",
       category: "",
     },
+    values: React.useMemo(() => {
+      return { ...postState.post };
+    }, [postState.post]),
   });
   useEffect(() => {
     if (toastRef.current) {
-      if (post.status === "SUCCESS") {
+      if (postState.status === "SUCCESS") {
         toast.update(toastRef.current, {
           type: "success",
-          render: "생성 성공!",
+          render: "수정 성공!",
           isLoading: false,
         });
       }
     }
-  }, []);
+  }, [postState.status]);
 
-  const onClose = () => {
-    dispatch(postActions.handleEditModal(false));
-  };
+  // const onClose = () => {
+  //   dispatch(postActions.editModalClose);
+  // };
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    toastRef.current = toast.loading("로딩...");
+    toastRef.current = toast.loading("수정중...");
     dispatch(editPost(data));
-    onClose();
+    // onClose();
   };
+
+  const isLoading = React.useMemo(
+    () => postState.status === "LOADING",
+    [postState.status]
+  );
 
   const body = (
     <div className="space-y-5">
@@ -66,22 +71,40 @@ const PostEditModal = (postProps: any) => {
         name="category"
         control={control}
         errors={errors}
+        disabled={isLoading}
       />
-      <Input name="title" control={control} errors={errors} label="제목" />
-      <TextArea name="desc" control={control} errors={errors} label="본문" />
+      <Input
+        name="title"
+        control={control}
+        errors={errors}
+        label="제목"
+        disabled={isLoading}
+      />
+      <TextArea
+        name="desc"
+        control={control}
+        errors={errors}
+        label="본문"
+        disabled={isLoading}
+      />
     </div>
   );
 
   return (
     <Modal
-      isOpen={postState.createModalIsOpen}
-      onClose={onClose}
+      isOpen={postState.editModalIsOpen}
+      onClose={() => {
+        dispatch(postActions.editModalClose({}));
+      }}
       label="글수정"
-      actionLabel="제출"
+      actionLabel="수정"
       onAction={handleSubmit(onValid)}
       body={body}
       secondActionLabel="취소"
-      secondAction={onClose}
+      secondAction={() => {
+        dispatch(postActions.editModalClose({}));
+      }}
+      disabled={isLoading}
     />
   );
 };

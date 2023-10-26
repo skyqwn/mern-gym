@@ -10,15 +10,20 @@ interface SelectTypes {
   control: Control;
   errors: FieldErrors;
   name: string;
+  disabled?: boolean;
 }
 
-const Select = ({ options, control, name }: SelectTypes) => {
+const Select = ({ options, control, name, disabled }: SelectTypes) => {
   const { field } = useController({ name, control });
+  const fieldValue = options.find((item) => item.value === field.value);
   return (
     <ReactSelect
+      isDisabled={disabled}
       options={options}
+      value={fieldValue}
       name={field.name}
       onChange={(item: any) => {
+        if (!item) return;
         field.onChange(item.value);
       }}
     />

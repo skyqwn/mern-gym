@@ -20,12 +20,12 @@ const Community = () => {
         label="업로드"
         small
         onAction={() => {
-          dispatch(postActions.handleCreateModal(true));
+          dispatch(postActions.createModalOpen({}));
         }}
       />
       {postState.posts.length > 0 &&
         postState.posts.map((post) => (
-          <Link to={`${post.id}`}>
+          <Link to={`${post.id}`} state={{ post }}>
             <div key={post.id} className="text-red-500">
               {post.title}
             </div>

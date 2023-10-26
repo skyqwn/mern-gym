@@ -1,17 +1,5 @@
-import React from "react";
 import { instance } from "../api/apiconfig";
 import userErrorHandler from "../hooks/userErrorHandler";
-import { useAppSelector } from "../store";
-import { Link } from "react-router-dom";
-
-// interface postsType {
-//   posts: {
-//     title: string;
-//     desc: string;
-//     category: string;
-//     id: string;
-//   }[];
-// }
 
 const Home = () => {
   const errorHandler = userErrorHandler();
