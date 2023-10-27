@@ -14,7 +14,9 @@ const Header = () => {
             <Link to={"/community"}>
               <div>커뮤니티</div>
             </Link>
-            <div>갤러리 </div>
+            <Link to={"/gallery"}>
+              <div>갤러리 </div>
+            </Link>
             <div>프로등록 </div>
             <div className="w-8 h-8 rounded-full bg-red-500"></div>
           </div>

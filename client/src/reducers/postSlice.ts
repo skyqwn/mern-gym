@@ -1,4 +1,4 @@
-import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { PostType } from "../types/postTypes";
 import {
   createPost,

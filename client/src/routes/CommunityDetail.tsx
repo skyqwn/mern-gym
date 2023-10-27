@@ -41,20 +41,13 @@ const CommunityDetail = () => {
 
   return (
     <Container>
-      <button
-        onClick={() => {
-          dispatch(removePost(params.id));
-          navigate("/community");
-        }}
-      >
-        delete
-      </button>
       <PostDeleteConfirm />
       <PostEditModal />
       <h3>{data?.category}</h3>
       <h1 className="text-4xl">{data?.title}</h1>
       <span>{data?.desc}</span>
       <Button
+        small
         label="수정"
         onAction={() => {
           // dispatch(postActions.handleEditModal({ isOpen: true, post: data }));

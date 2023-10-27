@@ -1,12 +1,16 @@
-import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import postSlice from "../reducers/postSlice";
+import gallerySlice from "../reducers/gallerySlice";
+
+export const rootReducer = combineReducers({
+  postSlice: postSlice.reducer,
+  gallerySlice: gallerySlice.reducer,
+});
 
 export const store = configureStore({
-  reducer: {
-    postSlice: postSlice.reducer,
-  },
+  reducer: rootReducer,
 });
 
 // export const useAppDispatch: () => typeof store.dispatch = useDispatch;

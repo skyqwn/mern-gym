@@ -51,10 +51,6 @@ const PostCreateModal = () => {
     defaultValues,
   });
 
-  const onClose = () => {
-    dispatch(postActions.createModalClose);
-  };
-
   const onValid: SubmitHandler<FieldValues> = (data) => {
     toastRef.current = toast.loading("로딩...");
     dispatch(createPost(data));
@@ -81,13 +77,17 @@ const PostCreateModal = () => {
   return (
     <Modal
       isOpen={postState.createModalIsOpen}
-      onClose={onClose}
+      onClose={() => {
+        dispatch(postActions.createModalClose({}));
+      }}
       label="글쓰기"
       actionLabel="제출"
       onAction={handleSubmit(onValid)}
       body={body}
       secondActionLabel="취소"
-      secondAction={onClose}
+      secondAction={() => {
+        dispatch(postActions.createModalClose({}));
+      }}
     />
   );
 };
