@@ -131,14 +131,12 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const refresh = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.cookies);
   if (req.cookies.refreshToken) {
     const {
       cookies: { refreshToken },
     } = req;
     try {
       const ok = jwt.verifyRefreshToken(refreshToken);
-      console.log(ok);
 
       if (!ok) {
         return next(
@@ -191,7 +189,6 @@ const refresh = async (req: Request, res: Response, next: NextFunction) => {
 const googleOauth = async (req: Request, res: Response, next: NextFunction) => {
   const code = req.query.code as string;
   const pathUrl = (req.query.state as string) || "/";
-  console.log(req.query);
   const { id_token, access_token } = await oauth.getGoogleToken({ code });
   const googleUser = await oauth.getGoogleUser({
     id_token,

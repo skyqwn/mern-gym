@@ -1,6 +1,6 @@
 import { useController } from "react-hook-form";
 import { InputProps } from "../../types/inputTypes";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { cls } from "../../libs/util";
 
 export const Input = ({
@@ -15,6 +15,7 @@ export const Input = ({
 }: InputProps) => {
   const ref = useRef<HTMLInputElement>(null);
   const { field } = useController({ name, control, rules: { required } });
+  const [value, setValue] = useState("");
   return (
     <div className={cls("relative w-full")}>
       <input

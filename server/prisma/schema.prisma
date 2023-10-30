@@ -44,7 +44,8 @@ model Gallery {
   id        String   @id @unique @default(uuid())
   title     String   @db.VarChar(100)
   desc      String   @db.VarChar(1000)
-  thumbnail String[]
+  images    String[]
+  thumbnail String
   createAt  DateTime @default(now())
   updateAt  DateTime @updatedAt
 

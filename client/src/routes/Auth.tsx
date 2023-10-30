@@ -46,6 +46,7 @@ const Auth = () => {
         })
         .catch((error) => {
           errorHandler(error);
+          console.log(error);
         });
     } else {
       instance.post("/api/user/signup", data);

@@ -9,7 +9,6 @@ export const getKakaoUrl = (from: string) => {
     prompt: "consent",
     state: from,
   };
-  console.log(options);
 
   const qs = new URLSearchParams(options);
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { instance } from "../api/apiconfig";
+import { instance } from "../../api/apiconfig";
 import { FieldValues } from "react-hook-form";
 
 export const createPost = createAsyncThunk(

@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import postSlice from "../reducers/postSlice";
-import gallerySlice from "../reducers/gallerySlice";
+import postSlice from "../reducers/post/postSlice";
+import gallerySlice from "../reducers/gallery/gallerySlice";
 
 export const rootReducer = combineReducers({
   postSlice: postSlice.reducer,

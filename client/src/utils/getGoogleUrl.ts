@@ -13,7 +13,6 @@ export const getGoogleUrl = (from: string) => {
     ].join(" "),
     state: from,
   };
-  console.log(options);
 
   const qs = new URLSearchParams(options);
 

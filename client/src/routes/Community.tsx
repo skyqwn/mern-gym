@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 import Container from "../components/Container";
 import { Button } from "../components/Button";
 import { useAppDispatch, useAppSelector } from "../store";
-import { postActions } from "../reducers/postSlice";
+import { postActions } from "../reducers/post/postSlice";
 import PostCreateModal from "../components/modals/PostCreateModal";
-import { fetchPost } from "../reducers/createPost";
+import { fetchPost } from "../reducers/post/postThunk";
 import { Link } from "react-router-dom";
 
 const Community = () => {

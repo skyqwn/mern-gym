@@ -1,12 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { PostType } from "../types/postTypes";
+import { PostType } from "../../types/postTypes";
 import {
   createPost,
   detailPost,
   editPost,
   fetchPost,
   removePost,
-} from "./createPost";
+} from "./postThunk";
 
 interface PostStateType {
   posts: PostType[];

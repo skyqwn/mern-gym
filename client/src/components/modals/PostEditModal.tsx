@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import Modal from "./Modal";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { postActions } from "../../reducers/postSlice";
+import { postActions } from "../../reducers/post/postSlice";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import TextArea from "../Inputs/TextArea";
 import { Input } from "../Inputs/Input";
 import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
 import { Id, toast } from "react-toastify";
-import { detailPost, editPost } from "../../reducers/createPost";
+import { detailPost, editPost } from "../../reducers/post/postThunk";
 
 const PostEditModal = (postProps: any) => {
   const dispatch = useAppDispatch();

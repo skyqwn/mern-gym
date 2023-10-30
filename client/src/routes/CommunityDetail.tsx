@@ -3,12 +3,11 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store";
 import { Button } from "../components/Button";
 import Container from "../components/Container";
-import PostCreateModal from "../components/modals/PostCreateModal";
-import { postActions } from "../reducers/postSlice";
+
+import { postActions } from "../reducers/post/postSlice";
 import PostEditModal from "../components/modals/PostEditModal";
-import { detailPost, editPost, removePost } from "../reducers/createPost";
+import { detailPost } from "../reducers/post/postThunk";
 import { PostType } from "../types/postTypes";
-import Loader from "../components/Loader";
 import PostDeleteConfirm from "../components/confirms/PostDeleteConfirm";
 
 const CommunityDetail = () => {
@@ -16,7 +15,6 @@ const CommunityDetail = () => {
   const dispatch = useAppDispatch();
   const params = useParams() as { id: string };
   const postState = useAppSelector((state) => state.postSlice);
-  const navigate = useNavigate();
   const [data, setData] = React.useState<PostType | null>(null);
 
   useEffect(() => {

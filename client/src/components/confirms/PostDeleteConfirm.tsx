@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import { removePost } from "../../reducers/createPost";
-import { postActions } from "../../reducers/postSlice";
+import { removePost } from "../../reducers/post/postThunk";
+import { postActions } from "../../reducers/post/postSlice";
 import { useAppDispatch, useAppSelector } from "../../store";
 import Confirm from "./Confirm";
 import { Id, toast } from "react-toastify";
