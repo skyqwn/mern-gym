@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useRef } from "react";
+import { ChangeEvent, useRef } from "react";
 import { Control, FieldErrors, useController } from "react-hook-form";
 import { cls } from "../../libs/util";
 
@@ -23,32 +23,20 @@ const FileInput = ({
 }: FileInputProps) => {
   const ref = useRef<HTMLInputElement>(null);
   const { field } = useController({ control, name, rules: { required } });
-  console.log(typeof field.value);
-  console.log(field.value);
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const array = [...field.value];
+
+    if (!e.target.files) return;
+
+    for (let i = 0; i < e.target.files.length; i++) {
+      array.push(e.target.files[i]);
+    }
+
+    field.onChange(array);
+  };
   return (
     <div className="relative w-full">
-      {/* {field.value && (
-        <div>
-          {field.value.map((file: any, i: any) => (
-            <div key={i}>
-              {file.name}{" "}
-              <span
-                onClick={() => {
-                  const filterFiles = field.value.filter(
-                    (file: any, index: any) => {
-                      return index !== i;
-                    }
-                  );
-                  field.onChange(filterFiles);
-                  console.log(filterFiles);
-                }}
-              >
-                ❌
-              </span>
-            </div>
-          ))}
-        </div>
-      )} */}
       <input
         multiple
         ref={ref}
@@ -56,25 +44,7 @@ const FileInput = ({
         type="file"
         // value={field.value}
         name={field.name}
-        onChange={(e) => {
-          if (e.target.files) {
-            const array = [...field.value];
-            // if (field.value.length > 0) {
-            //   for (let i = 0; i < field.value.length; i++) {
-            //     array.push(field.value[i]);
-            //   }
-            // }
-            // setFiles([...files, ...e.target.files])
-            if (e.target.files.length > 0) {
-              for (let i = 0; i < e.target.files.length; i++) {
-                array.push(e.target.files[i]);
-              }
-              field.onChange(array);
-            } else {
-              field.onChange(field.value);
-            }
-          }
-        }}
+        onChange={onChange}
         className={cls(
           "w-full outline-none px-4 pt-6 pb-2 border-2 focus:border-neutral-700 rounded peer transition disabled:cursor-not-allowed disabled:opacity-70",
           small ? "px-4 pt-4 pb-2" : "px-4 pt-7 pb-3"

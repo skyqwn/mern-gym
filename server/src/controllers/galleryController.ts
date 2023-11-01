@@ -17,7 +17,7 @@ const create = async (
       file,
       user,
     } = req;
-    console.log(file);
+    console.log(req.body.file);
     if (!user) {
       return next(
         createError(constant.ERROR_MESSAGE.NO_EXISTS_USER, constant.STATUS[401])
