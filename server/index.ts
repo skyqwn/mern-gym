@@ -5,11 +5,8 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 dotenv.config();
 import { PrismaClient } from "@prisma/client";
-import jwt from "./src/libs/jwt";
-import createError from "./src/util/createError";
 import CONSTANT from "./src/constant";
 import postRouter from "./src/routes/postRouter";
-import constant from "./src/constant";
 import galleryRouter from "./src/routes/galleryRouter";
 
 const app = express();

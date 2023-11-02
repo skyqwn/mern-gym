@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { RequestWithUser } from "../../types/express";
 import createError from "../util/createError";
 import constant from "../constant";
+import s3PutImage from "../libs/s3PutImage";
 
 const prisma = new PrismaClient();
 
@@ -14,30 +15,61 @@ const create = async (
   try {
     const {
       body: { title, desc, images },
-      file,
       user,
     } = req;
-    console.log(req.body.file);
     if (!user) {
       return next(
         createError(constant.ERROR_MESSAGE.NO_EXISTS_USER, constant.STATUS[401])
       );
     }
+    const multerFiles = req.files as {
+      [fieldName: string]: Express.Multer.File[];
+    };
+
+    const data = { ...req.body, images: new Array(), authorId: user.id };
+
+    for (let i = 0; i < multerFiles.files.length; i++) {
+      const location = await s3PutImage({
+        folderName: title,
+        type: "GALLERY",
+        file: multerFiles.files[i],
+        resizeWidth: 1280,
+      });
+      if (i === 0) {
+        data.thumbnail = location;
+      }
+      data.images.push(location);
+    }
+
+    // multerFiles.files.map(async (file: Express.Multer.File) => {
+    //   const location = await s3PutImage({
+    //     folderName: title,
+    //     type: "GALLERY",
+    //     file,
+    //     resizeWidth: 1280,
+    //   });
+    //   console.log(location);
+    // });
 
     const newGallery = await prisma.gallery.create({
-      data: {
-        title,
-        desc,
-        thumbnail: "",
-        images: [(file as Express.MulterS3.File).location],
-        author: {
-          connect: {
-            id: user?.id,
-          },
-        },
-        // authorId: user.id,
-      },
+      data: { ...data },
     });
+
+    console.log(newGallery);
+    // const newGallery = await prisma.gallery.create({
+    //   data: {
+    //     title,
+    //     desc,
+    //     thumbnail: "",
+    //     images: [files as any],
+    //     author: {
+    //       connect: {
+    //         id: user?.id,
+    //       },
+    //     },
+    //     // authorId: user.id,
+    //   },
+    // });
 
     return res.status(200).json(newGallery);
   } catch (error) {

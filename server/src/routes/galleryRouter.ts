@@ -1,14 +1,14 @@
 import express from "express";
 import onlyUser from "../util/middleware";
 import galleryController from "../controllers/galleryController";
-import { upload } from "../util/multer";
+import multer from "multer";
 
 const galleryRouter = express.Router();
 
 galleryRouter.post(
   "/",
   onlyUser,
-  upload.single("file"),
+  multer().fields([{ name: "files", maxCount: 10 }]),
   galleryController.create
 );
 

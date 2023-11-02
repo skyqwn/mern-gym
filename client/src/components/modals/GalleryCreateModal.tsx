@@ -42,17 +42,23 @@ const GalleryCreateModal = () => {
   }, [watchFiles]);
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
     delete data.previews;
     try {
       const fd = new FormData();
-      for (var key in data) {
-        if (key === "file") {
-          fd.append(key, data[key][0]);
-        } else {
-          fd.append(key, data[key]);
-        }
-      }
+      fd.append("title", data.title);
+      fd.append("desc", data.desc);
+      data.files.map((file: File) => {
+        fd.append("files", file);
+      });
+      // for (var key in data) {
+      //   // if (key === "files") {
+      //   //   data[key].map((file)=> {
+      //   //     fd.append(key, file);
+
+      //   //   })
+      //   } else {
+      //     fd.append(key, data[key]);
+      //   }
       dispatch(galleryThunk.createGallery(fd));
     } catch (error) {
       console.log(error);
