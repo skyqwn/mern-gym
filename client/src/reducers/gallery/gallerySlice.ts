@@ -14,7 +14,7 @@ export interface GalleryTypes {
 }
 
 interface GalleryStateType {
-  galleries: [];
+  galleries: GalleryTypes[];
   gallery?: GalleryTypes;
   createModalIsOpen: boolean;
   editModalIsOpen: boolean;
@@ -43,14 +43,17 @@ export const gallerySlice = createSlice({
     creteModalClose: (state, action) => {
       state.createModalIsOpen = false;
     },
-    editModalOpen: (state, action) => {
+    editModalOpen: (state, action: PayloadAction<any>) => {
       state.editModalIsOpen = true;
+      state.gallery = action.payload;
     },
     editModalClose: (state, action) => {
-      state.editModalIsOpen = true;
+      state.editModalIsOpen = false;
+      state = { ...state, gallery: action.payload };
     },
-    deleteConfirmOpen: (state, action) => {
+    deleteConfirmOpen: (state, action: PayloadAction<any>) => {
       state.deleteConfirmIsOpen = true;
+      state.gallery = action.payload;
     },
     deleteConfirmClose: (state, action) => {
       state.deleteConfirmIsOpen = false;
@@ -64,6 +67,7 @@ export const gallerySlice = createSlice({
     });
     builder.addCase(galleryThunk.createGallery.fulfilled, (state, action) => {
       state.status = "SUCCESS";
+      console.log(action.payload);
       state.galleries = [action.payload, ...state.galleries] as any;
       state.createModalIsOpen = false;
     });
@@ -91,9 +95,28 @@ export const gallerySlice = createSlice({
     });
     builder.addCase(galleryThunk.detailGallery.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      state.galleries = action.payload;
+      state.gallery = action.payload;
     });
     builder.addCase(galleryThunk.detailGallery.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.error = action.error;
+    });
+    /*Gallery Update */
+    builder.addCase(galleryThunk.editGallery.pending, (state, action) => {
+      state.status = "LOADING";
+    });
+    builder.addCase(galleryThunk.editGallery.fulfilled, (state, action) => {
+      state.status = "SUCCESS";
+      state.galleries = state.galleries.map((gallery) => {
+        if (gallery.id === action.payload.id) {
+          gallery = action.payload;
+        }
+        return gallery;
+      });
+      state.gallery = action.payload;
+      state.editModalIsOpen = false;
+    });
+    builder.addCase(galleryThunk.editGallery.rejected, (state, action) => {
       state.status = "ERROR";
       state.error = action.error;
     });

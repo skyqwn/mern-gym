@@ -10,6 +10,7 @@ interface FileInputProps {
   control: Control;
   disabled?: boolean;
   small?: boolean;
+  id: string;
 }
 
 const FileInput = ({
@@ -20,10 +21,10 @@ const FileInput = ({
   control,
   disabled,
   small,
+  id,
 }: FileInputProps) => {
   const ref = useRef<HTMLInputElement>(null);
   const { field } = useController({ control, name, rules: { required } });
-
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const array = [...field.value];
 
@@ -38,15 +39,17 @@ const FileInput = ({
   return (
     <div className="relative w-full">
       <input
+        id={id}
         multiple
         ref={ref}
         disabled={disabled}
         type="file"
+        accept="image/*"
         // value={field.value}
         name={field.name}
         onChange={onChange}
         className={cls(
-          "w-full outline-none px-4 pt-6 pb-2 border-2 focus:border-neutral-700 rounded peer transition disabled:cursor-not-allowed disabled:opacity-70",
+          "w-full outline-none px-4 pt-6 pb-2 border-2 focus:border-neutral-700 rounded peer transition disabled:cursor-not-allowed disabled:opacity-70 hidden",
           small ? "px-4 pt-4 pb-2" : "px-4 pt-7 pb-3"
         )}
       />

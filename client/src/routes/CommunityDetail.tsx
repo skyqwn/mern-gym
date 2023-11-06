@@ -16,7 +16,6 @@ const CommunityDetail = () => {
   const params = useParams() as { id: string };
   const postState = useAppSelector((state) => state.postSlice);
   const [data, setData] = React.useState<PostType | null>(null);
-
   useEffect(() => {
     if (location.state) {
       if (location.state.post) {

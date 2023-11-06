@@ -1,7 +1,6 @@
 import s3Config from "./s3Config";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from "dotenv";
-import { buffer } from "stream/consumers";
 import sharpResize from "./sharpResize";
 dotenv.config();
 
@@ -14,8 +13,8 @@ interface PutImageParams {
 
 export default async ({
   folderName,
-  file,
   type,
+  file,
   resizeWidth,
 }: PutImageParams) => {
   let bufferData = file.buffer;

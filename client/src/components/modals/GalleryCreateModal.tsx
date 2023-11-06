@@ -32,6 +32,8 @@ const GalleryCreateModal = () => {
   //미리보기
   const watchFiles = watch("files");
   const watchPreviews = watch("previews");
+  console.log(watchFiles);
+  console.log(watchPreviews);
 
   useEffect(() => {
     const blobPreviews = watchFiles.map((file: File) =>
@@ -65,26 +67,26 @@ const GalleryCreateModal = () => {
     }
     toastRef.current = toast.loading("로딩...");
   };
-  // useEffect(() => {
-  //   if (toastRef.current) {
-  //     if (galleryState.status === "SUCCESS") {
-  //       toast.update(toastRef.current, {
-  //         type: "success",
-  //         render: "생성 성공!",
-  //         isLoading: false,
-  //         autoClose: 2000,
-  //       });
-  //     }
-  //     if (galleryState.status === "ERROR") {
-  //       toast.update(toastRef.current, {
-  //         type: "error",
-  //         render: "생성 실패!",
-  //         isLoading: false,
-  //         autoClose: 2000,
-  //       });
-  //     }
-  //   }
-  // }, [galleryState.status]);
+  useEffect(() => {
+    if (toastRef.current) {
+      if (galleryState.status === "SUCCESS") {
+        toast.update(toastRef.current, {
+          type: "success",
+          render: "생성 성공!",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+      if (galleryState.status === "ERROR") {
+        toast.update(toastRef.current, {
+          type: "error",
+          render: "생성 실패!",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+    }
+  }, [galleryState.status]);
 
   const isLoading = useMemo(
     () => galleryState.status === "LOADING",
@@ -111,27 +113,44 @@ const GalleryCreateModal = () => {
   };
 
   const body = (
-    <div className="space-y-5">
-      <div className="flex gap-1">
-        {watchPreviews.map((preview: string, targetIndex: number) => {
-          return (
-            <div className="relative">
-              <img src={preview} className="w-20 h-20 rounded" />
-              <div
-                onClick={(e) => {
-                  deletePreview(targetIndex);
-                  URL.revokeObjectURL(preview);
-                }}
-                className="absolute top-0 right-0 cursor-pointer text-xs"
-              >
-                ❌
+    <div className="space-y-5 ">
+      <div className="overflow-x-auto">
+        <div className=" w-fit">
+          <div className="flex gap-8  ">
+            <label htmlFor="picture">
+              <div className="flex items-center justify-center w-20 h-20  border hover:bg-gr ay-50 border-gray-300 rounded-md shadow-sm text-sm font-medium  text-gray-700">
+                사진추가
               </div>
-            </div>
-          );
-        })}
+              <FileInput
+                id="picture"
+                name="files"
+                control={control}
+                errors={errors}
+                label=""
+              />
+            </label>
+            {watchPreviews.map((preview: string, targetIndex: number) => {
+              return (
+                <div key={targetIndex} className="relative  w-20">
+                  <img src={preview} className="w-20 h-20 rounded" />
+                  <div
+                    onClick={(e) => {
+                      deletePreview(targetIndex);
+                      URL.revokeObjectURL(preview);
+                    }}
+                    className="absolute top-0 right-0 cursor-pointer text-xs"
+                  >
+                    ❌
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
+
       <Input name="title" control={control} errors={errors} label="제목" />
-      <FileInput name="files" control={control} errors={errors} label="사진" />
+
       <TextArea name="desc" control={control} errors={errors} label="본문" />
     </div>
   );
@@ -139,7 +158,9 @@ const GalleryCreateModal = () => {
   return (
     <Modal
       isOpen={galleryState.createModalIsOpen}
-      onClose={onClose}
+      onClose={() => {
+        dispatch(galleryActions.creteModalClose({}));
+      }}
       label="갤러리 업로드"
       actionLabel="제출"
       onAction={handleSubmit(onValid)}

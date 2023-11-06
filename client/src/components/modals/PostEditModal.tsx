@@ -10,7 +10,7 @@ import Select from "../Inputs/Select";
 import { Id, toast } from "react-toastify";
 import { detailPost, editPost } from "../../reducers/post/postThunk";
 
-const PostEditModal = (postProps: any) => {
+const PostEditModal = () => {
   const dispatch = useAppDispatch();
   const options = getOptions();
   const toastRef = React.useRef<Id>();
@@ -23,6 +23,7 @@ const PostEditModal = (postProps: any) => {
   //   }
 
   // }, [post]);
+  console.log(postState);
   const {
     handleSubmit,
     control,

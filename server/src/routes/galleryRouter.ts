@@ -13,6 +13,16 @@ galleryRouter.post(
 );
 
 galleryRouter.get("/", galleryController.fetch);
+
 galleryRouter.get("/:id", galleryController.detail);
+
+galleryRouter.post(
+  "/:id/edit",
+  onlyUser,
+  multer().fields([{ name: "files", maxCount: 10 }]),
+  galleryController.edit
+);
+
+galleryRouter.post("/:id/remove", onlyUser, galleryController.remove);
 
 export default galleryRouter;

@@ -53,9 +53,9 @@ const create = async (
 
     const newGallery = await prisma.gallery.create({
       data: { ...data },
+      include: { author: { select: { id: true, nickname: true } } },
     });
 
-    console.log(newGallery);
     // const newGallery = await prisma.gallery.create({
     //   data: {
     //     title,
@@ -106,12 +106,70 @@ const detail = async (
       where: {
         id,
       },
+      include: { author: { select: { id: true, nickname: true } } },
     });
 
+    console.log(gallery);
     res.status(200).json(gallery);
   } catch (error) {
     return next(error);
   }
 };
 
-export default { create, fetch, detail };
+const edit = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    params: { id },
+    body: { title, desc, images },
+    files,
+    user,
+  } = req;
+  try {
+    if (!user) {
+      return next(
+        createError(constant.ERROR_MESSAGE.NO_EXISTS_USER, constant.STATUS[401])
+      );
+    }
+
+    const multerFiles = req.files as {
+      [fieldName: string]: Express.Multer.File[];
+    };
+
+    const imageLocations = [...images];
+
+    if (multerFiles.files) {
+      console.log(1);
+      for (let i = 0; i < multerFiles.files.length; i++) {
+        const location = await s3PutImage({
+          folderName: title,
+          type: "GALLERY",
+          file: multerFiles.files[i],
+          resizeWidth: 1280,
+        });
+        imageLocations.push(location);
+      }
+    }
+
+    const updateGallery = await prisma.gallery.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        desc,
+        images: imageLocations,
+        thumbnail: imageLocations[0],
+      },
+      include: { author: { select: { id: true, nickname: true } } },
+    });
+    return res.status(200).json(updateGallery);
+  } catch (error) {
+    return next(error);
+  }
+};
+const remove = async () => {};
+
+export default { create, fetch, detail, edit, remove };
