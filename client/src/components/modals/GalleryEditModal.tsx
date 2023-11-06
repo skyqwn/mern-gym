@@ -6,7 +6,7 @@ import TextArea from "../Inputs/TextArea";
 import { Input } from "../Inputs/Input";
 import { Id, toast } from "react-toastify";
 import { galleryActions } from "../../reducers/gallery/gallerySlice";
-import galleryThunk, { editGallery } from "../../reducers/gallery/galleryThunk";
+import galleryThunk from "../../reducers/gallery/galleryThunk";
 import FileInput from "../Inputs/FileInput";
 
 const GalleryEditModal = () => {
@@ -32,7 +32,6 @@ const GalleryEditModal = () => {
       return { files: [], previewFiles: [], images: [] };
     }, [galleryState.gallery]),
   });
-  console.log(galleryState.gallery);
   const oldImages = watch("images");
   const watchFiles = watch("files");
   const watchPreviewFiles = watch("previewFiles");
@@ -79,8 +78,10 @@ const GalleryEditModal = () => {
     const filterOldImages = oldImages.filter(
       (__: any, index: number) => targetIndex !== index
     );
+    console.log(filterOldImages);
     setValue("images", filterOldImages);
   };
+  console.log(oldImages);
 
   const deleteNewPreview = (targetIndex: number) => {
     const filterNewImages = watchFiles.filter(
@@ -167,7 +168,7 @@ const GalleryEditModal = () => {
       secondAction={() => {
         dispatch(galleryActions.editModalClose({}));
       }}
-      // disabled={isLoading}
+      disabled={isLoading}
     />
   );
 };

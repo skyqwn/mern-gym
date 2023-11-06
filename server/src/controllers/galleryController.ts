@@ -138,10 +138,8 @@ const edit = async (
       [fieldName: string]: Express.Multer.File[];
     };
 
-    const imageLocations = [...images];
-
+    const imageLocations = typeof images === "string" ? [images] : [...images];
     if (multerFiles.files) {
-      console.log(1);
       for (let i = 0; i < multerFiles.files.length; i++) {
         const location = await s3PutImage({
           folderName: title,
@@ -152,7 +150,8 @@ const edit = async (
         imageLocations.push(location);
       }
     }
-
+    console.log(2);
+    console.log(imageLocations);
     const updateGallery = await prisma.gallery.update({
       where: {
         id,
@@ -170,6 +169,10 @@ const edit = async (
     return next(error);
   }
 };
-const remove = async () => {};
+const remove = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {};
 
 export default { create, fetch, detail, edit, remove };
