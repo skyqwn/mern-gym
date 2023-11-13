@@ -12,13 +12,13 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <UserContextProvider>
-    <Provider store={store}>
+  <Provider store={store}>
+    <UserContextProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </Provider>
-  </UserContextProvider>
+    </UserContextProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const userState = useAppSelector((state) => state.userSlice);
-  console.log(userState);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const {

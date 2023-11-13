@@ -32,7 +32,6 @@ export const userSlice = createSlice({
       state.status = "LOADING";
     });
     builder.addCase(editUser.fulfilled, (state, action) => {
-      console.log(action);
       state.status = "SUCCESS";
       state.user = action.payload;
     });

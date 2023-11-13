@@ -201,6 +201,7 @@ const refresh = async (req: Request, res: Response, next: NextFunction) => {
         accessToken: newAccessToken,
         userEmail: user.email,
         userNickname: user.nickname,
+        id: user.id,
       });
     } catch (error) {
       return next(error);
