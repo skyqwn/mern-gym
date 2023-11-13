@@ -17,8 +17,9 @@ const Header = () => {
             <Link to={"/gallery"}>
               <div>갤러리 </div>
             </Link>
-            <div>프로등록 </div>
-            <div className="w-8 h-8 rounded-full bg-red-500"></div>
+            <Link to={"/profile"}>
+              <div className="w-8 h-8 rounded-full bg-red-500" />
+            </Link>
           </div>
         </div>
       </Container>

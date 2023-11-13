@@ -7,6 +7,7 @@ import oauth from "../libs/oauth";
 import createError from "../util/createError";
 import CONSTANT from "../constant";
 import axios from "axios";
+import { RequestWithUser } from "../../types/express";
 
 dotenv.config();
 
@@ -29,9 +30,10 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
           CONSTANT.STATUS[500]
         )
       );
-      // return res.status(500).json({ message: " 빈칸을 다 채워주세요" });
     }
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
     if (!user) {
       return next(
@@ -72,7 +74,8 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(200).json({
       userEmail: user.email,
-      userNickname: user.nickname,
+      nickname: user.nickname,
+      id: user.id,
       refreshToken,
       accessToken,
     });
@@ -114,7 +117,6 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       return next(
         createError(CONSTANT.ERROR_MESSAGE.EXISTS_EMAIL, CONSTANT.STATUS[500])
       );
-      // return res.status(500).json({ message: "이미 가입된 유저입니다." });
     }
 
     const hashedPw = bcrypt.hashSync(password, SALT_ROUND);
@@ -127,6 +129,29 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   } finally {
     await prisma.$disconnect();
+  }
+};
+
+const edit = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // const {
+    //   body: { id, nickname },
+    // } = req;
+    const updateUser = await prisma.user.update({
+      where: { id: req.body.id },
+      data: {
+        nickname: req.body.nickname,
+      },
+    });
+    const nickname = updateUser.nickname;
+    const id = updateUser.id;
+    return res.status(200).json({ nickname, id });
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -302,4 +327,4 @@ const kakaoOauth = async (req: Request, res: Response, next: NextFunction) => {
   return res.redirect(`http://localhost:3000${req.query.state}`);
 };
 
-export default { signin, signup, refresh, googleOauth, kakaoOauth };
+export default { signin, signup, refresh, edit, googleOauth, kakaoOauth };

@@ -3,10 +3,12 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import postSlice from "../reducers/post/postSlice";
 import gallerySlice from "../reducers/gallery/gallerySlice";
+import userSlice from "../reducers/user/userSlice";
 
 export const rootReducer = combineReducers({
   postSlice: postSlice.reducer,
   gallerySlice: gallerySlice.reducer,
+  userSlice: userSlice.reducer,
 });
 
 export const store = configureStore({

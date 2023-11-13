@@ -32,8 +32,6 @@ const GalleryCreateModal = () => {
   //미리보기
   const watchFiles = watch("files");
   const watchPreviews = watch("previews");
-  console.log(watchFiles);
-  console.log(watchPreviews);
 
   useEffect(() => {
     const blobPreviews = watchFiles.map((file: File) =>

@@ -10,6 +10,8 @@ import { getGoogleUrl } from "../utils/getGoogleUrl";
 import userErrorHandler from "../hooks/userErrorHandler";
 import { getKakaoUrl } from "../utils/getKakaoUrl";
 import { toast } from "react-toastify";
+import { useAppDispatch } from "../store";
+import { userActions } from "../reducers/user/userSlice";
 
 const Auth = () => {
   const errorHandler = userErrorHandler();
@@ -17,6 +19,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const { auth, onSignin } = useContext(UserContext) as UserContextTypes;
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   let from = ((location.state as any)?.from?.pathname as string) || "/";
 
@@ -38,9 +41,10 @@ const Auth = () => {
         .post("/api/user/signin", data)
         .then((res) => {
           const {
-            data: { accessToken, userEmail, userNickname },
+            data: { accessToken, userEmail, nickname, id },
           } = res;
-          onSignin(accessToken, userEmail, userNickname);
+          dispatch(userActions.userFetch({ nickname, id }));
+          onSignin(accessToken, userEmail, nickname);
           toast.success("로그인 성공");
           navigate("/");
         })

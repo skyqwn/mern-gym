@@ -7,6 +7,8 @@ userRouter.post("/signin", userControllers.signin);
 
 userRouter.post("/signup", userControllers.signup);
 
+userRouter.put("/:id", userControllers.edit);
+
 userRouter.post("/refresh", userControllers.refresh);
 
 userRouter.get("/oauth/google", userControllers.googleOauth);

@@ -81,7 +81,6 @@ const GalleryEditModal = () => {
     console.log(filterOldImages);
     setValue("images", filterOldImages);
   };
-  console.log(oldImages);
 
   const deleteNewPreview = (targetIndex: number) => {
     const filterNewImages = watchFiles.filter(

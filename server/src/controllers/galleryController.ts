@@ -150,8 +150,6 @@ const edit = async (
         imageLocations.push(location);
       }
     }
-    console.log(2);
-    console.log(imageLocations);
     const updateGallery = await prisma.gallery.update({
       where: {
         id,

@@ -8,7 +8,6 @@ import { Button } from "../components/Button";
 import GalleryEditModal from "../components/modals/GalleryEditModal";
 
 const GalleryDetail = () => {
-  const location = useLocation();
   const dispatch = useAppDispatch();
   const params = useParams() as { id: string };
   const galleryState = useAppSelector((state) => state.gallerySlice);

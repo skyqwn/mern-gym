@@ -6,6 +6,7 @@ import Community from "./routes/Community";
 import CommunityDetail from "./routes/CommunityDetail";
 import Gallery from "./routes/Gallery";
 import GalleryDetail from "./routes/GalleryDetail";
+import Profile from "./routes/Profile";
 
 const Router = () => {
   return (
@@ -23,6 +24,7 @@ const Router = () => {
       <Route path="/community/:id" element={<CommunityDetail />} />
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/gallery/:id" element={<GalleryDetail />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 };
