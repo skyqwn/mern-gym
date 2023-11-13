@@ -20,9 +20,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       .post("/api/user/refresh")
       .then((res) => {
         const {
-          data: { accessToken, userEmail, userNickname, id },
+          data: { accessToken, userEmail, userNickname, id, avatar },
         } = res;
-        onSignin(accessToken, userEmail, userNickname, id);
+        onSignin(accessToken, userEmail, userNickname, id, avatar);
       })
       .catch((err) => {
         console.log(err);
@@ -37,11 +37,12 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     accessToken: string,
     userEmail: string,
     userNickname: string,
-    id: string
+    id: string,
+    avatar: string
   ) => {
     instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     setAuth({ isLogin: true, email: userEmail, nickname: userNickname });
-    dispatch(userActions.userFetch({ nickname: userNickname, id }));
+    dispatch(userActions.userFetch({ nickname: userNickname, id, avatar }));
   };
 
   const value = React.useMemo(() => {

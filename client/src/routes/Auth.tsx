@@ -41,9 +41,9 @@ const Auth = () => {
         .post("/api/user/signin", data)
         .then((res) => {
           const {
-            data: { accessToken, userEmail, nickname, id },
+            data: { accessToken, userEmail, nickname, id, avatar },
           } = res;
-          dispatch(userActions.userFetch({ nickname, id }));
+          dispatch(userActions.userFetch({ nickname, id, avatar }));
           onSignin(accessToken, userEmail, nickname);
           toast.success("로그인 성공");
           navigate("/");

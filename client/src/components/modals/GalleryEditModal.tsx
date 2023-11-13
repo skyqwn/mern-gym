@@ -64,7 +64,6 @@ const GalleryEditModal = () => {
   // };
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
     toastRef.current = toast.loading("수정중...");
     try {
       dispatch(galleryThunk.editGallery(data));

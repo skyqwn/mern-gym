@@ -11,6 +11,7 @@ interface FileInputProps {
   disabled?: boolean;
   small?: boolean;
   id: string;
+  onlyOne?: boolean;
 }
 
 const FileInput = ({
@@ -22,11 +23,13 @@ const FileInput = ({
   disabled,
   small,
   id,
+  onlyOne,
 }: FileInputProps) => {
   const ref = useRef<HTMLInputElement>(null);
   const { field } = useController({ control, name, rules: { required } });
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const array = [...field.value];
+    const oneArr = [];
 
     if (!e.target.files) return;
 
@@ -34,7 +37,12 @@ const FileInput = ({
       array.push(e.target.files[i]);
     }
 
-    field.onChange(array);
+    if (onlyOne) {
+      const lastFile = array[array.length - 1];
+      field.onChange([lastFile]);
+    } else {
+      field.onChange(array);
+    }
   };
   return (
     <div className="relative w-full">

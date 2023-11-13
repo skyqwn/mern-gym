@@ -4,6 +4,7 @@ import { editUser } from "./userThunk";
 interface UserType {
   nickname: string;
   id: string;
+  avatar: string;
 }
 
 interface UserStateType {
@@ -13,7 +14,7 @@ interface UserStateType {
 }
 
 const initialState: UserStateType = {
-  user: { nickname: "", id: "" },
+  user: { nickname: "", id: "", avatar: "" },
   status: "",
   error: "",
 };
@@ -25,6 +26,7 @@ export const userSlice = createSlice({
     userFetch: (state, action: PayloadAction<UserType>) => {
       state.user.nickname = action.payload.nickname;
       state.user.id = action.payload.id;
+      state.user.avatar = action.payload.avatar;
     },
   },
   extraReducers: (builder) => {

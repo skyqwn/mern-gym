@@ -31,7 +31,6 @@ export const detailGallery = createAsyncThunk(
 export const editGallery = createAsyncThunk(
   "Gallery/editGallery",
   async (data: FieldValues) => {
-    console.log(data);
     if (data.id) {
       const fd = new FormData();
       fd.append("title", data.title);

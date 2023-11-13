@@ -20,10 +20,10 @@ model User {
   provider     ProviderType @default(LOCAL)
   providerId   String?
   refreshToken String?
-
-  posts     Post[]
-  galleries Gallery[]
-  comments  Comment[]
+  avatar       String?
+  posts        Post[]
+  galleries    Gallery[]
+  comments     Comment[]
 }
 
 model Post {

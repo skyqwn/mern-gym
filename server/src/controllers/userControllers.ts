@@ -8,6 +8,7 @@ import createError from "../util/createError";
 import CONSTANT from "../constant";
 import axios from "axios";
 import { RequestWithUser } from "../../types/express";
+import s3PutImage from "../libs/s3PutImage";
 
 dotenv.config();
 
@@ -71,11 +72,11 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
     res.cookie("refreshToken", refreshToken, {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
-
     return res.status(200).json({
       userEmail: user.email,
       nickname: user.nickname,
       id: user.id,
+      avartar: user.avatar,
       refreshToken,
       accessToken,
     });
@@ -138,18 +139,36 @@ const edit = async (
   next: NextFunction
 ) => {
   try {
-    // const {
-    //   body: { id, nickname },
-    // } = req;
+    const {
+      body: { id, nickname, previewImage },
+    } = req;
+    let updateData = { id, nickname } as any;
+    const multerFiles = req.files as {
+      [fieldName: string]: Express.Multer.File[];
+    };
+    if (multerFiles.file) {
+      const location = await s3PutImage({
+        folderName: nickname,
+        type: "USER",
+        file: multerFiles.file[0],
+        resizeWidth: 1280,
+      });
+      updateData.avatar = location;
+    }
+
     const updateUser = await prisma.user.update({
-      where: { id: req.body.id },
-      data: {
-        nickname: req.body.nickname,
+      where: {
+        id,
+      },
+      data: updateData,
+      select: {
+        nickname: true,
+        id: true,
+        avatar: true,
       },
     });
-    const nickname = updateUser.nickname;
-    const id = updateUser.id;
-    return res.status(200).json({ nickname, id });
+    console.log(updateUser);
+    return res.status(200).json(updateUser);
   } catch (error) {
     console.log(error);
   }
@@ -202,6 +221,7 @@ const refresh = async (req: Request, res: Response, next: NextFunction) => {
         userEmail: user.email,
         userNickname: user.nickname,
         id: user.id,
+        avatar: user.avatar,
       });
     } catch (error) {
       return next(error);
