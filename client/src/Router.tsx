@@ -24,7 +24,14 @@ const Router = () => {
       <Route path="/community/:id" element={<CommunityDetail />} />
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/gallery/:id" element={<GalleryDetail />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route
+        path="/profile"
+        element={
+          <ProtectRoute>
+            <Profile />
+          </ProtectRoute>
+        }
+      />
     </Routes>
   );
 };

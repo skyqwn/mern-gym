@@ -9,6 +9,8 @@ import PostEditModal from "../components/modals/PostEditModal";
 import { detailPost } from "../reducers/post/postThunk";
 import { PostType } from "../types/postTypes";
 import PostDeleteConfirm from "../components/confirms/PostDeleteConfirm";
+import TextArea from "../components/Inputs/TextArea";
+import { useForm } from "react-hook-form";
 
 const CommunityDetail = () => {
   const location = useLocation();
@@ -16,6 +18,11 @@ const CommunityDetail = () => {
   const params = useParams() as { id: string };
   const postState = useAppSelector((state) => state.postSlice);
   const [data, setData] = React.useState<PostType | null>(null);
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({});
   useEffect(() => {
     if (location.state) {
       if (location.state.post) {
@@ -56,6 +63,12 @@ const CommunityDetail = () => {
         onAction={() => {
           dispatch(postActions.deleteConfirmOpen(data));
         }}
+      />
+      <TextArea
+        name="comments"
+        control={control}
+        errors={errors}
+        label="댓글"
       />
     </Container>
   );

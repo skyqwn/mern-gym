@@ -8,6 +8,7 @@ const userRouter = express.Router();
 userRouter.post("/signin", userControllers.signin);
 
 userRouter.post("/signup", userControllers.signup);
+userRouter.post("/logout", userControllers.logout);
 
 userRouter.put(
   "/:id",

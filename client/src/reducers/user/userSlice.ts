@@ -30,6 +30,7 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    /*Update */
     builder.addCase(editUser.pending, (state, action) => {
       state.status = "LOADING";
     });

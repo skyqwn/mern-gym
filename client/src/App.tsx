@@ -19,15 +19,19 @@ const RefreshLoader = ({ children }: React.PropsWithChildren) => {
 const App = () => {
   return (
     <RefreshLoader>
-      <Header />
-      <ToastContainer
-        autoClose={3000}
-        position="top-center"
-        theme="light"
-        hideProgressBar={true}
-      />
-      <Router />
-      <Footer />
+      <div className="flex flex-col h-screen">
+        <div className="flex-1">
+          <Header />
+          <ToastContainer
+            autoClose={3000}
+            position="top-center"
+            theme="light"
+            hideProgressBar={true}
+          />
+          <Router />
+        </div>
+        <Footer />
+      </div>
     </RefreshLoader>
   );
 };

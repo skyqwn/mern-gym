@@ -1,6 +1,8 @@
 import React from "react";
 import Container from "./Container";
 import { Link } from "react-router-dom";
+import { useAppSelector } from "../store";
+import UserAvatar from "./UserAvatar";
 
 const Header = () => {
   return (
@@ -18,7 +20,7 @@ const Header = () => {
               <div>갤러리 </div>
             </Link>
             <Link to={"/profile"}>
-              <div className="w-8 h-8 rounded-full bg-red-500" />
+              <UserAvatar />
             </Link>
           </div>
         </div>

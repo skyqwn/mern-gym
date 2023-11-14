@@ -7,10 +7,11 @@ import { Input } from "../components/Inputs/Input";
 import userThunk, { editUser } from "../reducers/user/userThunk";
 import { useNavigate } from "react-router-dom";
 import FileInput from "../components/Inputs/FileInput";
+import UserAvatar from "../components/UserAvatar";
+import { instance } from "../api/apiconfig";
 
 const Profile = () => {
   const userState = useAppSelector((state) => state.userSlice);
-  console.log(userState);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const {
@@ -46,10 +47,8 @@ const Profile = () => {
       <div className="flex items-center gap-3">
         {previewImage ? (
           <img className="w-20 h-20 rounded-full" src={previewImage} />
-        ) : userState.user.avatar ? (
-          <img className="w-20 h-20 rounded-full" src={userState.user.avatar} />
         ) : (
-          <img className="w-20 h-20" src="imgs/user.png" />
+          <UserAvatar big />
         )}
         <label htmlFor="avatar">
           <div className="flex items-center justify-center w-20 h-20  border hover:bg-gr ay-50 border-gray-300 rounded-md shadow-sm text-sm font-medium  text-gray-700">
@@ -67,6 +66,19 @@ const Profile = () => {
       </div>
       <Input name="nickname" control={control} errors={errors} label="닉네임" />
       <Button label="변경" onAction={handleSubmit(onValid)} />
+      <button
+        className="text-red-500 bg-slate-700 px-5 py-3 rounded font-bold"
+        onClick={async () => {
+          try {
+            await instance.post(`/api/user/logout`);
+            navigate("/auth");
+          } catch (error) {
+            console.log(error);
+          }
+        }}
+      >
+        로그아웃
+      </button>
     </Container>
   );
 };

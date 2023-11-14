@@ -6,7 +6,6 @@ import jwt from "../libs/jwt";
 import oauth from "../libs/oauth";
 import createError from "../util/createError";
 import CONSTANT from "../constant";
-import axios from "axios";
 import { RequestWithUser } from "../../types/express";
 import s3PutImage from "../libs/s3PutImage";
 
@@ -130,6 +129,19 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   } finally {
     await prisma.$disconnect();
+  }
+};
+
+const logout = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    res.clearCookie("refreshToken");
+    res.send("remove cookie");
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -348,4 +360,12 @@ const kakaoOauth = async (req: Request, res: Response, next: NextFunction) => {
   return res.redirect(`http://localhost:3000${req.query.state}`);
 };
 
-export default { signin, signup, refresh, edit, googleOauth, kakaoOauth };
+export default {
+  signin,
+  signup,
+  logout,
+  refresh,
+  edit,
+  googleOauth,
+  kakaoOauth,
+};
