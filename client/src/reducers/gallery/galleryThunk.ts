@@ -61,4 +61,10 @@ export const removeGallery = createAsyncThunk(
   }
 );
 
-export default { createGallery, fetchGallery, detailGallery, editGallery };
+export default {
+  createGallery,
+  fetchGallery,
+  detailGallery,
+  editGallery,
+  removeGallery,
+};

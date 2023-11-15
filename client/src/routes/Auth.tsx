@@ -43,8 +43,8 @@ const Auth = () => {
           const {
             data: { accessToken, userEmail, nickname, id, avatar },
           } = res;
-          dispatch(userActions.userFetch({ nickname, id, avatar }));
           onSignin(accessToken, userEmail, nickname);
+          dispatch(userActions.userFetch({ nickname, id, avatar }));
           toast.success("로그인 성공");
           navigate("/");
         })
@@ -59,7 +59,7 @@ const Auth = () => {
     }
   };
 
-  if (auth?.isLogin) {
+  if (auth?.loggedIn) {
     return <Navigate to={from} />;
   }
 

@@ -18,6 +18,9 @@ const CommunityDetail = () => {
   const params = useParams() as { id: string };
   const postState = useAppSelector((state) => state.postSlice);
   const [data, setData] = React.useState<PostType | null>(null);
+  const userState = useAppSelector((state) => state.userSlice);
+  const postId = data?.authorId;
+  const userId = userState.user.id;
   const {
     handleSubmit,
     control,
@@ -50,20 +53,25 @@ const CommunityDetail = () => {
       <h3>{data?.category}</h3>
       <h1 className="text-4xl">{data?.title}</h1>
       <span>{data?.desc}</span>
-      <Button
-        small
-        label="수정"
-        onAction={() => {
-          // dispatch(postActions.handleEditModal({ isOpen: true, post: data }));
-          dispatch(postActions.editModalOpen(data));
-        }}
-      />
-      <Button
-        label="❌"
-        onAction={() => {
-          dispatch(postActions.deleteConfirmOpen(data));
-        }}
-      />
+      {postId === userId && (
+        <>
+          <Button
+            small
+            label="수정"
+            onAction={() => {
+              // dispatch(postActions.handleEditModal({ isOpen: true, post: data }));
+              dispatch(postActions.editModalOpen(data));
+            }}
+          />
+          <Button
+            label="❌"
+            onAction={() => {
+              dispatch(postActions.deleteConfirmOpen(data));
+            }}
+          />
+        </>
+      )}
+
       <TextArea
         name="comments"
         control={control}

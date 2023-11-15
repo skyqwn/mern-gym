@@ -5,16 +5,23 @@ import React, {
   useState,
 } from "react";
 import { instance } from "../api/apiconfig";
-import { UserStateTypes } from "../types/userContextTypes";
 import { useAppDispatch } from "../store";
 import { userActions } from "../reducers/user/userSlice";
+import { AuthType } from "../types/userContextTypes";
 
 export const UserContext = createContext({});
 
 export const UserContextProvider = ({ children }: PropsWithChildren) => {
   const dispatch = useAppDispatch();
-  const [auth, setAuth] = useState<UserStateTypes | null>(null);
+  const [auth, setAuth] = useState<AuthType | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const initAuth = {
+    loggedIn: false,
+    email: "",
+    nickname: "",
+  };
+
   useEffect(() => {
     instance
       .post("/api/user/refresh")
@@ -40,14 +47,24 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     id: string,
     avatar: string
   ) => {
-    instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-    setAuth({ isLogin: true, email: userEmail, nickname: userNickname });
-    dispatch(userActions.userFetch({ nickname: userNickname, id, avatar }));
+    if (accessToken) {
+      instance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${accessToken}`;
+      dispatch(userActions.userFetch({ nickname: userNickname, id, avatar }));
+      setAuth({ loggedIn: true, email: userEmail, nickname: userNickname });
+    }
+    return;
+  };
+
+  const onSignout = () => {
+    instance.defaults.headers.common["Authorization"] = "";
+    setAuth(initAuth);
   };
 
   const value = React.useMemo(() => {
-    return { auth, onSignin, loading };
-  }, [auth, loading, onSignin]);
+    return { auth, onSignin, onSignout, loading };
+  }, [auth, loading, onSignin, onSignout]);
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

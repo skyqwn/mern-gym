@@ -15,15 +15,7 @@ const PostEditModal = () => {
   const options = getOptions();
   const toastRef = React.useRef<Id>();
   const postState = useAppSelector((state) => state.postSlice);
-  // useEffect(() => {
-  //   if (post.id) {
-  //     reset({
-  //       ...post,
-  //     });
-  //   }
 
-  // }, [post]);
-  console.log(postState);
   const {
     handleSubmit,
     control,
@@ -45,6 +37,15 @@ const PostEditModal = () => {
           type: "success",
           render: "수정 성공!",
           isLoading: false,
+          autoClose: 2000,
+        });
+      }
+      if (postState.status === "ERROR") {
+        toast.update(toastRef.current, {
+          type: "error",
+          render: "생성 실패!",
+          isLoading: false,
+          autoClose: 2000,
         });
       }
     }

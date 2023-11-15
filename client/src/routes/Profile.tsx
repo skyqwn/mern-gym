@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import FileInput from "../components/Inputs/FileInput";
 import UserAvatar from "../components/UserAvatar";
 import { instance } from "../api/apiconfig";
+import { userActions } from "../reducers/user/userSlice";
 
 const Profile = () => {
   const userState = useAppSelector((state) => state.userSlice);
@@ -37,11 +38,9 @@ const Profile = () => {
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
     dispatch(userThunk.editUser(data));
-    navigate("/home");
+    // navigate("/home");
   };
 
-  // 처음엔 노유저
-  // 1. 서버에 저장된 사진이 있어 근데 사진 변경할라고 프리뷰를 눌르면 어케 프리뷰 보여줌???
   return (
     <Container>
       <div className="flex items-center gap-3">
@@ -70,6 +69,9 @@ const Profile = () => {
         className="text-red-500 bg-slate-700 px-5 py-3 rounded font-bold"
         onClick={async () => {
           try {
+            dispatch(
+              userActions.userFetch({ avatar: "", id: "", nickname: "" })
+            );
             await instance.post(`/api/user/logout`);
             navigate("/auth");
           } catch (error) {

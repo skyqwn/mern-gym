@@ -61,7 +61,6 @@ export const gallerySlice = createSlice({
   },
   extraReducers: (builder) => {
     /* Gallery Create */
-
     builder.addCase(galleryThunk.createGallery.pending, (state, action) => {
       state.status = "LOADING";
     });
@@ -101,6 +100,7 @@ export const gallerySlice = createSlice({
       state.status = "ERROR";
       state.error = action.error;
     });
+
     /*Gallery Update */
     builder.addCase(galleryThunk.editGallery.pending, (state, action) => {
       state.status = "LOADING";
@@ -117,6 +117,22 @@ export const gallerySlice = createSlice({
       state.editModalIsOpen = false;
     });
     builder.addCase(galleryThunk.editGallery.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.error = action.error;
+    });
+
+    /*Gallery Delete */
+    builder.addCase(galleryThunk.removeGallery.pending, (state, action) => {
+      state.status = "LOADING";
+    });
+    builder.addCase(galleryThunk.removeGallery.fulfilled, (state, action) => {
+      state.status = "SUCCESS";
+      state.galleries = state.galleries.filter(
+        (gallery) => gallery.id !== action.payload.id
+      );
+      state.deleteConfirmIsOpen = false;
+    });
+    builder.addCase(galleryThunk.removeGallery.rejected, (state, action) => {
       state.status = "ERROR";
       state.error = action.error;
     });

@@ -8,7 +8,7 @@ const ProtectRoute = ({ children }: React.PropsWithChildren) => {
   if (loading) {
     return <>Loading...</>;
   }
-  if (!auth?.isLogin) {
+  if (!auth?.loggedIn) {
     return <Navigate to={"/auth"} />;
   }
   return <div>{children}</div>;

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "../components/Container";
 import { Button } from "../components/Button";
 import { useAppDispatch, useAppSelector } from "../store";
@@ -6,6 +6,7 @@ import GalleryCreateModal from "../components/modals/GalleryCreateModal";
 import { GalleryTypes, galleryActions } from "../reducers/gallery/gallerySlice";
 import { Link } from "react-router-dom";
 import { fetchGallery } from "../reducers/gallery/galleryThunk";
+import Pagination from "../components/Pagination";
 
 const Gallery = () => {
   const galleryState = useAppSelector((state) => state.gallerySlice);
@@ -13,6 +14,7 @@ const Gallery = () => {
   useEffect(() => {
     dispatch(fetchGallery());
   }, []);
+  const [totalItems, setTotalItems] = useState(0);
 
   return (
     <Container>
@@ -36,6 +38,7 @@ const Gallery = () => {
             </Link>
           ))}
       </div>
+      {/* <Pagination totalItems={galleryState.} pageCount={5} itemCountPerPage={50} /> */}
     </Container>
   );
 };

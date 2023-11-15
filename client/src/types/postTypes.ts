@@ -11,6 +11,13 @@ export interface PostType {
   desc: string;
   title: string;
   id: string;
+  author: {
+    id: string;
+    nickname: string;
+  };
+  authorId: string;
+  createAt: string;
+  updateAt: string;
 }
 
 export interface AddPostDataType {

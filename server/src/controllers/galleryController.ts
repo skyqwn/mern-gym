@@ -171,6 +171,20 @@ const remove = async (
   req: RequestWithUser,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const {
+    params: { id },
+  } = req;
+  try {
+    const deleteGallery = await prisma.gallery.delete({
+      where: {
+        id,
+      },
+    });
+    return res.status(200).json(deleteGallery);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export default { create, fetch, detail, edit, remove };
