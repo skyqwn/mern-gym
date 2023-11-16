@@ -57,7 +57,7 @@ const fetch = async (
     const totalPage = Math.ceil(allPortfolios / 2);
     const fetchPost = await prisma.post.findMany({
       take: 2,
-      skip: 2 * +page! - 1,
+      skip: 2 * (+page! - 1),
       include: { author: { select: { id: true, nickname: true } } },
       orderBy: { createAt: "desc" },
     });

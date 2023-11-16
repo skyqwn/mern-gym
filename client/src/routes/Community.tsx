@@ -5,17 +5,18 @@ import { useAppDispatch, useAppSelector } from "../store";
 import { postActions } from "../reducers/post/postSlice";
 import PostCreateModal from "../components/modals/PostCreateModal";
 import { fetchPost } from "../reducers/post/postThunk";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import Pagination from "../components/Pagination";
 
 const Community = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalCount, setTotalCount] = useState<Number>();
   const postState = useAppSelector((state) => state.postSlice);
+  const { search } = useLocation();
+  const queryPage = +search.charAt(search.length - 1);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(fetchPost(currentPage));
-  }, []);
+    dispatch(fetchPost(queryPage));
+  }, [queryPage]);
   const totalPage = postState.posts.totalPage;
   return (
     <Container>
