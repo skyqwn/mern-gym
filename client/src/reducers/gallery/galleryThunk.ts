@@ -12,8 +12,8 @@ const createGallery = createAsyncThunk(
 
 export const fetchGallery = createAsyncThunk(
   "Gallery/fetchGallery",
-  async () => {
-    const res = await instance.get("/api/gallery");
+  async (currentPage: number) => {
+    const res = await instance.get(`/api/gallery?page=${currentPage}`);
     return res.data;
   }
 );

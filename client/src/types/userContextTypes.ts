@@ -1,18 +1,15 @@
 import { SetStateAction } from "react";
-
-export type AuthType = {
-  loggedIn: boolean;
+export interface SigninProps {
+  accessToken: string;
   email: string;
   nickname: string;
-};
-
+  id: string;
+  avatar: string;
+}
 export interface UserContextTypes {
-  auth: AuthType | null;
-  onSignin: (
-    accessToken: string,
-    userEmail: string,
-    userNickname: string
-  ) => void;
+  auth: boolean;
+  onSignin: (props: SigninProps) => void;
+  onSignout: () => void;
   loading: boolean;
   error: {
     message: string;

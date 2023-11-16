@@ -21,9 +21,9 @@ const SALT_ROUND = +process.env.SALT_ROUND!;
 const signin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
-      body: { email, password },
+      body: { email: bodyEmail, password },
     } = req;
-    if (!email || !password) {
+    if (!bodyEmail || !password) {
       return next(
         createError(
           CONSTANT.ERROR_MESSAGE.REQUIERED_INPUT,
@@ -32,8 +32,10 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: bodyEmail },
     });
+
+    console.log(user);
 
     if (!user) {
       return next(
@@ -62,9 +64,15 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = jwt.signRefreshToken();
 
     const tokenUser = await prisma.user.update({
-      where: { email },
+      where: { email: bodyEmail },
       data: {
         refreshToken,
+      },
+      select: {
+        email: true,
+        nickname: true,
+        id: true,
+        avatar: true,
       },
     });
 
@@ -72,11 +80,7 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
     return res.status(200).json({
-      userEmail: user.email,
-      nickname: user.nickname,
-      id: user.id,
-      avartar: user.avatar,
-      refreshToken,
+      ...tokenUser,
       accessToken,
     });
   } catch (error) {
@@ -137,9 +141,16 @@ const logout = async (
   res: Response,
   next: NextFunction
 ) => {
+  const { user } = req;
   try {
     res.clearCookie("refreshToken");
     res.send("remove cookie");
+    // await prisma.user.update({
+    //   where: { id: user?.id },
+    //   data: {
+    //     refreshToken: null,
+    //   },
+    // });
   } catch (error) {
     console.log(error);
   }
@@ -201,7 +212,6 @@ const refresh = async (req: Request, res: Response, next: NextFunction) => {
             CONSTANT.STATUS[403]
           )
         );
-        // return res.status(403).json({ message: "no verified refresh token" });
       }
 
       const user = await prisma.user.findFirst({ where: { refreshToken } });
@@ -213,15 +223,20 @@ const refresh = async (req: Request, res: Response, next: NextFunction) => {
             CONSTANT.STATUS[403]
           )
         );
-        // return res.status(403).json({ message: "no verified refresh token" });
       }
 
       const newAccessToken = jwt.signAccessToken(user.id);
       const newRefreshToken = jwt.signRefreshToken();
 
-      await prisma.user.update({
+      const updataUser = await prisma.user.update({
         where: { id: user.id },
         data: { refreshToken: newRefreshToken },
+        select: {
+          id: true,
+          email: true,
+          avatar: true,
+          nickname: true,
+        },
       });
 
       res.cookie("refreshToken", newRefreshToken, {
@@ -230,14 +245,10 @@ const refresh = async (req: Request, res: Response, next: NextFunction) => {
 
       return res.status(200).json({
         accessToken: newAccessToken,
-        userEmail: user.email,
-        userNickname: user.nickname,
-        id: user.id,
-        avatar: user.avatar,
+        ...updataUser,
       });
     } catch (error) {
       return next(error);
-      // return res.status(500).json({ message: "서버 에러 발생" });
     }
   } else {
     return res.json(null);

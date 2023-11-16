@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Button } from "../components/Button";
 import Container from "../components/Container";
 import { useAppDispatch, useAppSelector } from "../store";
@@ -10,11 +10,14 @@ import FileInput from "../components/Inputs/FileInput";
 import UserAvatar from "../components/UserAvatar";
 import { instance } from "../api/apiconfig";
 import { userActions } from "../reducers/user/userSlice";
+import { UserContext } from "../context/UserContext";
+import { UserContextTypes } from "../types/userContextTypes";
 
 const Profile = () => {
   const userState = useAppSelector((state) => state.userSlice);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { auth, onSignout } = useContext(UserContext) as UserContextTypes;
   const {
     control,
     watch,
@@ -69,10 +72,7 @@ const Profile = () => {
         className="text-red-500 bg-slate-700 px-5 py-3 rounded font-bold"
         onClick={async () => {
           try {
-            dispatch(
-              userActions.userFetch({ avatar: "", id: "", nickname: "" })
-            );
-            await instance.post(`/api/user/logout`);
+            onSignout();
             navigate("/auth");
           } catch (error) {
             console.log(error);

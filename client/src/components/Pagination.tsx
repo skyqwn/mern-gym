@@ -1,51 +1,49 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import { cls } from "../libs/util";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import { Link, useLocation } from "react-router-dom";
 
-interface Props {
-  totalItems: number;
-  itemCountPerPage: number;
-  pageCount: number;
-  currentPage: number;
+interface PaginationProps {
+  totalPage: number;
+  currentPage?: number;
 }
 
-const Pagination = ({
-  totalItems,
-  itemCountPerPage,
-  pageCount,
-  currentPage,
-}: Props) => {
-  const totalPages = Math.ceil(totalItems / itemCountPerPage);
-  const [start, setStart] = useState(1);
-  const noPrev = start === 1;
-  const noNext = start + pageCount - 1 >= totalPages;
+const Pagination = ({ totalPage, currentPage = 1 }: PaginationProps) => {
+  const CONTAINER_SIZE = 5;
+  const CONTAINER_LENGTH = Math.ceil(totalPage / CONTAINER_SIZE);
+  const CURRENT_CONTAINER = Math.ceil(currentPage / CONTAINER_SIZE);
+
+  const { pathname } = useLocation();
   return (
-    <div>
-      <ul className="list-none">
-        <li className={`${noPrev}`}>
-          {/* <li className={cls(`${noPrev&& }`)}> */}
-          <Link to={`?page=${start - 1}`}>이전</Link>
-        </li>
-        {[...Array(pageCount)].map((a, i) => (
-          <>
-            {start + i <= totalPages && (
-              <li key={i}>
-                {/* <Link className={`${currentPage === start + i && styles.active}`} */}
-                <Link
-                  className={`${currentPage === start + i}`}
-                  to={`?page=${start + i}`}
-                >
-                  {start + i}
-                </Link>
-              </li>
-            )}
-          </>
-        ))}
-        <li className={`${noNext}`}>
-          {/* <li className={`${noNext && styles.visible}`}> */}
-          <Link to={`?page=${start + pageCount}`}>다음</Link>
-        </li>
-      </ul>
+    <div className="flex gap-1 items-center justify-center pt-6 mt-auto">
+      {CURRENT_CONTAINER > 1 && (
+        <Link
+          to={`${pathname}?page=${(CURRENT_CONTAINER - 1) * CONTAINER_SIZE}`}
+        >
+          <AiOutlineLeft />
+        </Link>
+      )}
+      {Array.from(Array(totalPage), (e, i) => (
+        <span key={i}>
+          {Math.ceil((i + 1) / CONTAINER_SIZE) === CURRENT_CONTAINER && (
+            <Link
+              to={`${pathname}?page=${i + 1}`}
+              className={` px-3 text-center rounded ${
+                currentPage
+                  ? String(currentPage) === String(i + 1) && "bg-accent"
+                  : i + 1 === 1 && "bg-accent text-white"
+              }`}
+            >
+              {i + 1}
+            </Link>
+          )}
+        </span>
+      ))}
+      {CONTAINER_SIZE < totalPage && CONTAINER_LENGTH > CURRENT_CONTAINER && (
+        <Link to={`${pathname}?page=${CURRENT_CONTAINER * CONTAINER_SIZE + 1}`}>
+          <AiOutlineRight />
+        </Link>
+      )}
     </div>
   );
 };

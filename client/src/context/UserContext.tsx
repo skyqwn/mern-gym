@@ -4,62 +4,57 @@ import React, {
   useEffect,
   useState,
 } from "react";
+
 import { instance } from "../api/apiconfig";
 import { useAppDispatch } from "../store";
 import { userActions } from "../reducers/user/userSlice";
-import { AuthType } from "../types/userContextTypes";
+import { SigninProps } from "../types/userContextTypes";
 
 export const UserContext = createContext({});
 
 export const UserContextProvider = ({ children }: PropsWithChildren) => {
   const dispatch = useAppDispatch();
-  const [auth, setAuth] = useState<AuthType | null>(null);
+  const [auth, setAuth] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  const initAuth = {
-    loggedIn: false,
-    email: "",
-    nickname: "",
-  };
 
   useEffect(() => {
     instance
       .post("/api/user/refresh")
       .then((res) => {
-        const {
-          data: { accessToken, userEmail, userNickname, id, avatar },
-        } = res;
-        onSignin(accessToken, userEmail, userNickname, id, avatar);
+        const { data } = res;
+        onSignin(data);
       })
       .catch((err) => {
         console.log(err);
-        setAuth(null);
+        setAuth(false);
       })
       .finally(() => {
         setLoading(false);
       });
   }, []);
 
-  const onSignin = (
-    accessToken: string,
-    userEmail: string,
-    userNickname: string,
-    id: string,
-    avatar: string
-  ) => {
+  const onSignin = ({ accessToken, nickname, id, avatar }: SigninProps) => {
     if (accessToken) {
       instance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${accessToken}`;
-      dispatch(userActions.userFetch({ nickname: userNickname, id, avatar }));
-      setAuth({ loggedIn: true, email: userEmail, nickname: userNickname });
+      dispatch(
+        userActions.userFetch({
+          nickname,
+          id,
+          avatar,
+        })
+      );
+      setAuth(true);
     }
     return;
   };
 
-  const onSignout = () => {
+  const onSignout = async () => {
     instance.defaults.headers.common["Authorization"] = "";
-    setAuth(initAuth);
+    setAuth(false);
+    dispatch(userActions.userFetch({ avatar: "", id: "", nickname: "" }));
+    await instance.post(`/api/user/logout`);
   };
 
   const value = React.useMemo(() => {

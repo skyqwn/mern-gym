@@ -72,23 +72,6 @@ const GalleryDetail = () => {
         deleteAction={galleryDeleteAction}
         deleteLabel="삭제"
       />
-      {/* {userId === galleryId && (
-        <>
-          <Button
-            label="수정"
-            onAction={() => {
-              dispatch(galleryActions.editModalOpen(galleryState.gallery));
-            }}
-          />
-          <Button
-            label="삭제"
-            theme="secondary"
-            onAction={() => {
-              dispatch(galleryActions.deleteConfirmOpen(galleryState.gallery));
-            }}
-          />
-        </>
-      )} */}
     </Container>
   );
 };

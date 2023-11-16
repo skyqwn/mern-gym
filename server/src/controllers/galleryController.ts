@@ -16,6 +16,7 @@ const create = async (
     const {
       body: { title, desc, images },
       user,
+      params,
     } = req;
     if (!user) {
       return next(
@@ -82,8 +83,13 @@ const fetch = async (
   res: Response,
   next: NextFunction
 ) => {
+  const {
+    query: { page },
+  } = req;
   try {
     const galleries = await prisma.gallery.findMany({
+      take: 2,
+      skip: 2,
       include: { author: { select: { id: true, nickname: true } } },
       orderBy: { createAt: "desc" },
     });

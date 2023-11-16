@@ -9,7 +9,10 @@ import {
 } from "./postThunk";
 
 interface PostStateType {
-  posts: PostType[];
+  posts: {
+    fetchPost: PostType[];
+    totalPage: number;
+  };
   post: any;
   createModalIsOpen: boolean;
   editModalIsOpen: boolean;
@@ -19,7 +22,7 @@ interface PostStateType {
 }
 
 const initialState: PostStateType = {
-  posts: [],
+  posts: { fetchPost: [], totalPage: 1 },
   post: undefined,
   createModalIsOpen: false,
   editModalIsOpen: false,
@@ -69,7 +72,7 @@ export const postSlice = createSlice({
     });
     builder.addCase(createPost.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      state.posts = [action.payload, ...state.posts];
+      state.posts.fetchPost = [action.payload, ...state.posts.fetchPost];
       state.createModalIsOpen = false;
     });
     builder.addCase(createPost.rejected, (state, action) => {
@@ -109,7 +112,7 @@ export const postSlice = createSlice({
     });
     builder.addCase(editPost.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      state.posts = state.posts.map((post) => {
+      state.posts.fetchPost = state.posts.fetchPost.map((post) => {
         if (post.id === action.payload.id) {
           post = action.payload;
         }
@@ -129,7 +132,9 @@ export const postSlice = createSlice({
     });
     builder.addCase(removePost.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      state.posts = state.posts.filter((post) => post.id !== action.payload.id);
+      state.posts.fetchPost = state.posts.fetchPost.filter(
+        (post) => post.id !== action.payload.id
+      );
       state.deleteConfirmIsOpen = false;
     });
     builder.addCase(removePost.rejected, (state, action) => {

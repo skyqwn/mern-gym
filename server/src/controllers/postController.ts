@@ -48,12 +48,20 @@ const fetch = async (
   res: Response,
   next: NextFunction
 ) => {
+  const {
+    query: { page },
+  } = req;
+
   try {
-    const posts = await prisma.post.findMany({
+    const allPortfolios = await prisma.post.count();
+    const totalPage = Math.ceil(allPortfolios / 2);
+    const fetchPost = await prisma.post.findMany({
+      take: 2,
+      skip: 2 * +page! - 1,
       include: { author: { select: { id: true, nickname: true } } },
       orderBy: { createAt: "desc" },
     });
-    return res.status(200).json(posts);
+    return res.status(200).json({ fetchPost, totalPage });
   } catch (error) {
     return next(error);
   }

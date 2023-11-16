@@ -10,10 +10,16 @@ export const createPost = createAsyncThunk(
   }
 );
 
-export const fetchPost = createAsyncThunk("Post/fetchPost", async () => {
-  const res = await instance.get("/api/post");
-  return res.data;
-});
+export const fetchPost = createAsyncThunk(
+  "Post/fetchPost",
+  async (currentPage: number) => {
+    const res = await instance.get(`/api/post?page=${currentPage}`);
+    // console.log(res.data);
+    // const { posts, totalPage } = res.data;
+
+    return res.data;
+  }
+);
 
 export const detailPost = createAsyncThunk(
   "Post/detail",

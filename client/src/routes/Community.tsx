@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "../components/Container";
 import { Button } from "../components/Button";
 import { useAppDispatch, useAppSelector } from "../store";
@@ -6,15 +6,17 @@ import { postActions } from "../reducers/post/postSlice";
 import PostCreateModal from "../components/modals/PostCreateModal";
 import { fetchPost } from "../reducers/post/postThunk";
 import { Link } from "react-router-dom";
-import FloatingButton from "../components/FloatingButton";
+import Pagination from "../components/Pagination";
 
 const Community = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState<Number>();
   const postState = useAppSelector((state) => state.postSlice);
-  console.log(postState.posts.length);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(fetchPost());
+    dispatch(fetchPost(currentPage));
   }, []);
+  const totalPage = postState.posts.totalPage;
   return (
     <Container>
       <PostCreateModal />
@@ -27,8 +29,9 @@ const Community = () => {
           }}
         />
       </div>
-      {postState.posts.length > 0 &&
-        postState.posts.map((post) => (
+      {postState.posts.fetchPost.length > 0 &&
+        //@ts-ignore
+        postState.posts.fetchPost.map((post) => (
           <div className="space-y-4 divide-y-[2px]">
             <Link
               to={`${post.id}`}
@@ -87,6 +90,7 @@ const Community = () => {
             </Link>
           </div>
         ))}
+      <Pagination currentPage={currentPage} totalPage={totalPage} />
       {/* <FloatingButton href="/community/write">
         <svg
           className="w-6 h-6"

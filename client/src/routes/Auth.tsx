@@ -1,17 +1,16 @@
 import React, { useContext, useState } from "react";
-import { Input } from "../components/Inputs/Input";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import userErrorHandler from "../hooks/userErrorHandler";
+import { Input } from "../components/Inputs/Input";
 import { Button } from "../components/Button";
 import { UserContextTypes } from "../types/userContextTypes";
 import { instance } from "../api/apiconfig";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { getGoogleUrl } from "../utils/getGoogleUrl";
-import userErrorHandler from "../hooks/userErrorHandler";
 import { getKakaoUrl } from "../utils/getKakaoUrl";
-import { toast } from "react-toastify";
-import { useAppDispatch } from "../store";
-import { userActions } from "../reducers/user/userSlice";
 
 const Auth = () => {
   const errorHandler = userErrorHandler();
@@ -19,10 +18,9 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const { auth, onSignin } = useContext(UserContext) as UserContextTypes;
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  console.log(auth);
 
-  let from = ((location.state as any)?.from?.pathname as string) || "/";
-
+  let from = (location.state?.from as string) || "/";
   const {
     handleSubmit,
     control,
@@ -35,18 +33,16 @@ const Auth = () => {
       verifyPassword: "",
     },
   });
+
   const onValid: SubmitHandler<FieldValues> = (data) => {
     if (isLogin) {
       instance
         .post("/api/user/signin", data)
         .then((res) => {
-          const {
-            data: { accessToken, userEmail, nickname, id, avatar },
-          } = res;
-          onSignin(accessToken, userEmail, nickname);
-          dispatch(userActions.userFetch({ nickname, id, avatar }));
+          const { data } = res;
+          onSignin(data);
           toast.success("로그인 성공");
-          navigate("/");
+          navigate(from);
         })
         .catch((error) => {
           errorHandler(error);
@@ -54,12 +50,11 @@ const Auth = () => {
         });
     } else {
       instance.post("/api/user/signup", data);
-      setIsLogin(true);
       toast.success("회원가입 성공");
     }
   };
 
-  if (auth?.loggedIn) {
+  if (auth) {
     return <Navigate to={from} />;
   }
 

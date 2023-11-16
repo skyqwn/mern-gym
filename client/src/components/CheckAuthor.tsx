@@ -19,15 +19,20 @@ const CheckAuthor = ({
   deleteLabel,
   deleteAction,
 }: CheckAutorProps) => {
+  if (userId !== authorId) return null;
   return (
-    <div>
-      {userId === authorId && (
-        <div className="flex gap-5 w-96">
-          <Button label={editLabel} onAction={editAction} />
-          <Button label={deleteLabel} onAction={deleteAction} />
-        </div>
-      )}
+    <div className="flex gap-5 w-96">
+      <Button label={editLabel} onAction={editAction} />
+      <Button label={deleteLabel} onAction={deleteAction} />
     </div>
+    // <div>
+    // {/* {userId === authorId && ( */}
+    // <div className="flex gap-5 w-96">
+    //   <Button label={editLabel} onAction={editAction} />
+    //   <Button label={deleteLabel} onAction={deleteAction} />
+    // </div>
+    // )}
+    // </div>
   );
 };
 
