@@ -9,7 +9,6 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import Pagination from "../components/Pagination";
 
 const Community = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const postState = useAppSelector((state) => state.postSlice);
   const { search } = useLocation();
   const queryPage = +search.charAt(search.length - 1);
@@ -91,7 +90,7 @@ const Community = () => {
             </Link>
           </div>
         ))}
-      <Pagination currentPage={currentPage} totalPage={totalPage} />
+      <Pagination currentPage={queryPage} totalPage={totalPage} />
       {/* <FloatingButton href="/community/write">
         <svg
           className="w-6 h-6"

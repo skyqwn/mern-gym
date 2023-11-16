@@ -9,7 +9,7 @@ interface PaginationProps {
 }
 
 const Pagination = ({ totalPage, currentPage = 1 }: PaginationProps) => {
-  const CONTAINER_SIZE = 5;
+  const CONTAINER_SIZE = 2;
   const CONTAINER_LENGTH = Math.ceil(totalPage / CONTAINER_SIZE);
   const CURRENT_CONTAINER = Math.ceil(currentPage / CONTAINER_SIZE);
 
