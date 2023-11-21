@@ -91,19 +91,19 @@ const detail = async (
         id,
       },
     });
-    const isLiked = Boolean(
-      await prisma.fav.findFirst({
-        where: {
-          postId: post?.id,
-          authorId: user?.id,
-        },
-        select: {
-          id: true,
-        },
-      })
-    );
+    // const isLiked = Boolean(
+    //   await prisma.fav.findFirst({
+    //     where: {
+    //       postId: post?.id,
+    //       authorId: user?.id,
+    //     },
+    //     select: {
+    //       id: true,
+    //     },
+    //   })
+    // );
 
-    res.status(200).json({ post, isLiked });
+    res.status(200).json(post);
   } catch (error) {
     return next(error);
   }
@@ -159,40 +159,41 @@ const remove = async (
 const fav = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   const {
     params: { id },
+    body: { likeUsers },
     user,
   } = req;
   try {
-    const alreadyExists = await prisma.fav.findFirst({
+    if (!user) return;
+
+    const post = await prisma.post.findUnique({
+      where: { id },
+    });
+    if (!post) return;
+    let dataQuery = { likeUsers: {} } as any;
+
+    if (post.likeUsers.includes(user.id)) {
+      const filterArr = post.likeUsers.filter((id) => id !== user.id);
+      dataQuery.likeUsers.set = filterArr;
+    } else {
+      dataQuery.likeUsers.push = user.id;
+    }
+    const updatePost = await prisma.post.update({
       where: {
-        // postId: id,
-        authorId: user?.id,
+        id,
       },
+      data: dataQuery,
     });
 
-    if (alreadyExists) {
-      //delete
-      await prisma.fav.delete({
-        where: {
-          id: alreadyExists.id,
-        },
-      });
-    } else {
-      //create
-      await prisma.fav.create({
-        data: {
-          author: {
-            connect: {
-              id: user?.id,
-            },
-          },
-          post: {
-            connect: {
-              id,
-            },
-          },
-        },
-      });
-    }
+    // const updatePost = await prisma.post.update({
+    //   where: {
+    //     id,
+    //   },
+    //   data: {
+    //     likeUsers,
+    //   },
+    // });
+    console.log(updatePost);
+    return res.status(200).json(updatePost);
   } catch (error) {
     console.log(error);
   }
