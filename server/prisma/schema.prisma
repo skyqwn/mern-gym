@@ -27,14 +27,14 @@ model User {
 }
 
 model Post {
-  id       String           @id @unique @default(uuid())
-  title    String           @db.VarChar(100)
-  desc     String           @db.VarChar(1000)
-  createAt DateTime         @default(now())
-  updateAt DateTime         @updatedAt
-  category PostCategoryType @default(FREE)
-
-  comments Comment[]
+  id        String           @id @unique @default(uuid())
+  title     String           @db.VarChar(100)
+  desc      String           @db.VarChar(1000)
+  createAt  DateTime         @default(now())
+  updateAt  DateTime         @updatedAt
+  category  PostCategoryType @default(FREE)
+  likeUsers String[]
+  comments  Comment[]
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
