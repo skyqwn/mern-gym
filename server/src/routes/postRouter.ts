@@ -9,5 +9,6 @@ postRouter.get("/", postController.fetch);
 postRouter.get("/:id", postController.detail);
 postRouter.post("/:id/edit", onlyUser, postController.edit);
 postRouter.post("/:id/remove", onlyUser, postController.remove);
+postRouter.post("/:id/fav", onlyUser, postController.fav);
 
 export default postRouter;

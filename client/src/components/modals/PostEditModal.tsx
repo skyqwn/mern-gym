@@ -8,7 +8,7 @@ import { Input } from "../Inputs/Input";
 import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
 import { Id, toast } from "react-toastify";
-import { detailPost, editPost } from "../../reducers/post/postThunk";
+import { editPost } from "../../reducers/post/postThunk";
 
 const PostEditModal = () => {
   const dispatch = useAppDispatch();
@@ -32,7 +32,7 @@ const PostEditModal = () => {
   });
   useEffect(() => {
     if (toastRef.current) {
-      if (postState.status === "SUCCESS") {
+      if (postState.editStatus === "SUCCESS") {
         toast.update(toastRef.current, {
           type: "success",
           render: "수정 성공!",
@@ -40,7 +40,7 @@ const PostEditModal = () => {
           autoClose: 2000,
         });
       }
-      if (postState.status === "ERROR") {
+      if (postState.editStatus === "ERROR") {
         toast.update(toastRef.current, {
           type: "error",
           render: "생성 실패!",
@@ -49,7 +49,7 @@ const PostEditModal = () => {
         });
       }
     }
-  }, [postState.status]);
+  }, [postState.editStatus]);
 
   // const onClose = () => {
   //   dispatch(postActions.editModalClose);
@@ -62,8 +62,8 @@ const PostEditModal = () => {
   };
 
   const isLoading = React.useMemo(
-    () => postState.status === "LOADING",
-    [postState.status]
+    () => postState.editStatus === "LOADING",
+    [postState.editStatus]
   );
 
   const body = (

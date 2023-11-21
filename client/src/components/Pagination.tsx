@@ -1,15 +1,13 @@
-import React from "react";
-import { cls } from "../libs/util";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
 
 interface PaginationProps {
   totalPage: number;
-  currentPage?: number;
+  currentPage: number;
 }
 
-const Pagination = ({ totalPage, currentPage = 1 }: PaginationProps) => {
-  const CONTAINER_SIZE = 2;
+const Pagination = ({ totalPage, currentPage }: PaginationProps) => {
+  const CONTAINER_SIZE = 5;
   const CONTAINER_LENGTH = Math.ceil(totalPage / CONTAINER_SIZE);
   const CURRENT_CONTAINER = Math.ceil(currentPage / CONTAINER_SIZE);
 

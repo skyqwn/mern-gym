@@ -24,7 +24,7 @@ const PostCreateModal = () => {
 
   useEffect(() => {
     if (toastRef.current) {
-      if (postState.status === "SUCCESS") {
+      if (postState.createStatus === "SUCCESS") {
         toast.update(toastRef.current, {
           type: "success",
           render: "생성 성공!",
@@ -32,7 +32,7 @@ const PostCreateModal = () => {
           autoClose: 2000,
         });
       }
-      if (postState.status === "ERROR") {
+      if (postState.createStatus === "ERROR") {
         toast.update(toastRef.current, {
           type: "error",
           render: "생성 실패!",
@@ -41,7 +41,7 @@ const PostCreateModal = () => {
         });
       }
     }
-  }, [postState.status]);
+  }, [postState.createStatus]);
 
   const {
     handleSubmit,
@@ -57,8 +57,8 @@ const PostCreateModal = () => {
   };
 
   const isLoading = React.useMemo(
-    () => postState.status === "LOADING",
-    [postState.status]
+    () => postState.createStatus === "LOADING",
+    [postState.createStatus]
   );
 
   const body = (
@@ -88,6 +88,7 @@ const PostCreateModal = () => {
       secondAction={() => {
         dispatch(postActions.createModalClose({}));
       }}
+      // disabled={isLoading}
     />
   );
 };

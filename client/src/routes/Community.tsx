@@ -1,22 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Container from "../components/Container";
 import { Button } from "../components/Button";
 import { useAppDispatch, useAppSelector } from "../store";
 import { postActions } from "../reducers/post/postSlice";
 import PostCreateModal from "../components/modals/PostCreateModal";
 import { fetchPost } from "../reducers/post/postThunk";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../components/Pagination";
 
 const Community = () => {
-  const postState = useAppSelector((state) => state.postSlice);
-  const { search } = useLocation();
-  const queryPage = +search.charAt(search.length - 1);
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(fetchPost(queryPage));
+  const postState = useAppSelector((state) => state.postSlice);
+  console.log(postState);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryPage = Number(searchParams.get("page"));
+  const navigate = useNavigate();
+  const totalPage = postState.totalPage;
+  const page = useMemo(() => {
+    if (queryPage) return queryPage;
+    return 1;
   }, [queryPage]);
-  const totalPage = postState.posts.totalPage;
+  useEffect(() => {
+    if (page > 0) {
+      dispatch(fetchPost(page));
+    } else {
+      navigate("/community?page=1");
+    }
+  }, [page]);
   return (
     <Container>
       <PostCreateModal />
@@ -29,10 +39,9 @@ const Community = () => {
           }}
         />
       </div>
-      {postState.posts.fetchPost.length > 0 &&
-        //@ts-ignore
-        postState.posts.fetchPost.map((post) => (
-          <div className="space-y-4 divide-y-[2px]">
+      {postState.fetchPost.length > 0 &&
+        postState.fetchPost.map((post) => (
+          <div key={post.id} className="space-y-4 divide-y-[2px]">
             <Link
               to={`${post.id}`}
               state={{ post }}
@@ -90,23 +99,7 @@ const Community = () => {
             </Link>
           </div>
         ))}
-      <Pagination currentPage={queryPage} totalPage={totalPage} />
-      {/* <FloatingButton href="/community/write">
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-          ></path>
-        </svg>
-      </FloatingButton> */}
+      <Pagination currentPage={page} totalPage={totalPage} />
     </Container>
   );
 };

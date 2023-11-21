@@ -1,4 +1,4 @@
-enum PostCategoryType {
+export enum PostCategoryType {
   FREE = "FREE",
   ASK = "ASK",
   FLEX = "FLEX",
@@ -7,17 +7,18 @@ enum PostCategoryType {
 }
 
 export interface PostType {
-  category: PostCategoryType;
-  desc: string;
-  title: string;
-  id: string;
   author: {
     id: string;
     nickname: string;
   };
   authorId: string;
+  category: PostCategoryType;
   createAt: string;
+  desc: string;
+  id: string;
+  title: string;
   updateAt: string;
+  isLike: boolean;
 }
 
 export interface AddPostDataType {

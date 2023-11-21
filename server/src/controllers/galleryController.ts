@@ -57,6 +57,7 @@ const create = async (
       include: { author: { select: { id: true, nickname: true } } },
     });
 
+    console.log(newGallery);
     // const newGallery = await prisma.gallery.create({
     //   data: {
     //     title,
@@ -83,17 +84,20 @@ const fetch = async (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    query: { page },
-  } = req;
   try {
+    const {
+      query: { page },
+    } = req;
+    const allGalleries = await prisma.gallery.count();
+    const take = 2;
+    const totalPage = Math.ceil(allGalleries / take);
     const galleries = await prisma.gallery.findMany({
-      take: 2,
-      skip: 2,
+      take,
+      skip: 2 * (+page! - 1),
       include: { author: { select: { id: true, nickname: true } } },
       orderBy: { createAt: "desc" },
     });
-    return res.status(200).json(galleries);
+    return res.status(200).json({ galleries, totalPage });
   } catch (error) {
     return next(error);
   }

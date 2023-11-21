@@ -15,6 +15,7 @@ export interface GalleryTypes {
 
 interface GalleryStateType {
   galleries: GalleryTypes[];
+  totalPage: number;
   gallery?: GalleryTypes;
   createModalIsOpen: boolean;
   editModalIsOpen: boolean;
@@ -25,6 +26,7 @@ interface GalleryStateType {
 
 const initialState: GalleryStateType = {
   galleries: [],
+  totalPage: 1,
   gallery: undefined,
   createModalIsOpen: false,
   editModalIsOpen: false,
@@ -67,7 +69,11 @@ export const gallerySlice = createSlice({
     builder.addCase(galleryThunk.createGallery.fulfilled, (state, action) => {
       state.status = "SUCCESS";
       console.log(action.payload);
-      state.galleries = [action.payload, ...state.galleries] as any;
+      state.galleries = [action.payload.galleries, ...state.galleries].slice(
+        0,
+        5
+      );
+      state.totalPage = action.payload.totalPage;
       state.createModalIsOpen = false;
     });
     builder.addCase(galleryThunk.createGallery.rejected, (state, action) => {
@@ -81,7 +87,8 @@ export const gallerySlice = createSlice({
     });
     builder.addCase(galleryThunk.fetchGallery.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      state.galleries = action.payload;
+      state.galleries = action.payload.galleries;
+      state.totalPage = action.payload.totalPage;
     });
     builder.addCase(galleryThunk.fetchGallery.rejected, (state, action) => {
       state.status = "ERROR";

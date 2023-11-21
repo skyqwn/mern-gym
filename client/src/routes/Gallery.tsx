@@ -1,23 +1,43 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo } from "react";
+import {
+  Link,
+  Navigate,
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
 import Container from "../components/Container";
 import { Button } from "../components/Button";
 import { useAppDispatch, useAppSelector } from "../store";
 import GalleryCreateModal from "../components/modals/GalleryCreateModal";
-import { GalleryTypes, galleryActions } from "../reducers/gallery/gallerySlice";
+import { galleryActions } from "../reducers/gallery/gallerySlice";
 import { fetchGallery } from "../reducers/gallery/galleryThunk";
 import Pagination from "../components/Pagination";
 
 const Gallery = () => {
-  const galleryState = useAppSelector((state) => state.gallerySlice);
   const dispatch = useAppDispatch();
-  const [currentPage, setCurrentPage] = useState(1);
-  useEffect(() => {
-    dispatch(fetchGallery(currentPage));
-  }, []);
-  const [totalItems, setTotalItems] = useState(0);
+  const galleryState = useAppSelector((state) => state.gallerySlice);
+  console.log(galleryState);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryPage = Number(searchParams.get("page"));
+  const navigate = useNavigate();
 
+  const page = useMemo(() => {
+    if (queryPage) return queryPage;
+    return 1;
+  }, [queryPage]);
+
+  useEffect(() => {
+    if (page > 0) {
+      dispatch(fetchGallery(page));
+    } else {
+      navigate("/gallery?page=1");
+    }
+  }, [page]);
+
+  const totalPage = galleryState.totalPage;
   return (
     <Container>
       <GalleryCreateModal />
@@ -29,7 +49,7 @@ const Gallery = () => {
       />
       <div className="flex space-x-10">
         {galleryState.galleries.length > 0 &&
-          galleryState.galleries.map((gallery: GalleryTypes) => (
+          galleryState.galleries.map((gallery) => (
             <Link key={gallery.id} to={`${gallery.id}`} state={{ gallery }}>
               <div key={gallery.id} className="text-red-500">
                 <div>
@@ -40,7 +60,8 @@ const Gallery = () => {
             </Link>
           ))}
       </div>
-      {/* <Pagination totalItems={galleryState.} pageCount={5} itemCountPerPage={50} /> */}
+
+      <Pagination currentPage={page} totalPage={totalPage} />
     </Container>
   );
 };

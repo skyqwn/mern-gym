@@ -1,48 +1,66 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { PostType } from "../../types/postTypes";
+import { PostCategoryType, PostType } from "../../types/postTypes";
 import {
   createPost,
   detailPost,
   editPost,
+  favPost,
   fetchPost,
   removePost,
 } from "./postThunk";
 
-interface PostStateType {
-  posts: {
-    fetchPost: PostType[];
-    totalPage: number;
+export interface locationPost {
+  author: {
+    id: string;
+    nickname: string;
   };
-  post: any;
+  authorId: string;
+  category: string;
+  createAt: string;
+  desc: string;
+  id: string;
+  title: string;
+  updateAt: string;
+  isLike: boolean;
+}
+
+interface PostStateType {
+  fetchPost: PostType[];
+  totalPage: number;
+  post?: locationPost;
   createModalIsOpen: boolean;
   editModalIsOpen: boolean;
   deleteConfirmIsOpen: boolean;
-  status: "" | "LOADING" | "SUCCESS" | "ERROR";
+  createStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  detailFetchStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  fetchStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  deleteStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   error?: any;
+  isLike: boolean;
 }
 
 const initialState: PostStateType = {
-  posts: { fetchPost: [], totalPage: 1 },
+  fetchPost: [],
+  totalPage: 1,
   post: undefined,
   createModalIsOpen: false,
   editModalIsOpen: false,
   deleteConfirmIsOpen: false,
-  status: "",
+  createStatus: "",
+  detailFetchStatus: "",
+  fetchStatus: "",
+  editStatus: "",
+  deleteStatus: "",
   error: "",
+  isLike: false,
 };
 
 export const postSlice = createSlice({
   name: "Post",
   initialState,
   reducers: {
-    // handleCreateModal: (state, action: PayloadAction<boolean>) => {
-    //   state.createModalIsOpen = action.payload;
-    // },
-    // handleEditModal: (state, action: PayloadAction<boolean>) => {
-    //   state.createModalIsOpen = action.payload;
-    // },
     createModalOpen: (state, action: PayloadAction<any>) => {
-      // state.createModalIsOpen = true;
       state.createModalIsOpen = true;
     },
     createModalClose: (state, action: PayloadAction<any>) => {
@@ -54,7 +72,7 @@ export const postSlice = createSlice({
     },
     editModalClose: (state, action: PayloadAction<any>) => {
       state.editModalIsOpen = false;
-      state.post = "";
+      state.post = undefined;
     },
     deleteConfirmOpen: (state, action: PayloadAction<any>) => {
       state.deleteConfirmIsOpen = true;
@@ -68,51 +86,53 @@ export const postSlice = createSlice({
     /* Post Create */
 
     builder.addCase(createPost.pending, (state, action) => {
-      state.status = "LOADING";
+      state.createStatus = "LOADING";
     });
     builder.addCase(createPost.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
-      state.posts.fetchPost = [action.payload, ...state.posts.fetchPost];
+      state.createStatus = "SUCCESS";
+      state.fetchPost = [action.payload, ...state.fetchPost].slice(0, 5);
       state.createModalIsOpen = false;
     });
     builder.addCase(createPost.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.createStatus = "ERROR";
       state.error = action.error;
     });
 
     /*Post Fetch */
     builder.addCase(fetchPost.pending, (state, action) => {
-      state.status = "LOADING";
+      state.fetchStatus = "LOADING";
     });
     builder.addCase(fetchPost.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
-      state.posts = action.payload;
+      state.fetchStatus = "SUCCESS";
+      state.fetchPost = action.payload.fetchPost;
+      state.totalPage = action.payload.totalPage;
     });
     builder.addCase(fetchPost.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.fetchStatus = "ERROR";
       state.error = action.error;
     });
 
     /*Post Detail */
     builder.addCase(detailPost.pending, (state, action) => {
-      state.status = "LOADING";
+      state.detailFetchStatus = "LOADING";
     });
     builder.addCase(detailPost.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
-      state.post = action.payload;
+      state.detailFetchStatus = "SUCCESS";
+      state.post = action.payload.post;
     });
     builder.addCase(detailPost.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.detailFetchStatus = "ERROR";
       state.error = action.error;
     });
 
     /*Post Update */
     builder.addCase(editPost.pending, (state, action) => {
-      state.status = "LOADING";
+      state.editStatus = "LOADING";
     });
     builder.addCase(editPost.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
-      state.posts.fetchPost = state.posts.fetchPost.map((post) => {
+      state.editStatus = "SUCCESS";
+      console.log(state.fetchPost);
+      state.fetchPost = state.fetchPost.map((post) => {
         if (post.id === action.payload.id) {
           post = action.payload;
         }
@@ -122,23 +142,40 @@ export const postSlice = createSlice({
       state.editModalIsOpen = false;
     });
     builder.addCase(editPost.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.editStatus = "ERROR";
       state.error = action.error;
     });
 
     /*Post Delete */
     builder.addCase(removePost.pending, (state, action) => {
-      state.status = "LOADING";
+      state.deleteStatus = "LOADING";
     });
     builder.addCase(removePost.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
-      state.posts.fetchPost = state.posts.fetchPost.filter(
+      state.deleteStatus = "SUCCESS";
+      state.fetchPost = state.fetchPost.filter(
         (post) => post.id !== action.payload.id
       );
       state.deleteConfirmIsOpen = false;
     });
     builder.addCase(removePost.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.deleteStatus = "ERROR";
+      state.error = action.error;
+    });
+
+    /*Post Fav */
+    builder.addCase(favPost.pending, (state, action) => {
+      state.detailFetchStatus = "LOADING";
+    });
+    builder.addCase(favPost.fulfilled, (state, action) => {
+      state.detailFetchStatus = "SUCCESS";
+      console.log(action);
+      // state.posts.fetchPost = state.posts.fetchPost.filter(
+      //   (post) => post.id !== action.payload.id
+      // );
+      // state.deleteConfirmIsOpen = false;
+    });
+    builder.addCase(favPost.rejected, (state, action) => {
+      state.detailFetchStatus = "ERROR";
       state.error = action.error;
     });
   },

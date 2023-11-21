@@ -31,9 +31,18 @@ const create = async (
         author: {
           connect: {
             id: user?.id,
+            nickname: user?.nickname,
           },
         },
+
         // authorId: user.id,
+      },
+      include: {
+        author: {
+          select: {
+            nickname: true,
+          },
+        },
       },
     });
 
@@ -49,15 +58,15 @@ const fetch = async (
   next: NextFunction
 ) => {
   const {
-    query: { page },
+    query: { page = 1 },
   } = req;
-
   try {
-    const allPortfolios = await prisma.post.count();
-    const totalPage = Math.ceil(allPortfolios / 2);
+    const allPosts = await prisma.post.count();
+    const take = 5;
+    const totalPage = Math.ceil(allPosts / take);
     const fetchPost = await prisma.post.findMany({
-      take: 2,
-      skip: 2 * (+page! - 1),
+      take,
+      skip: 5 * (+page! - 1),
       include: { author: { select: { id: true, nickname: true } } },
       orderBy: { createAt: "desc" },
     });
@@ -74,6 +83,7 @@ const detail = async (
 ) => {
   const {
     params: { id },
+    user,
   } = req;
   try {
     const post = await prisma.post.findUnique({
@@ -81,8 +91,19 @@ const detail = async (
         id,
       },
     });
+    const isLiked = Boolean(
+      await prisma.fav.findFirst({
+        where: {
+          postId: post?.id,
+          authorId: user?.id,
+        },
+        select: {
+          id: true,
+        },
+      })
+    );
 
-    res.status(200).json(post);
+    res.status(200).json({ post, isLiked });
   } catch (error) {
     return next(error);
   }
@@ -108,6 +129,7 @@ const edit = async (
         category,
       },
     });
+
     return res.status(200).json(newPost);
   } catch (error) {
     return next(error);
@@ -133,4 +155,47 @@ const remove = async (
     return next(error);
   }
 };
-export default { create, fetch, detail, edit, remove };
+
+const fav = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  const {
+    params: { id },
+    user,
+  } = req;
+  try {
+    const alreadyExists = await prisma.fav.findFirst({
+      where: {
+        // postId: id,
+        authorId: user?.id,
+      },
+    });
+
+    if (alreadyExists) {
+      //delete
+      await prisma.fav.delete({
+        where: {
+          id: alreadyExists.id,
+        },
+      });
+    } else {
+      //create
+      await prisma.fav.create({
+        data: {
+          author: {
+            connect: {
+              id: user?.id,
+            },
+          },
+          post: {
+            connect: {
+              id,
+            },
+          },
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default { create, fetch, detail, edit, remove, fav };

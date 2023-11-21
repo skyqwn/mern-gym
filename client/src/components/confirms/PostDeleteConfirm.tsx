@@ -13,16 +13,16 @@ const PostDeleteConfirm = () => {
   const navigate = useNavigate();
   React.useEffect(() => {
     if (toastRef.current) {
-      if (postState.status === "SUCCESS") {
+      if (postState.deleteStatus === "SUCCESS") {
         toast.update(toastRef.current, {
           type: "success",
           render: "삭제 성공!",
           isLoading: false,
           autoClose: 2000,
         });
-        navigate("/comunity");
+        navigate("/community?page=1");
       }
-      if (postState.status === "ERROR") {
+      if (postState.deleteStatus === "ERROR") {
         toast.update(toastRef.current, {
           type: "error",
           render: "삭제 실패!",
@@ -31,15 +31,16 @@ const PostDeleteConfirm = () => {
         });
       }
     }
-  }, [postState.status]);
+  }, [postState.deleteStatus]);
 
   const isLoading = React.useMemo(
-    () => postState.status === "LOADING",
-    [postState.status]
+    () => postState.deleteStatus === "LOADING",
+    [postState.deleteStatus]
   );
 
   const onAction = () => {
     toastRef.current = toast.loading("삭제중...");
+    if (!postState.post) return;
     if (postState.post.id) dispatch(removePost(postState.post.id));
   };
 
