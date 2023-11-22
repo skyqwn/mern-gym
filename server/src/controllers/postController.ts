@@ -91,17 +91,6 @@ const detail = async (
         id,
       },
     });
-    // const isLiked = Boolean(
-    //   await prisma.fav.findFirst({
-    //     where: {
-    //       postId: post?.id,
-    //       authorId: user?.id,
-    //     },
-    //     select: {
-    //       id: true,
-    //     },
-    //   })
-    // );
 
     res.status(200).json(post);
   } catch (error) {
@@ -129,7 +118,7 @@ const edit = async (
         category,
       },
     });
-
+    console.log(newPost);
     return res.status(200).json(newPost);
   } catch (error) {
     return next(error);
@@ -159,7 +148,6 @@ const remove = async (
 const fav = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   const {
     params: { id },
-    body: { likeUsers },
     user,
   } = req;
   try {
@@ -181,18 +169,19 @@ const fav = async (req: RequestWithUser, res: Response, next: NextFunction) => {
       where: {
         id,
       },
-      data: dataQuery,
+      data: {
+        ...dataQuery,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            nickname: true,
+          },
+        },
+      },
     });
 
-    // const updatePost = await prisma.post.update({
-    //   where: {
-    //     id,
-    //   },
-    //   data: {
-    //     likeUsers,
-    //   },
-    // });
-    console.log(updatePost);
     return res.status(200).json(updatePost);
   } catch (error) {
     console.log(error);
