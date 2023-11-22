@@ -4,14 +4,13 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import TextArea from "../Inputs/TextArea";
 import { Input } from "../Inputs/Input";
-import { Id, toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { galleryActions } from "../../reducers/gallery/gallerySlice";
 import galleryThunk from "../../reducers/gallery/galleryThunk";
 import FileInput from "../Inputs/FileInput";
 
 const GalleryEditModal = () => {
   const dispatch = useAppDispatch();
-  const toastRef = React.useRef<Id>();
   const galleryState = useAppSelector((state) => state.gallerySlice);
   const {
     handleSubmit,
@@ -46,33 +45,14 @@ const GalleryEditModal = () => {
     }
   }, [watchFiles]);
 
-  useEffect(() => {
-    if (toastRef.current) {
-      if (galleryState.status === "SUCCESS") {
-        toast.update(toastRef.current, {
-          type: "success",
-          render: "수정 성공!",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-      if (galleryState.status === "ERROR") {
-        toast.update(toastRef.current, {
-          type: "error",
-          render: "생성 실패!",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-    }
-  }, [galleryState.status]);
-
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    toastRef.current = toast.loading("수정중...");
+    const loadingToast = toast.loading("Loading...");
     try {
       dispatch(galleryThunk.editGallery(data));
+      toast.success("수정 성공", { id: loadingToast });
     } catch (error) {
       console.log(error);
+      toast.error("수정 실패", { id: loadingToast });
     }
     // onClose();
   };

@@ -69,10 +69,7 @@ export const gallerySlice = createSlice({
     builder.addCase(galleryThunk.createGallery.fulfilled, (state, action) => {
       state.status = "SUCCESS";
       console.log(action.payload);
-      state.galleries = [action.payload.galleries, ...state.galleries].slice(
-        0,
-        5
-      );
+      state.galleries = [action.payload, ...state.galleries].slice(0, 2);
       state.totalPage = action.payload.totalPage;
       state.createModalIsOpen = false;
     });

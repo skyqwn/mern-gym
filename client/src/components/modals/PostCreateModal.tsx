@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import toast from "react-hot-toast";
+
 import Modal from "./Modal";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { postActions } from "../../reducers/post/postSlice";
@@ -8,7 +10,6 @@ import { Input } from "../Inputs/Input";
 import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
 import { createPost } from "../../reducers/post/postThunk";
-import { toast, Id } from "react-toastify";
 
 const defaultValues = {
   title: "",
@@ -19,29 +20,7 @@ const defaultValues = {
 const PostCreateModal = () => {
   const postState = useAppSelector((state) => state.postSlice);
   const dispatch = useAppDispatch();
-  const toastRef = React.useRef<Id>();
   const options = getOptions();
-
-  useEffect(() => {
-    if (toastRef.current) {
-      if (postState.createStatus === "SUCCESS") {
-        toast.update(toastRef.current, {
-          type: "success",
-          render: "생성 성공!",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-      if (postState.createStatus === "ERROR") {
-        toast.update(toastRef.current, {
-          type: "error",
-          render: "생성 실패!",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-    }
-  }, [postState.createStatus]);
 
   const {
     handleSubmit,
@@ -52,8 +31,14 @@ const PostCreateModal = () => {
   });
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    toastRef.current = toast.loading("로딩...");
-    dispatch(createPost(data));
+    const loadingToast = toast.loading("Loading...");
+    try {
+      dispatch(createPost(data));
+      toast.success("생성 성공!", { id: loadingToast });
+    } catch (error) {
+      console.log(error);
+      toast.error("생성 실패!", { id: loadingToast });
+    }
   };
 
   const isLoading = React.useMemo(

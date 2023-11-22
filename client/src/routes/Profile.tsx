@@ -4,21 +4,18 @@ import Container from "../components/Container";
 import { useAppDispatch, useAppSelector } from "../store";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../components/Inputs/Input";
-import userThunk, { editUser } from "../reducers/user/userThunk";
+import userThunk from "../reducers/user/userThunk";
 import { useNavigate } from "react-router-dom";
 import FileInput from "../components/Inputs/FileInput";
 import UserAvatar from "../components/UserAvatar";
-import { instance } from "../api/apiconfig";
-import { userActions } from "../reducers/user/userSlice";
 import { UserContext } from "../context/UserContext";
 import { UserContextTypes } from "../types/userContextTypes";
-import { Id, toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const userState = useAppSelector((state) => state.userSlice);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const toastRef = React.useRef<Id>();
   const { auth, onSignout } = useContext(UserContext) as UserContextTypes;
   const {
     control,
@@ -42,34 +39,15 @@ const Profile = () => {
     }
   }, [watchFile]);
 
-  useEffect(() => {
-    if (toastRef.current) {
-      if (userState.status === "SUCCESS") {
-        toast.update(toastRef.current, {
-          type: "success",
-          render: "변경완료",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-      if (userState.status === "ERROR") {
-        toast.update(toastRef.current, {
-          type: "error",
-          render: "변경실패!",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-    }
-  }, [userState.status]);
-
   const onValid: SubmitHandler<FieldValues> = (data) => {
+    const loadingToast = toast.loading("Loading...");
     try {
       dispatch(userThunk.editUser(data));
+      toast.success("수정 성공", { id: loadingToast });
     } catch (error) {
+      toast.error("수정 실패", { id: loadingToast });
       console.log(error);
     }
-    toastRef.current = toast.loading("로딩...");
   };
 
   return (

@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+
 import { useAppDispatch, useAppSelector } from "../store";
-import { GalleryTypes, galleryActions } from "../reducers/gallery/gallerySlice";
+import { galleryActions } from "../reducers/gallery/gallerySlice";
 import Container from "../components/Container";
 import { detailGallery } from "../reducers/gallery/galleryThunk";
 import GalleryEditModal from "../components/modals/GalleryEditModal";

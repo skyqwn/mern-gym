@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import toast from "react-hot-toast";
+
 import Modal from "./Modal";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { postActions } from "../../reducers/post/postSlice";
@@ -7,13 +9,11 @@ import TextArea from "../Inputs/TextArea";
 import { Input } from "../Inputs/Input";
 import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
-import { Id, toast } from "react-toastify";
 import { editPost } from "../../reducers/post/postThunk";
 
 const PostEditModal = () => {
   const dispatch = useAppDispatch();
   const options = getOptions();
-  const toastRef = React.useRef<Id>();
   const postState = useAppSelector((state) => state.postSlice);
 
   const {
@@ -30,34 +30,16 @@ const PostEditModal = () => {
       return { ...postState.post };
     }, [postState.post]),
   });
-  useEffect(() => {
-    if (toastRef.current) {
-      if (postState.editStatus === "SUCCESS") {
-        toast.update(toastRef.current, {
-          type: "success",
-          render: "수정 성공!",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-      if (postState.editStatus === "ERROR") {
-        toast.update(toastRef.current, {
-          type: "error",
-          render: "생성 실패!",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-    }
-  }, [postState.editStatus]);
-
-  // const onClose = () => {
-  //   dispatch(postActions.editModalClose);
-  // };
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    toastRef.current = toast.loading("수정중...");
-    dispatch(editPost(data));
+    const loadginToast = toast.loading("Loading...");
+    try {
+      dispatch(editPost(data));
+      toast.success("수정 성공!", { id: loadginToast });
+    } catch (error) {
+      console.log(error);
+      toast.error("수정 실패!", { id: loadginToast });
+    }
     // onClose();
   };
 

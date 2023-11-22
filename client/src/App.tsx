@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import { UserContext } from "./context/UserContext";
 import { UserContextTypes } from "./types/userContextTypes";
 import Loader from "./components/Loader";
+import { Toaster } from "react-hot-toast";
 
 const RefreshLoader = ({ children }: React.PropsWithChildren) => {
   const { loading } = useContext(UserContext) as UserContextTypes;
@@ -22,12 +23,7 @@ const App = () => {
       <div className="flex flex-col h-screen">
         <div className="flex-1">
           <Header />
-          <ToastContainer
-            autoClose={3000}
-            position="top-center"
-            theme="light"
-            hideProgressBar={true}
-          />
+          <Toaster position="top-center" />
           <Router />
         </div>
         <Footer />

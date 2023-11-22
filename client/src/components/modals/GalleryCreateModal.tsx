@@ -1,18 +1,18 @@
 import React, { useEffect, useMemo } from "react";
+import toast from "react-hot-toast";
+
 import Modal from "./Modal";
 import { Input } from "../Inputs/Input";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import TextArea from "../Inputs/TextArea";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { galleryActions } from "../../reducers/gallery/gallerySlice";
-import { Id, toast } from "react-toastify";
 import FileInput from "../Inputs/FileInput";
 import galleryThunk from "../../reducers/gallery/galleryThunk";
 
 const GalleryCreateModal = () => {
   const dispatch = useAppDispatch();
   const galleryState = useAppSelector((state) => state.gallerySlice);
-  const toastRef = React.useRef<Id>();
   const {
     handleSubmit,
     control,
@@ -43,6 +43,7 @@ const GalleryCreateModal = () => {
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
     delete data.previews;
+    const loadingToast = toast.loading("Loading...");
     try {
       const fd = new FormData();
       fd.append("title", data.title);
@@ -50,41 +51,14 @@ const GalleryCreateModal = () => {
       data.files.map((file: File) => {
         fd.append("files", file);
       });
-      // for (var key in data) {
-      //   // if (key === "files") {
-      //   //   data[key].map((file)=> {
-      //   //     fd.append(key, file);
 
-      //   //   })
-      //   } else {
-      //     fd.append(key, data[key]);
-      //   }
       dispatch(galleryThunk.createGallery(fd));
+      toast.success("생성 성공", { id: loadingToast });
     } catch (error) {
       console.log(error);
+      toast.error("생성 실패", { id: loadingToast });
     }
-    toastRef.current = toast.loading("로딩...");
   };
-  useEffect(() => {
-    if (toastRef.current) {
-      if (galleryState.status === "SUCCESS") {
-        toast.update(toastRef.current, {
-          type: "success",
-          render: "생성 성공!",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-      if (galleryState.status === "ERROR") {
-        toast.update(toastRef.current, {
-          type: "error",
-          render: "생성 실패!",
-          isLoading: false,
-          autoClose: 2000,
-        });
-      }
-    }
-  }, [galleryState.status]);
 
   const isLoading = useMemo(
     () => galleryState.status === "LOADING",
