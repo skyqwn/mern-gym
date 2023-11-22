@@ -3,6 +3,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store";
 import { Button } from "../components/Button";
 import Container from "../components/Container";
+import { IoMdHeart } from "react-icons/io";
 
 import { postActions } from "../reducers/post/postSlice";
 import PostEditModal from "../components/modals/PostEditModal";
@@ -11,6 +12,7 @@ import PostDeleteConfirm from "../components/confirms/PostDeleteConfirm";
 import TextArea from "../components/Inputs/TextArea";
 import { useForm } from "react-hook-form";
 import Loader from "../components/Loader";
+import { cls } from "../libs/util";
 
 const CommunityDetail = () => {
   const dispatch = useAppDispatch();
@@ -21,6 +23,7 @@ const CommunityDetail = () => {
   const userState = useAppSelector((state) => state.userSlice);
   const postId = postState.post?.authorId;
   const userId = userState.user.id;
+
   const {
     control,
     formState: { errors },
@@ -31,6 +34,7 @@ const CommunityDetail = () => {
   }, []);
 
   if (postState.detailFetchStatus === "LOADING") return <Loader />;
+  if (!postState.post) return <div>Error!!</div>;
   return (
     <Container>
       <PostDeleteConfirm />
@@ -57,39 +61,27 @@ const CommunityDetail = () => {
       )}
       <button
         onClick={async () => {
-          dispatch(favPost(params.id));
+          // let dataUsers = [] as string[];
+          // const likeUsers = [...postState.post?.likeUsers!];
+          // const checkExists = likeUsers?.includes(userId);
+          // if (checkExists) {
+          //   const filterLikeUsers = likeUsers.filter((id) => id !== userId);
+          //   dataUsers = filterLikeUsers;
+          // } else {
+          //   likeUsers?.push(userId);
+          //   dataUsers = likeUsers;
+          // }
+          // dispatch(favPost({ id: postState.post?.id!, likeUsers: dataUsers }));
+          dispatch(favPost(postState.post?.id!));
         }}
-        className={
-          "p-3 rounded-md flex items-center justify-center hover:bg-gray-100 text-red-400 hover:text-red-500"
-        }
+        className={cls(
+          "p-3 rounded-md flex items-center justify-center  ",
+          postState.post.likeUsers.includes(userId)
+            ? "text-red-500"
+            : "text-slate-500"
+        )}
       >
-        <svg
-          className="h-6 w-6 "
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-          />
-        </svg>
-        {/* <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-            clipRule="evenodd"
-          />
-        </svg> */}
+        <IoMdHeart className="w-20 h-20" />
       </button>
 
       <TextArea

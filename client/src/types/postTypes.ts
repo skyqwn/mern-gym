@@ -18,7 +18,7 @@ export interface PostType {
   id: string;
   title: string;
   updateAt: string;
-  isLike: boolean;
+  likeUsers: string[];
 }
 
 export interface AddPostDataType {

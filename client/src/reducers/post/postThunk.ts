@@ -57,3 +57,9 @@ export const favPost = createAsyncThunk("Post/favPost", async (id: string) => {
     return res.data;
   }
 });
+// export const favPost = createAsyncThunk("Post/favPost", async (id: string) => {
+//   if (id) {
+//     const res = await instance.post(`/api/post/${id}/fav`);
+//     return res.data;
+//   }
+// });

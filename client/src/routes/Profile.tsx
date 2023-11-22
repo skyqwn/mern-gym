@@ -12,11 +12,13 @@ import { instance } from "../api/apiconfig";
 import { userActions } from "../reducers/user/userSlice";
 import { UserContext } from "../context/UserContext";
 import { UserContextTypes } from "../types/userContextTypes";
+import { Id, toast } from "react-toastify";
 
 const Profile = () => {
   const userState = useAppSelector((state) => state.userSlice);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const toastRef = React.useRef<Id>();
   const { auth, onSignout } = useContext(UserContext) as UserContextTypes;
   const {
     control,
@@ -32,6 +34,7 @@ const Profile = () => {
 
   const watchFile = watch("file");
   const previewImage = watch("previewImage");
+
   useEffect(() => {
     if (watchFile[0]) {
       const blobPreview = URL.createObjectURL(watchFile[0]);
@@ -39,9 +42,34 @@ const Profile = () => {
     }
   }, [watchFile]);
 
+  useEffect(() => {
+    if (toastRef.current) {
+      if (userState.status === "SUCCESS") {
+        toast.update(toastRef.current, {
+          type: "success",
+          render: "변경완료",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+      if (userState.status === "ERROR") {
+        toast.update(toastRef.current, {
+          type: "error",
+          render: "변경실패!",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+    }
+  }, [userState.status]);
+
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    dispatch(userThunk.editUser(data));
-    // navigate("/home");
+    try {
+      dispatch(userThunk.editUser(data));
+    } catch (error) {
+      console.log(error);
+    }
+    toastRef.current = toast.loading("로딩...");
   };
 
   return (

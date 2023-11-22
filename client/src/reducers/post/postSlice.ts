@@ -9,25 +9,10 @@ import {
   removePost,
 } from "./postThunk";
 
-export interface locationPost {
-  author: {
-    id: string;
-    nickname: string;
-  };
-  authorId: string;
-  category: string;
-  createAt: string;
-  desc: string;
-  id: string;
-  title: string;
-  updateAt: string;
-  isLike: boolean;
-}
-
 interface PostStateType {
   fetchPost: PostType[];
   totalPage: number;
-  post?: locationPost;
+  post?: PostType;
   createModalIsOpen: boolean;
   editModalIsOpen: boolean;
   deleteConfirmIsOpen: boolean;
@@ -36,8 +21,8 @@ interface PostStateType {
   fetchStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   deleteStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  favStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   error?: any;
-  isLike: boolean;
 }
 
 const initialState: PostStateType = {
@@ -52,8 +37,8 @@ const initialState: PostStateType = {
   fetchStatus: "",
   editStatus: "",
   deleteStatus: "",
+  favStatus: "",
   error: "",
-  isLike: false,
 };
 
 export const postSlice = createSlice({
@@ -118,7 +103,7 @@ export const postSlice = createSlice({
     });
     builder.addCase(detailPost.fulfilled, (state, action) => {
       state.detailFetchStatus = "SUCCESS";
-      state.post = action.payload.post;
+      state.post = action.payload;
     });
     builder.addCase(detailPost.rejected, (state, action) => {
       state.detailFetchStatus = "ERROR";
@@ -164,18 +149,22 @@ export const postSlice = createSlice({
 
     /*Post Fav */
     builder.addCase(favPost.pending, (state, action) => {
-      state.detailFetchStatus = "LOADING";
+      state.favStatus = "LOADING";
     });
     builder.addCase(favPost.fulfilled, (state, action) => {
-      state.detailFetchStatus = "SUCCESS";
-      console.log(action);
-      // state.posts.fetchPost = state.posts.fetchPost.filter(
-      //   (post) => post.id !== action.payload.id
-      // );
-      // state.deleteConfirmIsOpen = false;
+      state.favStatus = "SUCCESS";
+      console.log(action.payload);
+      state.fetchPost = state.fetchPost.map((post) => {
+        if (post.id === action.payload.id) {
+          post = action.payload;
+        }
+        return post;
+      });
+      state.post = action.payload;
+      state.deleteConfirmIsOpen = false;
     });
     builder.addCase(favPost.rejected, (state, action) => {
-      state.detailFetchStatus = "ERROR";
+      state.favStatus = "ERROR";
       state.error = action.error;
     });
   },
