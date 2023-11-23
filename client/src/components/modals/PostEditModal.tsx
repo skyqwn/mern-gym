@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import toast from "react-hot-toast";
+import React from "react";
 
 import Modal from "./Modal";
 import { useAppDispatch, useAppSelector } from "../../store";
@@ -10,11 +9,21 @@ import { Input } from "../Inputs/Input";
 import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
 import { editPost } from "../../reducers/post/postThunk";
+import useToast from "../../hooks/useToast";
 
 const PostEditModal = () => {
   const dispatch = useAppDispatch();
   const options = getOptions();
   const postState = useAppSelector((state) => state.postSlice);
+  console.log(postState.editStatus);
+  const { toastStart } = useToast({
+    status: postState.editStatus,
+    errorMessage: "수정실패",
+    successMessage: "수정성공!",
+    loadingMessage: "수정중...",
+    type: "post",
+    // reset: dispatch(postActions.resetStatus({})),
+  });
 
   const {
     handleSubmit,
@@ -32,15 +41,8 @@ const PostEditModal = () => {
   });
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    const loadginToast = toast.loading("Loading...");
-    try {
-      dispatch(editPost(data));
-      toast.success("수정 성공!", { id: loadginToast });
-    } catch (error) {
-      console.log(error);
-      toast.error("수정 실패!", { id: loadginToast });
-    }
-    // onClose();
+    toastStart();
+    dispatch(editPost(data));
   };
 
   const isLoading = React.useMemo(

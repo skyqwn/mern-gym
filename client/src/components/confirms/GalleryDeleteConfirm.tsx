@@ -6,31 +6,44 @@ import Confirm from "./Confirm";
 import { useNavigate } from "react-router-dom";
 import { galleryActions } from "../../reducers/gallery/gallerySlice";
 import { removeGallery } from "../../reducers/gallery/galleryThunk";
+import useToast from "../../hooks/useToast";
 
 const GalleryDeleteConfirm = () => {
   const dispatch = useAppDispatch();
   const galleryState = useAppSelector((state) => state.gallerySlice);
   const navigate = useNavigate();
-
+  // const { toastStart } = useToast({
+  //   status: galleryState.,
+  //   errorMessage: "삭제실패",
+  //   successMessage: "삭제성공",
+  //   loadingMessage: "삭제중...",
+  // });
   const isLoading = React.useMemo(
     () => galleryState.status === "LOADING",
     [galleryState.status]
   );
 
-  const onAction = () => {
-    const loadingToast = toast.loading("Loading...");
-    try {
-      if (galleryState.gallery) {
-        if (galleryState.gallery.id) {
-          dispatch(removeGallery(galleryState.gallery.id));
-          toast.success("삭제 성공!", { id: loadingToast });
-          navigate("/gallery");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("삭제 실패!", { id: loadingToast });
-    }
+  const onAction = async () => {
+    // if(galleryState.gallery){
+    //   if(galleryState.gallery.id){
+    //     toastS
+    //   }
+    // }
+    // try {
+    //   if (galleryState.gallery) {
+    //     if (galleryState.gallery.id) {
+    //       const promise = dispatch(removeGallery(galleryState.gallery.id));
+    //       toast.promise(promise, {
+    //         loading: "Loading...",
+    //         success: "갤러리 삭제 성공!",
+    //         error: "갤러리 삭제 실패!",
+    //       });
+    //       navigate("/gallery");
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   const onClose = () => {

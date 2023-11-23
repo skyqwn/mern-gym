@@ -30,6 +30,9 @@ export const detailPost = createAsyncThunk(
     }
   }
 );
+export const editPostAPI = async (data: any) => {
+  return await instance.post(`/api/post/${data.id}/edit`, data);
+};
 
 export const editPost = createAsyncThunk(
   "Post/editPost",

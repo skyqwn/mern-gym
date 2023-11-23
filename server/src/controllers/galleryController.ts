@@ -184,7 +184,9 @@ const remove = async (
 ) => {
   const {
     params: { id },
+    query,
   } = req;
+  console.log(req.query);
   try {
     const deleteGallery = await prisma.gallery.delete({
       where: {

@@ -18,12 +18,9 @@ const CommunityDetail = () => {
   const dispatch = useAppDispatch();
   const params = useParams() as { id: string };
   const postState = useAppSelector((state) => state.postSlice);
-  console.log(postState);
-
   const userState = useAppSelector((state) => state.userSlice);
   const postId = postState.post?.authorId;
   const userId = userState.user.id;
-
   const {
     control,
     formState: { errors },

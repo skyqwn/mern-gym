@@ -34,8 +34,6 @@ const create = async (
             nickname: user?.nickname,
           },
         },
-
-        // authorId: user.id,
       },
       include: {
         author: {
@@ -116,6 +114,13 @@ const edit = async (
         title,
         desc,
         category,
+      },
+      include: {
+        author: {
+          select: {
+            nickname: true,
+          },
+        },
       },
     });
     console.log(newPost);

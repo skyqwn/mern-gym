@@ -66,6 +66,9 @@ export const postSlice = createSlice({
     deleteConfirmClose: (state, action: PayloadAction<any>) => {
       state.deleteConfirmIsOpen = false;
     },
+    resetStatus: (state, action) => {
+      state.editStatus = "";
+    },
   },
   extraReducers: (builder) => {
     /* Post Create */
@@ -116,7 +119,6 @@ export const postSlice = createSlice({
     });
     builder.addCase(editPost.fulfilled, (state, action) => {
       state.editStatus = "SUCCESS";
-      console.log(state.fetchPost);
       state.fetchPost = state.fetchPost.map((post) => {
         if (post.id === action.payload.id) {
           post = action.payload;
@@ -177,6 +179,7 @@ const {
   createModalClose,
   deleteConfirmOpen,
   deleteConfirmClose,
+  resetStatus,
 } = postSlice.actions;
 
 export const postActions = {
@@ -186,6 +189,7 @@ export const postActions = {
   editModalClose,
   deleteConfirmOpen,
   deleteConfirmClose,
+  resetStatus,
 };
 
 export default postSlice;
