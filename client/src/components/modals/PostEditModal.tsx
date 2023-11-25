@@ -15,7 +15,6 @@ const PostEditModal = () => {
   const dispatch = useAppDispatch();
   const options = getOptions();
   const postState = useAppSelector((state) => state.postSlice);
-  console.log(postState.editStatus);
   const { toastStart } = useToast({
     status: postState.editStatus,
     errorMessage: "수정실패",

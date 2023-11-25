@@ -8,10 +8,18 @@ import toast from "react-hot-toast";
 import { galleryActions } from "../../reducers/gallery/gallerySlice";
 import galleryThunk from "../../reducers/gallery/galleryThunk";
 import FileInput from "../Inputs/FileInput";
+import useToast from "../../hooks/useToast";
 
 const GalleryEditModal = () => {
   const dispatch = useAppDispatch();
   const galleryState = useAppSelector((state) => state.gallerySlice);
+  const { toastStart } = useToast({
+    status: galleryState.editStatus,
+    errorMessage: "수정 실패!",
+    loadingMessage: "로딩중...",
+    successMessage: "수정 성공!",
+    type: "gallery",
+  });
   const {
     handleSubmit,
     control,
@@ -46,15 +54,8 @@ const GalleryEditModal = () => {
   }, [watchFiles]);
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    const loadingToast = toast.loading("Loading...");
-    try {
-      dispatch(galleryThunk.editGallery(data));
-      toast.success("수정 성공", { id: loadingToast });
-    } catch (error) {
-      console.log(error);
-      toast.error("수정 실패", { id: loadingToast });
-    }
-    // onClose();
+    toastStart();
+    dispatch(galleryThunk.editGallery(data));
   };
 
   const deleteOldPreview = (targetIndex: number) => {
@@ -73,8 +74,8 @@ const GalleryEditModal = () => {
   };
 
   const isLoading = React.useMemo(
-    () => galleryState.status === "LOADING",
-    [galleryState.status]
+    () => galleryState.editStatus === "LOADING",
+    [galleryState.editStatus]
   );
 
   const body = (

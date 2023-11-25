@@ -62,10 +62,21 @@ export const removeGallery = createAsyncThunk(
   }
 );
 
+export const favGallery = createAsyncThunk(
+  "Gallery/favGallery",
+  async (id: string) => {
+    if (id) {
+      const res = await instance.post(`/api/gallery/${id}/fav`);
+      return res.data;
+    }
+  }
+);
+
 export default {
   createGallery,
   fetchGallery,
   detailGallery,
   editGallery,
   removeGallery,
+  favGallery,
 };

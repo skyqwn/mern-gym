@@ -13,6 +13,7 @@ import TextArea from "../components/Inputs/TextArea";
 import { useForm } from "react-hook-form";
 import Loader from "../components/Loader";
 import { cls } from "../libs/util";
+import CheckAuthor from "../components/CheckAuthor";
 
 const CommunityDetail = () => {
   const dispatch = useAppDispatch();
@@ -25,6 +26,14 @@ const CommunityDetail = () => {
     control,
     formState: { errors },
   } = useForm({});
+
+  const postEditAction = () => {
+    dispatch(postActions.editModalOpen(postState.post));
+  };
+
+  const postDeleteAction = () => {
+    dispatch(postActions.deleteConfirmOpen(postState.post));
+  };
 
   useEffect(() => {
     dispatch(detailPost(params.id));
@@ -39,23 +48,14 @@ const CommunityDetail = () => {
       <h3>{postState?.post?.category}</h3>
       <h1 className="text-4xl">{postState?.post?.title}</h1>
       <span>{postState.post?.desc}</span>
-      {postId === userId && (
-        <>
-          <Button
-            small
-            label="수정"
-            onAction={() => {
-              dispatch(postActions.editModalOpen(postState.post));
-            }}
-          />
-          <Button
-            label="❌"
-            onAction={() => {
-              dispatch(postActions.deleteConfirmOpen(postState.post));
-            }}
-          />
-        </>
-      )}
+      <CheckAuthor
+        authorId={postId!}
+        userId={userId}
+        editLabel="수정"
+        editAction={postEditAction}
+        deleteAction={postDeleteAction}
+        deleteLabel="삭제"
+      />
       <button
         onClick={async () => {
           // let dataUsers = [] as string[];

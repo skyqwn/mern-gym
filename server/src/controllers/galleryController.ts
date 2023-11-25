@@ -199,4 +199,48 @@ const remove = async (
   }
 };
 
-export default { create, fetch, detail, edit, remove };
+const fav = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  const {
+    params: { id },
+    user,
+  } = req;
+  try {
+    if (!user) return;
+
+    const gallery = await prisma.gallery.findUnique({
+      where: { id },
+    });
+
+    if (!gallery) return;
+    let dataQuery = { likeUsers: {} } as any;
+
+    if (gallery.likeUsers.includes(user.id)) {
+      const filterArr = gallery.likeUsers.filter((id) => id !== user.id);
+      dataQuery.likeUsers.set = filterArr;
+    } else {
+      dataQuery.likeUsers.push = user.id;
+    }
+
+    const updatePost = await prisma.gallery.update({
+      where: {
+        id,
+      },
+      data: {
+        ...dataQuery,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            nickname: true,
+          },
+        },
+      },
+    });
+    return res.status(200).json(updatePost);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default { create, fetch, detail, edit, remove, fav };

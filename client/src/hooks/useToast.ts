@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../store";
 import { postActions } from "../reducers/post/postSlice";
+import { galleryActions } from "../reducers/gallery/gallerySlice";
 
 interface useToastProps {
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
@@ -26,6 +27,9 @@ export default ({
     if (type === "post") {
       dispatch(postActions.resetStatus({}));
     }
+    if ((type = "gallery")) {
+      dispatch(galleryActions.resetStatus({}));
+    }
   };
   useEffect(() => {
     if (status === "SUCCESS") {
@@ -33,7 +37,6 @@ export default ({
         id: toastRef.current,
       });
       reset();
-      // if (successUrl) navigate(successUrl);
     }
     if (status === "ERROR") {
       toast.error(errorMessage, {

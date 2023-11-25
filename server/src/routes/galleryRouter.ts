@@ -25,4 +25,6 @@ galleryRouter.post(
 
 galleryRouter.post("/:id/remove", onlyUser, galleryController.remove);
 
+galleryRouter.post("/:id/fav", onlyUser, galleryController.fav);
+
 export default galleryRouter;

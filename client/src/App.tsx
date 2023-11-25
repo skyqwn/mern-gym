@@ -1,7 +1,5 @@
 import React, { useContext } from "react";
 import Router from "./Router";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { UserContext } from "./context/UserContext";

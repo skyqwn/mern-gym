@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import CONSTANT from "../constant";
-import { toast } from "react-toastify";
-
+import { toast } from "react-hot-toast";
 export default () => {
   const navigate = useNavigate();
 

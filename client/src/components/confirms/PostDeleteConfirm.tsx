@@ -5,10 +5,12 @@ import { postActions } from "../../reducers/post/postSlice";
 import { useAppDispatch, useAppSelector } from "../../store";
 import Confirm from "./Confirm";
 import useToast from "../../hooks/useToast";
+import { useNavigate } from "react-router-dom";
 
 const PostDeleteConfirm = () => {
   const dispatch = useAppDispatch();
   const postState = useAppSelector((state) => state.postSlice);
+  const navigate = useNavigate();
   const { toastStart } = useToast({
     status: postState.deleteStatus,
     errorMessage: "삭제실패",
@@ -23,8 +25,9 @@ const PostDeleteConfirm = () => {
   const onAction = () => {
     if (!postState.post) return;
     if (postState.post.id) {
-      toastStart();
       dispatch(removePost(postState.post.id));
+      toastStart();
+      // navigate("/community");
     }
   };
 

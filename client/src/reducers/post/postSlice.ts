@@ -67,7 +67,11 @@ export const postSlice = createSlice({
       state.deleteConfirmIsOpen = false;
     },
     resetStatus: (state, action) => {
+      state.createStatus = "";
       state.editStatus = "";
+      // state.deleteStatus = "";
+      state.favStatus = "";
+      state.fetchStatus = "";
     },
   },
   extraReducers: (builder) => {

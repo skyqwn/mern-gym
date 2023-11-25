@@ -11,6 +11,7 @@ export interface GalleryTypes {
   thumbnail: string;
   title: string;
   updateAt: string;
+  likeUsers: string[];
 }
 
 interface GalleryStateType {
@@ -20,7 +21,12 @@ interface GalleryStateType {
   createModalIsOpen: boolean;
   editModalIsOpen: boolean;
   deleteConfirmIsOpen: boolean;
-  status: "" | "LOADING" | "SUCCESS" | "ERROR";
+  createStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  detailFetchStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  fetchStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  deleteStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  favStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   error?: any;
 }
 
@@ -31,7 +37,12 @@ const initialState: GalleryStateType = {
   createModalIsOpen: false,
   editModalIsOpen: false,
   deleteConfirmIsOpen: false,
-  status: "",
+  createStatus: "",
+  detailFetchStatus: "",
+  fetchStatus: "",
+  editStatus: "",
+  deleteStatus: "",
+  favStatus: "",
   error: "",
 };
 
@@ -60,57 +71,64 @@ export const gallerySlice = createSlice({
     deleteConfirmClose: (state, action) => {
       state.deleteConfirmIsOpen = false;
     },
+    resetStatus: (state, action) => {
+      state.createStatus = "";
+      state.editStatus = "";
+      // state.deleteStatus = "";
+      state.favStatus = "";
+      state.fetchStatus = "";
+    },
   },
   extraReducers: (builder) => {
     /* Gallery Create */
     builder.addCase(galleryThunk.createGallery.pending, (state, action) => {
-      state.status = "LOADING";
+      state.createStatus = "LOADING";
     });
     builder.addCase(galleryThunk.createGallery.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
+      state.createStatus = "SUCCESS";
       console.log(action.payload);
       state.galleries = [action.payload, ...state.galleries].slice(0, 2);
       state.totalPage = action.payload.totalPage;
       state.createModalIsOpen = false;
     });
     builder.addCase(galleryThunk.createGallery.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.createStatus = "ERROR";
       state.error = action.error;
     });
 
     /*Gallery Fetch */
     builder.addCase(galleryThunk.fetchGallery.pending, (state, action) => {
-      state.status = "LOADING";
+      state.fetchStatus = "LOADING";
     });
     builder.addCase(galleryThunk.fetchGallery.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
+      state.fetchStatus = "SUCCESS";
       state.galleries = action.payload.galleries;
       state.totalPage = action.payload.totalPage;
     });
     builder.addCase(galleryThunk.fetchGallery.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.fetchStatus = "ERROR";
       state.error = action.error;
     });
 
     /*Gallery Detail */
     builder.addCase(galleryThunk.detailGallery.pending, (state, action) => {
-      state.status = "LOADING";
+      state.detailFetchStatus = "LOADING";
     });
     builder.addCase(galleryThunk.detailGallery.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
+      state.detailFetchStatus = "SUCCESS";
       state.gallery = action.payload;
     });
     builder.addCase(galleryThunk.detailGallery.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.detailFetchStatus = "ERROR";
       state.error = action.error;
     });
 
     /*Gallery Update */
     builder.addCase(galleryThunk.editGallery.pending, (state, action) => {
-      state.status = "LOADING";
+      state.editStatus = "LOADING";
     });
     builder.addCase(galleryThunk.editGallery.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
+      state.editStatus = "SUCCESS";
       state.galleries = state.galleries.map((gallery) => {
         if (gallery.id === action.payload.id) {
           gallery = action.payload;
@@ -121,23 +139,44 @@ export const gallerySlice = createSlice({
       state.editModalIsOpen = false;
     });
     builder.addCase(galleryThunk.editGallery.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.editStatus = "ERROR";
       state.error = action.error;
     });
 
     /*Gallery Delete */
     builder.addCase(galleryThunk.removeGallery.pending, (state, action) => {
-      state.status = "LOADING";
+      state.deleteStatus = "LOADING";
     });
     builder.addCase(galleryThunk.removeGallery.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
+      state.deleteStatus = "SUCCESS";
       state.galleries = state.galleries.filter(
         (gallery) => gallery.id !== action.payload.id
       );
       state.deleteConfirmIsOpen = false;
     });
     builder.addCase(galleryThunk.removeGallery.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.deleteStatus = "ERROR";
+      state.error = action.error;
+    });
+
+    /*Gallery Fav */
+    builder.addCase(galleryThunk.favGallery.pending, (state, action) => {
+      state.deleteStatus = "LOADING";
+    });
+    builder.addCase(galleryThunk.favGallery.fulfilled, (state, action) => {
+      state.favStatus = "SUCCESS";
+      console.log(action.payload);
+      //@ts-ignore
+      state.galleries = state.galleries.map((gallery) => {
+        if (gallery.id === action.payload.id) {
+          gallery = action.payload;
+        }
+      });
+      state.gallery = action.payload;
+      state.deleteConfirmIsOpen = false;
+    });
+    builder.addCase(galleryThunk.favGallery.rejected, (state, action) => {
+      state.deleteStatus = "ERROR";
       state.error = action.error;
     });
   },
@@ -150,6 +189,7 @@ const {
   editModalClose,
   deleteConfirmOpen,
   deleteConfirmClose,
+  resetStatus,
 } = gallerySlice.actions;
 
 export const galleryActions = {
@@ -159,6 +199,7 @@ export const galleryActions = {
   editModalClose,
   deleteConfirmOpen,
   deleteConfirmClose,
+  resetStatus,
 };
 
 export default gallerySlice;

@@ -9,10 +9,18 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { galleryActions } from "../../reducers/gallery/gallerySlice";
 import FileInput from "../Inputs/FileInput";
 import galleryThunk from "../../reducers/gallery/galleryThunk";
+import useToast from "../../hooks/useToast";
 
 const GalleryCreateModal = () => {
   const dispatch = useAppDispatch();
   const galleryState = useAppSelector((state) => state.gallerySlice);
+  const { toastStart } = useToast({
+    status: galleryState.createStatus,
+    errorMessage: "생성 실패!",
+    successMessage: "생성 성공!",
+    loadingMessage: "로딩중...",
+    type: "gallery",
+  });
   const {
     handleSubmit,
     control,
@@ -43,26 +51,19 @@ const GalleryCreateModal = () => {
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
     delete data.previews;
-    const loadingToast = toast.loading("Loading...");
-    try {
-      const fd = new FormData();
-      fd.append("title", data.title);
-      fd.append("desc", data.desc);
-      data.files.map((file: File) => {
-        fd.append("files", file);
-      });
-
-      dispatch(galleryThunk.createGallery(fd));
-      toast.success("생성 성공", { id: loadingToast });
-    } catch (error) {
-      console.log(error);
-      toast.error("생성 실패", { id: loadingToast });
-    }
+    const fd = new FormData();
+    fd.append("title", data.title);
+    fd.append("desc", data.desc);
+    data.files.map((file: File) => {
+      fd.append("files", file);
+    });
+    toastStart();
+    dispatch(galleryThunk.createGallery(fd));
   };
 
   const isLoading = useMemo(
-    () => galleryState.status === "LOADING",
-    [galleryState.status]
+    () => galleryState.createStatus === "LOADING",
+    [galleryState.createStatus]
   );
 
   const onClose = () => {

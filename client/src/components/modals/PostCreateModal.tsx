@@ -10,6 +10,7 @@ import { Input } from "../Inputs/Input";
 import { getOptions } from "../../libs/util";
 import Select from "../Inputs/Select";
 import { createPost } from "../../reducers/post/postThunk";
+import useToast from "../../hooks/useToast";
 
 const defaultValues = {
   title: "",
@@ -21,6 +22,13 @@ const PostCreateModal = () => {
   const postState = useAppSelector((state) => state.postSlice);
   const dispatch = useAppDispatch();
   const options = getOptions();
+  const { toastStart } = useToast({
+    status: postState.createStatus,
+    errorMessage: "생성 실패",
+    successMessage: "생성 성공",
+    loadingMessage: "로딩중...",
+    type: "post",
+  });
 
   const {
     handleSubmit,
@@ -30,15 +38,9 @@ const PostCreateModal = () => {
     defaultValues,
   });
 
-  const onValid: SubmitHandler<FieldValues> = (data) => {
-    const loadingToast = toast.loading("Loading...");
-    try {
-      dispatch(createPost(data));
-      toast.success("생성 성공!", { id: loadingToast });
-    } catch (error) {
-      console.log(error);
-      toast.error("생성 실패!", { id: loadingToast });
-    }
+  const onValid: SubmitHandler<FieldValues> = async (data) => {
+    toastStart();
+    dispatch(createPost(data));
   };
 
   const isLoading = React.useMemo(

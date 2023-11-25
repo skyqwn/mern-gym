@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 import userErrorHandler from "../hooks/userErrorHandler";
 import { Input } from "../components/Inputs/Input";
