@@ -19,7 +19,6 @@ import Pagination from "../components/Pagination";
 const Gallery = () => {
   const dispatch = useAppDispatch();
   const galleryState = useAppSelector((state) => state.gallerySlice);
-  console.log(galleryState);
   const [searchParams, setSearchParams] = useSearchParams();
   const queryPage = Number(searchParams.get("page"));
   const navigate = useNavigate();

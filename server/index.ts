@@ -8,6 +8,7 @@ import { PrismaClient } from "@prisma/client";
 import CONSTANT from "./src/constant";
 import postRouter from "./src/routes/postRouter";
 import galleryRouter from "./src/routes/galleryRouter";
+import commentRouter from "./src/routes/commentRouter";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/gallery", galleryRouter);
+app.use("/api/comment", commentRouter);
 
 app.listen("8000", () => {
   console.log(`

@@ -12,6 +12,8 @@ import CheckAuthor from "../components/CheckAuthor";
 import { cls } from "../libs/util";
 import { IoMdHeart } from "react-icons/io";
 import Loader from "../components/Loader";
+import TextArea from "../components/Inputs/TextArea";
+import { useForm } from "react-hook-form";
 
 const GalleryDetail = () => {
   const dispatch = useAppDispatch();
@@ -20,6 +22,10 @@ const GalleryDetail = () => {
   const userState = useAppSelector((state) => state.userSlice);
   const userId = userState.user.id;
   const galleryId = galleryState.gallery?.authorId;
+  const {
+    control,
+    formState: { errors },
+  } = useForm({});
 
   const galleryEditAction = () => {
     dispatch(galleryActions.editModalOpen(galleryState.gallery));
@@ -84,6 +90,12 @@ const GalleryDetail = () => {
       >
         <IoMdHeart className="w-20 h-20" />
       </button>
+      <TextArea
+        name="comments"
+        control={control}
+        errors={errors}
+        label="댓글"
+      />
     </Container>
   );
 };

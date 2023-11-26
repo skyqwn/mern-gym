@@ -19,6 +19,7 @@ export interface PostType {
   title: string;
   updateAt: string;
   likeUsers: string[];
+  comments: string[];
 }
 
 export interface AddPostDataType {

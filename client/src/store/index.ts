@@ -4,11 +4,13 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import postSlice from "../reducers/post/postSlice";
 import gallerySlice from "../reducers/gallery/gallerySlice";
 import userSlice from "../reducers/user/userSlice";
+import commentSlice from "../reducers/comment/commentSlice";
 
 export const rootReducer = combineReducers({
   postSlice: postSlice.reducer,
   gallerySlice: gallerySlice.reducer,
   userSlice: userSlice.reducer,
+  commentSlice: commentSlice.reducer,
 });
 
 export const store = configureStore({

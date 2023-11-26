@@ -193,4 +193,23 @@ const fav = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   }
 };
 
+const comment = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    user,
+    params: { id },
+  } = req;
+  try {
+    if (!user) return;
+
+    const post = await prisma.post.findUnique({
+      where: { id },
+    });
+    if (!post) return;
+  } catch (error) {}
+};
+
 export default { create, fetch, detail, edit, remove, fav };

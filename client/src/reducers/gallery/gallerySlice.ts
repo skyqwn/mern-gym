@@ -86,7 +86,6 @@ export const gallerySlice = createSlice({
     });
     builder.addCase(galleryThunk.createGallery.fulfilled, (state, action) => {
       state.createStatus = "SUCCESS";
-      console.log(action.payload);
       state.galleries = [action.payload, ...state.galleries].slice(0, 2);
       state.totalPage = action.payload.totalPage;
       state.createModalIsOpen = false;
@@ -165,7 +164,6 @@ export const gallerySlice = createSlice({
     });
     builder.addCase(galleryThunk.favGallery.fulfilled, (state, action) => {
       state.favStatus = "SUCCESS";
-      console.log(action.payload);
       //@ts-ignore
       state.galleries = state.galleries.map((gallery) => {
         if (gallery.id === action.payload.id) {

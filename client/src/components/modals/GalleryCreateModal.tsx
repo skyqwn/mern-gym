@@ -123,7 +123,6 @@ const GalleryCreateModal = () => {
       </div>
 
       <Input name="title" control={control} errors={errors} label="제목" />
-
       <TextArea name="desc" control={control} errors={errors} label="본문" />
     </div>
   );

@@ -54,7 +54,9 @@ const create = async (
 
     const newGallery = await prisma.gallery.create({
       data: { ...data },
-      include: { author: { select: { id: true, nickname: true } } },
+      include: {
+        author: { select: { id: true, nickname: true } },
+      },
     });
 
     console.log(newGallery);
