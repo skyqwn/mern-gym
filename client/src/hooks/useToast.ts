@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../store";
 import { postActions } from "../reducers/post/postSlice";
 import { galleryActions } from "../reducers/gallery/gallerySlice";
+import { commentAcitons } from "../reducers/comment/commentSlice";
 
 interface useToastProps {
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
@@ -29,6 +30,9 @@ export default ({
     }
     if ((type = "gallery")) {
       dispatch(galleryActions.resetStatus({}));
+    }
+    if ((type = "comment")) {
+      dispatch(commentAcitons.resetStatus({}));
     }
   };
   useEffect(() => {

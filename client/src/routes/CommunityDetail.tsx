@@ -20,6 +20,7 @@ import {
   removeComment,
 } from "../reducers/comment/commentThunk";
 import PostComent from "../components/comment/PostComent";
+import PostCommentDeleteConfirm from "../components/confirms/PostCommentDeleteConfirm";
 
 const CommunityDetail = () => {
   const dispatch = useAppDispatch();
@@ -27,7 +28,6 @@ const CommunityDetail = () => {
   const postState = useAppSelector((state) => state.postSlice);
   const userState = useAppSelector((state) => state.userSlice);
   const commentState = useAppSelector((state) => state.commentSlice);
-  console.log(commentState);
   const postId = postState.post?.authorId;
   const userId = userState.user.id;
   const {
@@ -53,7 +53,6 @@ const CommunityDetail = () => {
   };
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
     dispatch(createComment(data));
   };
 
@@ -82,9 +81,9 @@ const CommunityDetail = () => {
         deleteAction={postDeleteAction}
         deleteLabel="삭제"
       />
-
-      {/* <PostComent /> */}
-      {commentState.comments &&
+      <PostCommentDeleteConfirm />
+      <PostComent />
+      {/* {commentState.comments &&
         commentState.comments.map((comment) => (
           <div className="flex justify-between items-center">
             <div key={comment.id} className="flex items-center gap-1">
@@ -112,7 +111,7 @@ const CommunityDetail = () => {
               </span>
             </div>
           </div>
-        ))}
+        ))} */}
       <TextArea name="desc" control={control} errors={errors} label="답변" />
       <Button label="댓글달기" onAction={handleSubmit(onValid)} />
       <button

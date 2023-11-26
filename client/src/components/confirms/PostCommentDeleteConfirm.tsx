@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../store";
 import Confirm from "./Confirm";
-import { removeGallery } from "../../reducers/gallery/galleryThunk";
 import useToast from "../../hooks/useToast";
 import { removeComment } from "../../reducers/comment/commentThunk";
 import { commentAcitons } from "../../reducers/comment/commentSlice";
@@ -10,11 +9,13 @@ import { commentAcitons } from "../../reducers/comment/commentSlice";
 const PostCommentDeleteConfirm = () => {
   const dispatch = useAppDispatch();
   const commentState = useAppSelector((state) => state.commentSlice);
+
   const { toastStart } = useToast({
     status: commentState.deleteStatus,
     errorMessage: "삭제 실패!",
     successMessage: "삭제 성공!",
     loadingMessage: "삭제중...",
+    type: "comment",
   });
   const isLoading = React.useMemo(
     () => commentState.deleteStatus === "LOADING",
@@ -22,10 +23,9 @@ const PostCommentDeleteConfirm = () => {
   );
 
   const onAction = async () => {
-    if (commentState.comment) {
-      toastStart();
-      dispatch(removeComment(commentState.comment.id));
-    }
+    toastStart();
+    if (commentState.comment) dispatch(removeComment(commentState.comment?.id));
+    dispatch(commentAcitons.deleteConfirmClose({}));
   };
 
   const onClose = () => {

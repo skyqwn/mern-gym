@@ -19,6 +19,7 @@ interface CommentStateType {
   editModalIsOpen: boolean;
   deleteConfirmIsOpen: boolean;
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
+  editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   deleteStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   error?: any;
 }
@@ -30,6 +31,7 @@ const initialState: CommentStateType = {
   deleteConfirmIsOpen: false,
   status: "",
   deleteStatus: "",
+  editStatus: "",
   error: "",
 };
 
@@ -39,7 +41,8 @@ export const commentSlice = createSlice({
   reducers: {
     editModalOpen: (state, action: PayloadAction<any>) => {
       state.editModalIsOpen = true;
-      state.comment = action.payload;
+      console.log(action.payload);
+      if (state.comment) state.comment = action.payload;
     },
     editModalClose: (state, action) => {
       state.editModalIsOpen = false;
@@ -51,6 +54,10 @@ export const commentSlice = createSlice({
     },
     deleteConfirmClose: (state, action) => {
       state.deleteConfirmIsOpen = false;
+    },
+    resetStatus: (state, action) => {
+      state.deleteStatus = "";
+      state.editStatus = "";
     },
   },
   extraReducers: (builder) => {
@@ -75,7 +82,6 @@ export const commentSlice = createSlice({
     });
     builder.addCase(fetchComment.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      console.log(action.payload);
       state.comments = action.payload;
     });
     builder.addCase(fetchComment.rejected, (state, action) => {
@@ -101,14 +107,20 @@ export const commentSlice = createSlice({
   },
 });
 
-const { editModalOpen, editModalClose, deleteConfirmOpen, deleteConfirmClose } =
-  commentSlice.actions;
+const {
+  editModalOpen,
+  editModalClose,
+  deleteConfirmOpen,
+  deleteConfirmClose,
+  resetStatus,
+} = commentSlice.actions;
 
 export const commentAcitons = {
   editModalOpen,
   editModalClose,
   deleteConfirmOpen,
   deleteConfirmClose,
+  resetStatus,
 };
 
 export default commentSlice;

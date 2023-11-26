@@ -22,7 +22,6 @@ const PostEditModal = () => {
     loadingMessage: "수정중...",
     type: "post",
   });
-  console.log(postState);
   const {
     handleSubmit,
     control,

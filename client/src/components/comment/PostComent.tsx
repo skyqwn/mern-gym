@@ -1,19 +1,24 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { removeComment } from "../../reducers/comment/commentThunk";
-// import PostCommentDeleteConfirm from "../confirms/PostCommentDeleteConfirm";
+import { commentAcitons } from "../../reducers/comment/commentSlice";
+import PostCommentDeleteConfirm from "../confirms/PostCommentDeleteConfirm";
 
 const PostComent = () => {
   const dispatch = useAppDispatch();
   const commentState = useAppSelector((state) => state.commentSlice);
+  console.log(commentState);
+  const onDeleteConfirm = () => {
+    dispatch(commentAcitons.deleteConfirmOpen({}));
+  };
   return (
     <div>
-      {/* <PostCommentDeleteConfirm /> */}
       <span>답변 {commentState.comments.length}</span>
       {commentState.comments &&
         commentState.comments.map((comment) => (
           <div className="flex justify-between items-center">
             <div key={comment.id} className="flex items-center gap-1">
+              <PostCommentDeleteConfirm />
               <img
                 className="w-10 h-10 rounded-full"
                 src={comment.author.avatar}
@@ -31,7 +36,7 @@ const PostComent = () => {
               </span>
               <span
                 onClick={() => {
-                  dispatch(removeComment(comment.id));
+                  dispatch(commentAcitons.deleteConfirmOpen(comment));
                 }}
               >
                 삭제

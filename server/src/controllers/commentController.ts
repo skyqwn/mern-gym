@@ -64,7 +64,6 @@ const fetch = async (
   const {
     params: { postId },
   } = req;
-  console.log(postId);
   try {
     const fetchComment = await prisma.comment.findMany({
       where: {
@@ -96,8 +95,8 @@ const remove = async (
     params: { postId },
     user,
   } = req;
-  console.log(postId);
   console.log(2);
+  console.log(postId);
   try {
     const deleteComment = await prisma.comment.delete({
       where: {
