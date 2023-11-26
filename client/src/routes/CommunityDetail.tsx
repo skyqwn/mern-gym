@@ -14,7 +14,12 @@ import TextArea from "../components/Inputs/TextArea";
 import Loader from "../components/Loader";
 import { cls } from "../libs/util";
 import CheckAuthor from "../components/CheckAuthor";
-import { createComment, fetchComment } from "../reducers/comment/commentThunk";
+import {
+  createComment,
+  fetchComment,
+  removeComment,
+} from "../reducers/comment/commentThunk";
+import PostComent from "../components/comment/PostComent";
 
 const CommunityDetail = () => {
   const dispatch = useAppDispatch();
@@ -77,6 +82,39 @@ const CommunityDetail = () => {
         deleteAction={postDeleteAction}
         deleteLabel="삭제"
       />
+
+      {/* <PostComent /> */}
+      {commentState.comments &&
+        commentState.comments.map((comment) => (
+          <div className="flex justify-between items-center">
+            <div key={comment.id} className="flex items-center gap-1">
+              <img
+                className="w-10 h-10 rounded-full"
+                src={comment.author.avatar}
+              />
+              <span>{comment.author.nickname}</span>
+              <span>{comment.desc}</span>
+            </div>
+            <div className="flex gap-2">
+              <span
+                onClick={() => {
+                  console.log("수정");
+                }}
+              >
+                수정
+              </span>
+              <span
+                onClick={() => {
+                  dispatch(removeComment(comment.id));
+                }}
+              >
+                삭제
+              </span>
+            </div>
+          </div>
+        ))}
+      <TextArea name="desc" control={control} errors={errors} label="답변" />
+      <Button label="댓글달기" onAction={handleSubmit(onValid)} />
       <button
         onClick={async () => {
           // let dataUsers = [] as string[];
@@ -102,37 +140,8 @@ const CommunityDetail = () => {
         <IoMdHeart className="w-20 h-20" />
       </button>
 
-      {commentState.comments &&
-        commentState.comments.map((comment) => (
-          <div className="flex justify-between items-center">
-            <div key={comment.id} className="flex items-center gap-1">
-              <img
-                className="w-10 h-10 rounded-full"
-                src={comment.author.avatar}
-              />
-              <span>{comment.author.nickname}</span>
-              <span>{comment.desc}</span>
-            </div>
-            <div className="flex gap-2">
-              <span
-                onClick={() => {
-                  console.log("수정");
-                }}
-              >
-                수정
-              </span>
-              <span
-                onClick={() => {
-                  console.log("삭제");
-                }}
-              >
-                삭제
-              </span>
-            </div>
-          </div>
-        ))}
       {/* <span>답변 {commentState.comments.length}</span> */}
-      <form onSubmit={handleSubmit(onValid)}>
+      {/* <form onSubmit={handleSubmit(onValid)}>
         <TextArea name="desc" control={control} errors={errors} label="답변" />
         <button
           onClick={() => {
@@ -141,7 +150,7 @@ const CommunityDetail = () => {
         >
           댓글 달기
         </button>
-      </form>
+      </form> */}
     </Container>
   );
 };

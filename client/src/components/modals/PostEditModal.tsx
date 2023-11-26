@@ -21,9 +21,8 @@ const PostEditModal = () => {
     successMessage: "수정성공!",
     loadingMessage: "수정중...",
     type: "post",
-    // reset: dispatch(postActions.resetStatus({})),
   });
-
+  console.log(postState);
   const {
     handleSubmit,
     control,

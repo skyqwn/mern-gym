@@ -19,3 +19,13 @@ export const fetchComment = createAsyncThunk(
     }
   }
 );
+
+export const removeComment = createAsyncThunk(
+  "Comment/deleteComment",
+  async (id: string) => {
+    if (id) {
+      const res = await instance.post(`/api/comment/${id}/remove`);
+      return res.data;
+    }
+  }
+);

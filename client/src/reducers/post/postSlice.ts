@@ -57,7 +57,7 @@ export const postSlice = createSlice({
     },
     editModalClose: (state, action: PayloadAction<any>) => {
       state.editModalIsOpen = false;
-      state.post = undefined;
+      // state.post = undefined;
     },
     deleteConfirmOpen: (state, action: PayloadAction<any>) => {
       state.deleteConfirmIsOpen = true;

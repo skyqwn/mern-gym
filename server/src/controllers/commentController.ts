@@ -37,6 +37,7 @@ const create = async (
         include: {
           author: {
             select: {
+              id: true,
               nickname: true,
               avatar: true,
             },
@@ -72,6 +73,7 @@ const fetch = async (
       include: {
         author: {
           select: {
+            id: true,
             nickname: true,
             avatar: true,
           },
@@ -85,4 +87,28 @@ const fetch = async (
   }
 };
 
-export default { create, fetch };
+const remove = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    params: { postId },
+    user,
+  } = req;
+  console.log(postId);
+  console.log(2);
+  try {
+    const deleteComment = await prisma.comment.delete({
+      where: {
+        id: postId,
+        authorId: user?.id,
+      },
+    });
+    return res.status(200).json(deleteComment);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default { create, fetch, remove };

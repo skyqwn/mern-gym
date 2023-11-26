@@ -1,10 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { createComment, fetchComment } from "./commentThunk";
+import { createComment, fetchComment, removeComment } from "./commentThunk";
 
 export interface CommentType {
   id: string;
   desc: string;
   author: {
+    id: string;
     nickname: string;
     avatar: string;
   };
@@ -15,21 +16,43 @@ export interface CommentType {
 interface CommentStateType {
   comments: CommentType[];
   comment?: CommentType;
+  editModalIsOpen: boolean;
+  deleteConfirmIsOpen: boolean;
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
+  deleteStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   error?: any;
 }
 
 const initialState: CommentStateType = {
   comments: [],
   comment: undefined,
+  editModalIsOpen: false,
+  deleteConfirmIsOpen: false,
   status: "",
+  deleteStatus: "",
   error: "",
 };
 
 export const commentSlice = createSlice({
   name: "Comment",
   initialState,
-  reducers: {},
+  reducers: {
+    editModalOpen: (state, action: PayloadAction<any>) => {
+      state.editModalIsOpen = true;
+      state.comment = action.payload;
+    },
+    editModalClose: (state, action) => {
+      state.editModalIsOpen = false;
+      state = { ...state, comment: action.payload };
+    },
+    deleteConfirmOpen: (state, action: PayloadAction<any>) => {
+      state.deleteConfirmIsOpen = true;
+      state.comment = action.payload;
+    },
+    deleteConfirmClose: (state, action) => {
+      state.deleteConfirmIsOpen = false;
+    },
+  },
   extraReducers: (builder) => {
     /* Comment Create */
     builder.addCase(createComment.pending, (state, action) => {
@@ -59,11 +82,33 @@ export const commentSlice = createSlice({
       state.status = "ERROR";
       state.error = action.error;
     });
+
+    /*Comment Delete */
+    builder.addCase(removeComment.pending, (state, action) => {
+      state.deleteStatus = "LOADING";
+    });
+    builder.addCase(removeComment.fulfilled, (state, action) => {
+      state.deleteStatus = "SUCCESS";
+      state.comments = state.comments.filter(
+        (comment) => comment.id !== action.payload.id
+      );
+      // state.deleteConfirmIsOpen = false;
+    });
+    builder.addCase(removeComment.rejected, (state, action) => {
+      state.deleteStatus = "ERROR";
+      state.error = action.error;
+    });
   },
 });
 
-const {} = commentSlice.actions;
+const { editModalOpen, editModalClose, deleteConfirmOpen, deleteConfirmClose } =
+  commentSlice.actions;
 
-export const commentAcitons = {};
+export const commentAcitons = {
+  editModalOpen,
+  editModalClose,
+  deleteConfirmOpen,
+  deleteConfirmClose,
+};
 
 export default commentSlice;
