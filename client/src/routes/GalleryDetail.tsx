@@ -13,7 +13,13 @@ import { cls } from "../libs/util";
 import { IoMdHeart } from "react-icons/io";
 import Loader from "../components/Loader";
 import TextArea from "../components/Inputs/TextArea";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "../components/Button";
+import {
+  createComment,
+  fetchGalleryComment,
+} from "../reducers/comment/commentThunk";
+import { commentAcitons } from "../reducers/comment/commentSlice";
 
 const GalleryDetail = () => {
   const dispatch = useAppDispatch();
@@ -22,10 +28,26 @@ const GalleryDetail = () => {
   const userState = useAppSelector((state) => state.userSlice);
   const userId = userState.user.id;
   const galleryId = galleryState.gallery?.authorId;
+  const commentState = useAppSelector((state) => state.commentSlice);
+
   const {
+    handleSubmit,
     control,
     formState: { errors },
-  } = useForm({});
+  } = useForm<FieldValues>({
+    values: React.useMemo(() => {
+      if (galleryState.gallery) {
+        return {
+          ...galleryState.gallery,
+          type: "gallery",
+        };
+      }
+    }, [galleryState.gallery]),
+  });
+
+  const onValid: SubmitHandler<FieldValues> = (data) => {
+    dispatch(createComment(data));
+  };
 
   const galleryEditAction = () => {
     dispatch(galleryActions.editModalOpen(galleryState.gallery));
@@ -37,6 +59,10 @@ const GalleryDetail = () => {
 
   useEffect(() => {
     dispatch(detailGallery(params.id));
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchGalleryComment(params.id));
   }, []);
 
   if (galleryState.detailFetchStatus === "LOADING") return <Loader />;
@@ -90,12 +116,41 @@ const GalleryDetail = () => {
       >
         <IoMdHeart className="w-20 h-20" />
       </button>
-      <TextArea
-        name="comments"
-        control={control}
-        errors={errors}
-        label="댓글"
-      />
+      <div>
+        <span>답변 {commentState.comments.length}</span>
+        {commentState.comments &&
+          commentState.comments.map((comment) => (
+            <div className="flex justify-between items-center">
+              <div key={comment.id} className="flex items-center gap-1">
+                {/* <PostCommentDeleteConfirm /> */}
+                <img
+                  className="w-10 h-10 rounded-full"
+                  src={comment.author.avatar}
+                />
+                <span>{comment.author.nickname}</span>
+                <span>{comment.desc}</span>
+              </div>
+              <div className="flex gap-2">
+                <span
+                  onClick={() => {
+                    console.log("수정");
+                  }}
+                >
+                  수정
+                </span>
+                <span
+                  onClick={() => {
+                    dispatch(commentAcitons.deleteConfirmOpen(comment));
+                  }}
+                >
+                  삭제
+                </span>
+              </div>
+            </div>
+          ))}
+      </div>
+      <TextArea name="desc" control={control} errors={errors} label="답변" />
+      <Button label="댓글달기" onAction={handleSubmit(onValid)} />
     </Container>
   );
 };

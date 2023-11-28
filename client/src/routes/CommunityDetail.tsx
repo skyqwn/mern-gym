@@ -16,7 +16,7 @@ import { cls } from "../libs/util";
 import CheckAuthor from "../components/CheckAuthor";
 import {
   createComment,
-  fetchComment,
+  fetchPostComment,
   removeComment,
 } from "../reducers/comment/commentThunk";
 import PostComent from "../components/comment/PostComent";
@@ -28,22 +28,23 @@ const CommunityDetail = () => {
   const postState = useAppSelector((state) => state.postSlice);
   const userState = useAppSelector((state) => state.userSlice);
   const commentState = useAppSelector((state) => state.commentSlice);
+  console.log(commentState);
   const postId = postState.post?.authorId;
   const userId = userState.user.id;
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<FieldValues>({
-    values: React.useMemo(() => {
-      if (postState.post) {
-        return {
-          ...postState.post,
-          type: "post",
-        };
-      }
-    }, [postState.post]),
-  });
+  // const {
+  //   handleSubmit,
+  //   control,
+  //   formState: { errors },
+  // } = useForm<FieldValues>({
+  //   values: React.useMemo(() => {
+  //     if (postState.post) {
+  //       return {
+  //         ...postState.post,
+  //         type: "post",
+  //       };
+  //     }
+  //   }, [postState.post]),
+  // });
   const postEditAction = () => {
     dispatch(postActions.editModalOpen(postState.post));
   };
@@ -61,7 +62,7 @@ const CommunityDetail = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchComment(params.id));
+    dispatch(fetchPostComment(params.id));
   }, []);
 
   if (postState.detailFetchStatus === "LOADING") return <Loader />;
@@ -83,37 +84,6 @@ const CommunityDetail = () => {
       />
       <PostCommentDeleteConfirm />
       <PostComent />
-      {/* {commentState.comments &&
-        commentState.comments.map((comment) => (
-          <div className="flex justify-between items-center">
-            <div key={comment.id} className="flex items-center gap-1">
-              <img
-                className="w-10 h-10 rounded-full"
-                src={comment.author.avatar}
-              />
-              <span>{comment.author.nickname}</span>
-              <span>{comment.desc}</span>
-            </div>
-            <div className="flex gap-2">
-              <span
-                onClick={() => {
-                  console.log("수정");
-                }}
-              >
-                수정
-              </span>
-              <span
-                onClick={() => {
-                  dispatch(removeComment(comment.id));
-                }}
-              >
-                삭제
-              </span>
-            </div>
-          </div>
-        ))} */}
-      <TextArea name="desc" control={control} errors={errors} label="답변" />
-      <Button label="댓글달기" onAction={handleSubmit(onValid)} />
       <button
         onClick={async () => {
           // let dataUsers = [] as string[];
@@ -138,18 +108,6 @@ const CommunityDetail = () => {
       >
         <IoMdHeart className="w-20 h-20" />
       </button>
-
-      {/* <span>답변 {commentState.comments.length}</span> */}
-      {/* <form onSubmit={handleSubmit(onValid)}>
-        <TextArea name="desc" control={control} errors={errors} label="답변" />
-        <button
-          onClick={() => {
-            handleSubmit(onValid);
-          }}
-        >
-          댓글 달기
-        </button>
-      </form> */}
     </Container>
   );
 };

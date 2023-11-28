@@ -121,7 +121,6 @@ const detail = async (
       include: { author: { select: { id: true, nickname: true } } },
     });
 
-    console.log(gallery);
     res.status(200).json(gallery);
   } catch (error) {
     return next(error);

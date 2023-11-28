@@ -23,7 +23,6 @@ export const detailGallery = createAsyncThunk(
   async (id: string) => {
     if (id) {
       const res = await instance.get(`/api/gallery/${id}`);
-      console.log(res.data);
       return res.data;
     }
   }

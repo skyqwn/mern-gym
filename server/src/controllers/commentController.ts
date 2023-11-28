@@ -15,8 +15,9 @@ const create = async (
     const {
       user,
       params,
-      body: { type, desc, id },
+      body: { type, desc, postId, galleryId },
     } = req;
+    console.log(req.body);
     if (type === null) return;
     if (type === "post") {
       const newPostComment = await prisma.comment.create({
@@ -30,7 +31,7 @@ const create = async (
           },
           post: {
             connect: {
-              id,
+              id: postId,
             },
           },
         },
@@ -47,6 +48,35 @@ const create = async (
       console.log(newPostComment);
       return res.status(200).json(newPostComment);
     }
+    if (type === "gallery") {
+      const newGalleryComment = await prisma.comment.create({
+        data: {
+          desc,
+          author: {
+            connect: {
+              id: user?.id,
+              nickname: user?.nickname,
+            },
+          },
+          gallery: {
+            connect: {
+              id: galleryId,
+            },
+          },
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              nickname: true,
+              avatar: true,
+            },
+          },
+        },
+      });
+      console.log(newGalleryComment);
+      return res.status(200).json(newGalleryComment);
+    }
     // //모든 코멘트들을 하나의
     // if (type === "post") {
     // }
@@ -56,7 +86,40 @@ const create = async (
   }
 };
 
-const fetch = async (
+const fetchGalleryComment = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    params: { galleryId },
+  } = req;
+  try {
+    const fetchGalleryComment = await prisma.comment.findMany({
+      where: {
+        galleryId,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            nickname: true,
+            avatar: true,
+          },
+        },
+      },
+      orderBy: { createAt: "desc" },
+    });
+    console.log(1);
+    console.log(fetchGalleryComment);
+    console.log(2);
+    return res.status(200).json(fetchGalleryComment);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const fetchPostComment = async (
   req: RequestWithUser,
   res: Response,
   next: NextFunction
@@ -85,6 +148,44 @@ const fetch = async (
     return next(error);
   }
 };
+const updatePostComment = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    body: { commentId, desc },
+    user,
+  } = req;
+  try {
+    const updatePostComment = await prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        desc,
+        author: {
+          connect: {
+            id: user?.id,
+            nickname: user?.nickname,
+          },
+        },
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            nickname: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+    return res.status(200).json(updatePostComment);
+  } catch (error) {
+    return next(error);
+  }
+};
 
 const remove = async (
   req: RequestWithUser,
@@ -95,8 +196,6 @@ const remove = async (
     params: { postId },
     user,
   } = req;
-  console.log(2);
-  console.log(postId);
   try {
     const deleteComment = await prisma.comment.delete({
       where: {
@@ -110,4 +209,10 @@ const remove = async (
   }
 };
 
-export default { create, fetch, remove };
+export default {
+  create,
+  remove,
+  fetchPostComment,
+  fetchGalleryComment,
+  updatePostComment,
+};

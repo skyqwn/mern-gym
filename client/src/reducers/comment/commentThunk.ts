@@ -10,13 +10,35 @@ export const createComment = createAsyncThunk(
   }
 );
 
-export const fetchComment = createAsyncThunk(
+export const fetchPostComment = createAsyncThunk(
   "Comment/fetchComment",
   async (postId: string) => {
     if (postId) {
-      const res = await instance.get(`/api/comment/${postId}`);
+      const res = await instance.get(`/api/comment/post/${postId}`);
       return res.data;
     }
+  }
+);
+export const fetchGalleryComment = createAsyncThunk(
+  "Comment/fetchGalleryComment",
+  async (galleryId: string) => {
+    if (galleryId) {
+      const res = await instance.get(`/api/comment/gallery/${galleryId}`);
+      console.log(res.data);
+      return res.data;
+    }
+  }
+);
+
+export const updatePostComment = createAsyncThunk(
+  "Comment/updateComment",
+  async (data: FieldValues) => {
+    console.log(data);
+    const res = await instance.post(
+      `/api/comment/post/${data.id}/update`,
+      data
+    );
+    return res.data;
   }
 );
 
@@ -24,7 +46,7 @@ export const removeComment = createAsyncThunk(
   "Comment/deleteComment",
   async (id: string) => {
     if (id) {
-      const res = await instance.post(`/api/comment/${id}/remove`);
+      const res = await instance.post(`/api/comment/post/${id}/remove`);
       return res.data;
     }
   }

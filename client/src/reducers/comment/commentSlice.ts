@@ -1,5 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { createComment, fetchComment, removeComment } from "./commentThunk";
+import {
+  createComment,
+  fetchGalleryComment,
+  fetchPostComment,
+  removeComment,
+  updatePostComment,
+} from "./commentThunk";
 
 export interface CommentType {
   id: string;
@@ -16,7 +22,7 @@ export interface CommentType {
 interface CommentStateType {
   comments: CommentType[];
   comment?: CommentType;
-  editModalIsOpen: boolean;
+  // editModalIsOpen: boolean;
   deleteConfirmIsOpen: boolean;
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
   editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
@@ -27,7 +33,7 @@ interface CommentStateType {
 const initialState: CommentStateType = {
   comments: [],
   comment: undefined,
-  editModalIsOpen: false,
+  // editModalIsOpen: false,
   deleteConfirmIsOpen: false,
   status: "",
   deleteStatus: "",
@@ -39,13 +45,14 @@ export const commentSlice = createSlice({
   name: "Comment",
   initialState,
   reducers: {
-    editModalOpen: (state, action: PayloadAction<any>) => {
-      state.editModalIsOpen = true;
+    editCommentInit: (state, action: PayloadAction<any>) => {
+      // state.editModalIsOpen = true;
       console.log(action.payload);
-      if (state.comment) state.comment = action.payload;
+      state.comment = action.payload;
+      // if (state.comment) state.comment = action.payload;
     },
-    editModalClose: (state, action) => {
-      state.editModalIsOpen = false;
+    editCommentCancel: (state, action) => {
+      // state.editModalIsOpen = false;
       state = { ...state, comment: action.payload };
     },
     deleteConfirmOpen: (state, action: PayloadAction<any>) => {
@@ -67,7 +74,6 @@ export const commentSlice = createSlice({
     });
     builder.addCase(createComment.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      console.log(action.payload);
       state.comments = [action.payload, ...state.comments];
       state.comment = action.payload;
     });
@@ -76,16 +82,50 @@ export const commentSlice = createSlice({
       state.error = action.error;
     });
 
-    /*Comment Fetch */
-    builder.addCase(fetchComment.pending, (state, action) => {
+    /*PostComment Fetch */
+    builder.addCase(fetchPostComment.pending, (state, action) => {
       state.status = "LOADING";
     });
-    builder.addCase(fetchComment.fulfilled, (state, action) => {
+    builder.addCase(fetchPostComment.fulfilled, (state, action) => {
+      console.log(action.payload);
       state.status = "SUCCESS";
       state.comments = action.payload;
     });
-    builder.addCase(fetchComment.rejected, (state, action) => {
+    builder.addCase(fetchPostComment.rejected, (state, action) => {
       state.status = "ERROR";
+      state.error = action.error;
+    });
+
+    /*GalleryComment Fetch */
+    builder.addCase(fetchGalleryComment.pending, (state, action) => {
+      state.status = "LOADING";
+    });
+    builder.addCase(fetchGalleryComment.fulfilled, (state, action) => {
+      state.status = "SUCCESS";
+      state.comments = action.payload;
+    });
+    builder.addCase(fetchGalleryComment.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.error = action.error;
+    });
+
+    /*Comment Update */
+    builder.addCase(updatePostComment.pending, (state, action) => {
+      state.editStatus = "LOADING";
+    });
+    builder.addCase(updatePostComment.fulfilled, (state, action) => {
+      state.editStatus = "SUCCESS";
+      state.comments = state.comments.map((comment) => {
+        if (comment.id === action.payload.id) {
+          comment = action.payload;
+        }
+        return comment;
+      });
+      state.comment = action.payload;
+      // state.deleteConfirmIsOpen = false;
+    });
+    builder.addCase(updatePostComment.rejected, (state, action) => {
+      state.editStatus = "ERROR";
       state.error = action.error;
     });
 
@@ -108,16 +148,16 @@ export const commentSlice = createSlice({
 });
 
 const {
-  editModalOpen,
-  editModalClose,
+  editCommentInit,
+  editCommentCancel,
   deleteConfirmOpen,
   deleteConfirmClose,
   resetStatus,
 } = commentSlice.actions;
 
 export const commentAcitons = {
-  editModalOpen,
-  editModalClose,
+  editCommentInit,
+  editCommentCancel,
   deleteConfirmOpen,
   deleteConfirmClose,
   resetStatus,
