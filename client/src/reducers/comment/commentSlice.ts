@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
-  createComment,
+  createGalleryComment,
+  createPostComment,
   fetchGalleryComment,
   fetchPostComment,
   removeComment,
@@ -20,22 +21,30 @@ export interface CommentType {
 }
 
 interface CommentStateType {
-  comments: CommentType[];
-  comment?: CommentType;
+  postComments: CommentType[];
+  postComment?: CommentType;
+  galleryComments: CommentType[];
+  galleryComment?: CommentType;
   // editModalIsOpen: boolean;
   deleteConfirmIsOpen: boolean;
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
+  postFetchCommentStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  galleryFetchCommentStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   deleteStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   error?: any;
 }
 
 const initialState: CommentStateType = {
-  comments: [],
-  comment: undefined,
+  postComments: [],
+  postComment: undefined,
+  galleryComments: [],
+  galleryComment: undefined,
   // editModalIsOpen: false,
   deleteConfirmIsOpen: false,
   status: "",
+  postFetchCommentStatus: "",
+  galleryFetchCommentStatus: "",
   deleteStatus: "",
   editStatus: "",
   error: "",
@@ -47,17 +56,16 @@ export const commentSlice = createSlice({
   reducers: {
     editCommentInit: (state, action: PayloadAction<any>) => {
       // state.editModalIsOpen = true;
-      console.log(action.payload);
-      state.comment = action.payload;
+      state.postComment = action.payload;
       // if (state.comment) state.comment = action.payload;
     },
     editCommentCancel: (state, action) => {
       // state.editModalIsOpen = false;
-      state = { ...state, comment: action.payload };
+      state = { ...state, postComment: action.payload };
     },
     deleteConfirmOpen: (state, action: PayloadAction<any>) => {
       state.deleteConfirmIsOpen = true;
-      state.comment = action.payload;
+      state.postComment = action.payload;
     },
     deleteConfirmClose: (state, action) => {
       state.deleteConfirmIsOpen = false;
@@ -68,30 +76,84 @@ export const commentSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    /* Comment Create */
-    builder.addCase(createComment.pending, (state, action) => {
+    /* PostComment Create */
+    builder.addCase(createPostComment.pending, (state, action) => {
       state.status = "LOADING";
     });
-    builder.addCase(createComment.fulfilled, (state, action) => {
+    builder.addCase(createPostComment.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      state.comments = [action.payload, ...state.comments];
-      state.comment = action.payload;
+      console.log(action.payload);
+      state.postComments = [action.payload, ...state.postComments];
+      console.log(state.postComments);
+      state.postComment = undefined;
     });
-    builder.addCase(createComment.rejected, (state, action) => {
+    builder.addCase(createPostComment.rejected, (state, action) => {
       state.status = "ERROR";
       state.error = action.error;
     });
 
     /*PostComment Fetch */
     builder.addCase(fetchPostComment.pending, (state, action) => {
-      state.status = "LOADING";
+      state.postFetchCommentStatus = "LOADING";
     });
     builder.addCase(fetchPostComment.fulfilled, (state, action) => {
       console.log(action.payload);
-      state.status = "SUCCESS";
-      state.comments = action.payload;
+      state.postFetchCommentStatus = "SUCCESS";
+      state.postComments = action.payload;
     });
     builder.addCase(fetchPostComment.rejected, (state, action) => {
+      state.postFetchCommentStatus = "ERROR";
+      state.error = action.error;
+    });
+
+    /*PostComment Update */
+    builder.addCase(updatePostComment.pending, (state, action) => {
+      state.editStatus = "LOADING";
+    });
+    builder.addCase(updatePostComment.fulfilled, (state, action) => {
+      state.editStatus = "SUCCESS";
+      state.postComments = state.postComments.map((comment) => {
+        if (comment.id === action.payload.id) {
+          comment = action.payload;
+        }
+        return comment;
+      });
+      state.postComment = undefined;
+      // state.deleteConfirmIsOpen = false;
+    });
+    builder.addCase(updatePostComment.rejected, (state, action) => {
+      state.editStatus = "ERROR";
+      state.error = action.error;
+    });
+
+    /*PostComment Delete */
+    builder.addCase(removeComment.pending, (state, action) => {
+      state.deleteStatus = "LOADING";
+    });
+    builder.addCase(removeComment.fulfilled, (state, action) => {
+      state.deleteStatus = "SUCCESS";
+      state.postComments = state.postComments.filter(
+        (comment) => comment.id !== action.payload.id
+      );
+      // state.deleteConfirmIsOpen = false;
+    });
+    builder.addCase(removeComment.rejected, (state, action) => {
+      state.deleteStatus = "ERROR";
+      state.error = action.error;
+    });
+
+    /* GalleryComment Create */
+    builder.addCase(createGalleryComment.pending, (state, action) => {
+      state.status = "LOADING";
+    });
+    builder.addCase(createGalleryComment.fulfilled, (state, action) => {
+      state.status = "SUCCESS";
+      console.log(action.payload);
+      state.galleryComments = [action.payload, ...state.galleryComments];
+      console.log(state.galleryComments);
+      state.galleryComment = undefined;
+    });
+    builder.addCase(createGalleryComment.rejected, (state, action) => {
       state.status = "ERROR";
       state.error = action.error;
     });
@@ -102,48 +164,48 @@ export const commentSlice = createSlice({
     });
     builder.addCase(fetchGalleryComment.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      state.comments = action.payload;
+      state.galleryComments = action.payload;
     });
     builder.addCase(fetchGalleryComment.rejected, (state, action) => {
       state.status = "ERROR";
       state.error = action.error;
     });
 
-    /*Comment Update */
-    builder.addCase(updatePostComment.pending, (state, action) => {
-      state.editStatus = "LOADING";
-    });
-    builder.addCase(updatePostComment.fulfilled, (state, action) => {
-      state.editStatus = "SUCCESS";
-      state.comments = state.comments.map((comment) => {
-        if (comment.id === action.payload.id) {
-          comment = action.payload;
-        }
-        return comment;
-      });
-      state.comment = action.payload;
-      // state.deleteConfirmIsOpen = false;
-    });
-    builder.addCase(updatePostComment.rejected, (state, action) => {
-      state.editStatus = "ERROR";
-      state.error = action.error;
-    });
+    //  /*GalleryComment Update */
+    //  builder.addCase(updatePostComment.pending, (state, action) => {
+    //   state.editStatus = "LOADING";
+    // });
+    // builder.addCase(updatePostComment.fulfilled, (state, action) => {
+    //   state.editStatus = "SUCCESS";
+    //   state.postComments = state.postComments.map((comment) => {
+    //     if (comment.id === action.payload.id) {
+    //       comment = action.payload;
+    //     }
+    //     return comment;
+    //   });
+    //   state.postComment = undefined;
+    //   // state.deleteConfirmIsOpen = false;
+    // });
+    // builder.addCase(updatePostComment.rejected, (state, action) => {
+    //   state.editStatus = "ERROR";
+    //   state.error = action.error;
+    // });
 
-    /*Comment Delete */
-    builder.addCase(removeComment.pending, (state, action) => {
-      state.deleteStatus = "LOADING";
-    });
-    builder.addCase(removeComment.fulfilled, (state, action) => {
-      state.deleteStatus = "SUCCESS";
-      state.comments = state.comments.filter(
-        (comment) => comment.id !== action.payload.id
-      );
-      // state.deleteConfirmIsOpen = false;
-    });
-    builder.addCase(removeComment.rejected, (state, action) => {
-      state.deleteStatus = "ERROR";
-      state.error = action.error;
-    });
+    // /*PostComment Delete */
+    // builder.addCase(removeComment.pending, (state, action) => {
+    //   state.deleteStatus = "LOADING";
+    // });
+    // builder.addCase(removeComment.fulfilled, (state, action) => {
+    //   state.deleteStatus = "SUCCESS";
+    //   state.postComments = state.postComments.filter(
+    //     (comment) => comment.id !== action.payload.id
+    //   );
+    //   // state.deleteConfirmIsOpen = false;
+    // });
+    // builder.addCase(removeComment.rejected, (state, action) => {
+    //   state.deleteStatus = "ERROR";
+    //   state.error = action.error;
+    // });
   },
 });
 

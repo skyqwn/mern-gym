@@ -45,10 +45,10 @@ const create = async (
           },
         },
       });
-      console.log(newPostComment);
       return res.status(200).json(newPostComment);
     }
     if (type === "gallery") {
+      console.log(type);
       const newGalleryComment = await prisma.comment.create({
         data: {
           desc,
@@ -74,13 +74,8 @@ const create = async (
           },
         },
       });
-      console.log(newGalleryComment);
       return res.status(200).json(newGalleryComment);
     }
-    // //모든 코멘트들을 하나의
-    // if (type === "post") {
-    // }
-    // return res.status(200).json(newComment);
   } catch (error) {
     console.log(error);
   }
@@ -186,6 +181,44 @@ const updatePostComment = async (
     return next(error);
   }
 };
+const updateGalleryComment = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    body: { commentId, desc },
+    user,
+  } = req;
+  try {
+    const updateGalleryComment = await prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        desc,
+        author: {
+          connect: {
+            id: user?.id,
+            nickname: user?.nickname,
+          },
+        },
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            nickname: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+    return res.status(200).json(updateGalleryComment);
+  } catch (error) {
+    return next(error);
+  }
+};
 
 const remove = async (
   req: RequestWithUser,
@@ -215,4 +248,5 @@ export default {
   fetchPostComment,
   fetchGalleryComment,
   updatePostComment,
+  updateGalleryComment,
 };

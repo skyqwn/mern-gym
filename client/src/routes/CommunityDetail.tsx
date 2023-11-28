@@ -1,25 +1,17 @@
 import React, { useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import { IoMdHeart } from "react-icons/io";
 
 import { useAppDispatch, useAppSelector } from "../store";
-import { Button } from "../components/Button";
 import Container from "../components/Container";
 import { postActions } from "../reducers/post/postSlice";
 import PostEditModal from "../components/modals/PostEditModal";
 import { detailPost, favPost } from "../reducers/post/postThunk";
 import PostDeleteConfirm from "../components/confirms/PostDeleteConfirm";
-import TextArea from "../components/Inputs/TextArea";
 import Loader from "../components/Loader";
 import { cls } from "../libs/util";
 import CheckAuthor from "../components/CheckAuthor";
-import {
-  createComment,
-  fetchPostComment,
-  removeComment,
-} from "../reducers/comment/commentThunk";
-import PostComent from "../components/comment/PostComent";
+import PostComment from "../components/comment/PostComment";
 import PostCommentDeleteConfirm from "../components/confirms/PostCommentDeleteConfirm";
 
 const CommunityDetail = () => {
@@ -27,8 +19,6 @@ const CommunityDetail = () => {
   const params = useParams() as { id: string };
   const postState = useAppSelector((state) => state.postSlice);
   const userState = useAppSelector((state) => state.userSlice);
-  const commentState = useAppSelector((state) => state.commentSlice);
-  console.log(commentState);
   const postId = postState.post?.authorId;
   const userId = userState.user.id;
   // const {
@@ -53,16 +43,8 @@ const CommunityDetail = () => {
     dispatch(postActions.deleteConfirmOpen(postState.post));
   };
 
-  const onValid: SubmitHandler<FieldValues> = (data) => {
-    dispatch(createComment(data));
-  };
-
   useEffect(() => {
     dispatch(detailPost(params.id));
-  }, []);
-
-  useEffect(() => {
-    dispatch(fetchPostComment(params.id));
   }, []);
 
   if (postState.detailFetchStatus === "LOADING") return <Loader />;
@@ -83,7 +65,7 @@ const CommunityDetail = () => {
         deleteLabel="삭제"
       />
       <PostCommentDeleteConfirm />
-      <PostComent />
+      <PostComment />
       <button
         onClick={async () => {
           // let dataUsers = [] as string[];

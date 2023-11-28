@@ -12,14 +12,12 @@ import CheckAuthor from "../components/CheckAuthor";
 import { cls } from "../libs/util";
 import { IoMdHeart } from "react-icons/io";
 import Loader from "../components/Loader";
-import TextArea from "../components/Inputs/TextArea";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { Button } from "../components/Button";
 import {
-  createComment,
+  createPostComment,
   fetchGalleryComment,
 } from "../reducers/comment/commentThunk";
-import { commentAcitons } from "../reducers/comment/commentSlice";
+import GalleryComment from "../components/comment/GalleryComment";
 
 const GalleryDetail = () => {
   const dispatch = useAppDispatch();
@@ -30,23 +28,8 @@ const GalleryDetail = () => {
   const galleryId = galleryState.gallery?.authorId;
   const commentState = useAppSelector((state) => state.commentSlice);
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<FieldValues>({
-    values: React.useMemo(() => {
-      if (galleryState.gallery) {
-        return {
-          ...galleryState.gallery,
-          type: "gallery",
-        };
-      }
-    }, [galleryState.gallery]),
-  });
-
   const onValid: SubmitHandler<FieldValues> = (data) => {
-    dispatch(createComment(data));
+    dispatch(createPostComment(data));
   };
 
   const galleryEditAction = () => {
@@ -116,13 +99,14 @@ const GalleryDetail = () => {
       >
         <IoMdHeart className="w-20 h-20" />
       </button>
-      <div>
+      <GalleryComment />
+      {/* <div>
         <span>답변 {commentState.comments.length}</span>
         {commentState.comments &&
           commentState.comments.map((comment) => (
             <div className="flex justify-between items-center">
               <div key={comment.id} className="flex items-center gap-1">
-                {/* <PostCommentDeleteConfirm /> */}
+                <PostCommentDeleteConfirm />
                 <img
                   className="w-10 h-10 rounded-full"
                   src={comment.author.avatar}
@@ -150,7 +134,7 @@ const GalleryDetail = () => {
           ))}
       </div>
       <TextArea name="desc" control={control} errors={errors} label="답변" />
-      <Button label="댓글달기" onAction={handleSubmit(onValid)} />
+      <Button label="댓글달기" onAction={handleSubmit(onValid)} /> */}
     </Container>
   );
 };

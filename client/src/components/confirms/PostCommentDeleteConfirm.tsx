@@ -9,6 +9,7 @@ import { commentAcitons } from "../../reducers/comment/commentSlice";
 const PostCommentDeleteConfirm = () => {
   const dispatch = useAppDispatch();
   const commentState = useAppSelector((state) => state.commentSlice);
+  console.log(commentState);
 
   const { toastStart } = useToast({
     status: commentState.deleteStatus,
@@ -24,7 +25,8 @@ const PostCommentDeleteConfirm = () => {
 
   const onAction = async () => {
     toastStart();
-    if (commentState.comment) dispatch(removeComment(commentState.comment?.id));
+    if (commentState.postComment)
+      dispatch(removeComment(commentState.postComment?.id));
     dispatch(commentAcitons.deleteConfirmClose({}));
   };
 

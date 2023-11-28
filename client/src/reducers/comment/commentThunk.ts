@@ -2,10 +2,19 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { FieldValues } from "react-hook-form";
 import { instance } from "../../api/apiconfig";
 
-export const createComment = createAsyncThunk(
-  "Comment/createComment",
+export const createPostComment = createAsyncThunk(
+  "Comment/createPostComment",
   async (data: FieldValues) => {
-    const res = await instance.post(`/api/comment`, data);
+    const res = await instance.post(`/api/comment/post`, data);
+    console.log(res.data);
+    return res.data;
+  }
+);
+export const createGalleryComment = createAsyncThunk(
+  "Comment/createGalleryComment",
+  async (data: FieldValues) => {
+    const res = await instance.post(`/api/comment/gallery`, data);
+    console.log(res.data);
     return res.data;
   }
 );

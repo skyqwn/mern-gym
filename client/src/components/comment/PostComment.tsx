@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import {
-  createComment,
+  createPostComment,
+  fetchGalleryComment,
+  fetchPostComment,
   updatePostComment,
 } from "../../reducers/comment/commentThunk";
 import { commentAcitons } from "../../reducers/comment/commentSlice";
-import PostCommentDeleteConfirm from "../confirms/PostCommentDeleteConfirm";
 import TextArea from "../Inputs/TextArea";
 import { Button } from "../Button";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import Loader from "../Loader";
 
 const PostComent = () => {
   const dispatch = useAppDispatch();
@@ -16,6 +19,7 @@ const PostComent = () => {
   console.log(commentState);
   const postState = useAppSelector((state) => state.postSlice);
   const [edit, setEdit] = useState(false);
+  const params = useParams() as { id: string };
   const onDeleteConfirm = () => {
     dispatch(commentAcitons.deleteConfirmOpen({}));
   };
@@ -28,30 +32,35 @@ const PostComent = () => {
   } = useForm<FieldValues>({
     values: React.useMemo(() => {
       return {
-        ...commentState.comment,
+        ...commentState.postComment,
         type: "post",
         postId: postState.post?.id,
       };
-    }, [commentState.comment]),
+    }, [commentState.postComment]),
   });
 
+  useEffect(() => {
+    dispatch(fetchPostComment(params.id));
+  }, []);
+
   const onValidCreate: SubmitHandler<FieldValues> = (data) => {
-    dispatch(createComment(data));
+    dispatch(createPostComment(data));
+    setValue("desc", "");
   };
   const onValidEdit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
-    data.commentId = commentState.comment?.id;
+    data.commentId = commentState.postComment?.id;
     dispatch(updatePostComment(data));
+    setEdit(false);
+    setValue("desc", "");
   };
-
+  if (commentState.postFetchCommentStatus === "LOADING") return <Loader />;
   return (
     <div>
-      <span>답변 {commentState.comments.length}</span>
-      {commentState.comments &&
-        commentState.comments.map((comment) => (
+      <span>답변 {commentState.postComments.length}</span>
+      {commentState.postComments &&
+        commentState.postComments.map((comment) => (
           <div className="flex justify-between items-center">
             <div key={comment.id} className="flex items-center gap-1">
-              <PostCommentDeleteConfirm />
               <img
                 className="w-10 h-10 rounded-full"
                 src={comment.author.avatar}
