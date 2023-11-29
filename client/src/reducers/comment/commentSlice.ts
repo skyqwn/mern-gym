@@ -31,8 +31,13 @@ interface CommentStateType {
   deleteConfirmIsOpen: boolean;
   deleteTargetId: string;
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
+  postCreateCommentStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   postFetchCommentStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  postEditCommentStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+
+  galleryCreateCommentStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   galleryFetchCommentStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  galleryEditCommentStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   deleteStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
   error?: any;
@@ -48,7 +53,12 @@ const initialState: CommentStateType = {
   deleteTargetId: "",
   status: "",
   postFetchCommentStatus: "",
+  postCreateCommentStatus: "",
+  postEditCommentStatus: "",
+
+  galleryCreateCommentStatus: "",
   galleryFetchCommentStatus: "",
+  galleryEditCommentStatus: "",
   deleteStatus: "",
   editStatus: "",
   error: "",
@@ -91,17 +101,17 @@ export const commentSlice = createSlice({
   extraReducers: (builder) => {
     /* PostComment Create */
     builder.addCase(createPostComment.pending, (state, action) => {
-      state.status = "LOADING";
+      state.postCreateCommentStatus = "LOADING";
     });
     builder.addCase(createPostComment.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
+      state.postCreateCommentStatus = "SUCCESS";
       console.log(action.payload);
       state.postComments = [action.payload, ...state.postComments];
       console.log(state.postComments);
       state.postComment = undefined;
     });
     builder.addCase(createPostComment.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.postCreateCommentStatus = "ERROR";
       state.error = action.error;
     });
 
@@ -120,10 +130,10 @@ export const commentSlice = createSlice({
 
     /*PostComment Update */
     builder.addCase(updatePostComment.pending, (state, action) => {
-      state.editStatus = "LOADING";
+      state.postEditCommentStatus = "LOADING";
     });
     builder.addCase(updatePostComment.fulfilled, (state, action) => {
-      state.editStatus = "SUCCESS";
+      state.postEditCommentStatus = "SUCCESS";
       state.postComments = state.postComments.map((comment) => {
         if (comment.id === action.payload.id) {
           comment = action.payload;
@@ -134,7 +144,7 @@ export const commentSlice = createSlice({
       // state.deleteConfirmIsOpen = false;
     });
     builder.addCase(updatePostComment.rejected, (state, action) => {
-      state.editStatus = "ERROR";
+      state.postEditCommentStatus = "ERROR";
       state.error = action.error;
     });
 
@@ -156,17 +166,17 @@ export const commentSlice = createSlice({
 
     /* GalleryComment Create */
     builder.addCase(createGalleryComment.pending, (state, action) => {
-      state.status = "LOADING";
+      state.galleryCreateCommentStatus = "LOADING";
     });
     builder.addCase(createGalleryComment.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
+      state.galleryCreateCommentStatus = "SUCCESS";
       console.log(action.payload);
       state.galleryComments = [action.payload, ...state.galleryComments];
       console.log(state.galleryComments);
       state.galleryComment = undefined;
     });
     builder.addCase(createGalleryComment.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.galleryCreateCommentStatus = "ERROR";
       state.error = action.error;
     });
 
@@ -185,10 +195,10 @@ export const commentSlice = createSlice({
 
     /*GalleryComment Update */
     builder.addCase(updateGalleryComment.pending, (state, action) => {
-      state.editStatus = "LOADING";
+      state.galleryEditCommentStatus = "LOADING";
     });
     builder.addCase(updateGalleryComment.fulfilled, (state, action) => {
-      state.editStatus = "SUCCESS";
+      state.galleryEditCommentStatus = "SUCCESS";
       state.galleryComments = state.galleryComments.map((comment) => {
         if (comment.id === action.payload.id) {
           comment = action.payload;
@@ -199,7 +209,7 @@ export const commentSlice = createSlice({
       // state.deleteConfirmIsOpen = false;
     });
     builder.addCase(updateGalleryComment.rejected, (state, action) => {
-      state.editStatus = "ERROR";
+      state.galleryEditCommentStatus = "ERROR";
       state.error = action.error;
     });
 

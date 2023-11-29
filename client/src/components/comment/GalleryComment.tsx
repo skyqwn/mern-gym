@@ -11,6 +11,7 @@ import { Button } from "../Button";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import Loader from "../Loader";
+import useToast from "../../hooks/useToast";
 
 const GalleryComment = () => {
   const dispatch = useAppDispatch();
@@ -22,6 +23,23 @@ const GalleryComment = () => {
   const onDeleteConfirm = () => {
     dispatch(commentAcitons.deleteConfirmOpen({}));
   };
+
+  const { toastStart: commentEditToast } = useToast({
+    status: commentState.galleryEditCommentStatus,
+    errorMessage: "수정 실패!",
+    successMessage: "수정 성공!",
+    loadingMessage: "수정중...",
+    type: "comment",
+  });
+
+  const { toastStart: commentCreateToast } = useToast({
+    status: commentState.galleryCreateCommentStatus,
+    errorMessage: "댓글 작성 실패!",
+    successMessage: "댓글 작성 성공!",
+    loadingMessage: "댓글 작성중...",
+    type: "comment",
+  });
+
   const {
     handleSubmit,
     control,
@@ -42,12 +60,13 @@ const GalleryComment = () => {
   }, []);
 
   const onValidCreate: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+    commentCreateToast();
     dispatch(createGalleryComment(data));
     setValue("desc", "");
   };
   const onValidEdit: SubmitHandler<FieldValues> = (data) => {
     data.commentId = commentState.galleryComment?.id;
+    commentEditToast();
     dispatch(updateGalleryComment(data));
     setEdit(false);
     setValue("desc", "");
