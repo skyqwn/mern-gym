@@ -79,7 +79,7 @@ const PostComent = () => {
               </span>
               <span
                 onClick={() => {
-                  dispatch(commentAcitons.deleteConfirmOpen(comment));
+                  dispatch(commentAcitons.deleteConfirmOpen(comment.id));
                 }}
               >
                 삭제

@@ -28,5 +28,10 @@ commentRouter.post(
   commentController.updateGalleryComment
 );
 commentRouter.post("/post/:postId/remove", onlyUser, commentController.remove);
+commentRouter.post(
+  "/gallery/:galleryId/remove",
+  onlyUser,
+  commentController.galleryRemoveComment
+);
 
 export default commentRouter;

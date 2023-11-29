@@ -1,23 +1,22 @@
 import React, { useEffect } from "react";
+import { FieldValues, SubmitHandler } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import { IoMdHeart } from "react-icons/io";
+import { cls } from "../libs/util";
 
 import { useAppDispatch, useAppSelector } from "../store";
+import { fetchGalleryComment } from "../reducers/comment/commentThunk";
 import { galleryActions } from "../reducers/gallery/gallerySlice";
-import Container from "../components/Container";
 import { detailGallery, favGallery } from "../reducers/gallery/galleryThunk";
+
+import Container from "../components/Container";
 import GalleryEditModal from "../components/modals/GalleryEditModal";
-import GalleryDeleteConfirm from "../components/confirms/GalleryDeleteConfirm";
 import UserAvatar from "../components/UserAvatar";
 import CheckAuthor from "../components/CheckAuthor";
-import { cls } from "../libs/util";
-import { IoMdHeart } from "react-icons/io";
 import Loader from "../components/Loader";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import {
-  createPostComment,
-  fetchGalleryComment,
-} from "../reducers/comment/commentThunk";
 import GalleryComment from "../components/comment/GalleryComment";
+import GalleryDeleteConfirm from "../components/confirms/GalleryDeleteConfirm";
+import GalleryCommentDeleteConfirm from "../components/confirms/GalleryCommentDeleteConfirm";
 
 const GalleryDetail = () => {
   const dispatch = useAppDispatch();
@@ -26,11 +25,6 @@ const GalleryDetail = () => {
   const userState = useAppSelector((state) => state.userSlice);
   const userId = userState.user.id;
   const galleryId = galleryState.gallery?.authorId;
-  const commentState = useAppSelector((state) => state.commentSlice);
-
-  const onValid: SubmitHandler<FieldValues> = (data) => {
-    dispatch(createPostComment(data));
-  };
 
   const galleryEditAction = () => {
     dispatch(galleryActions.editModalOpen(galleryState.gallery));
@@ -52,8 +46,8 @@ const GalleryDetail = () => {
   if (!galleryState.gallery) return <div>Error!!</div>;
   return (
     <Container>
-      <GalleryDeleteConfirm />
       <GalleryEditModal />
+      <GalleryDeleteConfirm />
 
       <UserAvatar />
       <div>작성자: {galleryState.gallery?.author.nickname}</div>
@@ -100,41 +94,7 @@ const GalleryDetail = () => {
         <IoMdHeart className="w-20 h-20" />
       </button>
       <GalleryComment />
-      {/* <div>
-        <span>답변 {commentState.comments.length}</span>
-        {commentState.comments &&
-          commentState.comments.map((comment) => (
-            <div className="flex justify-between items-center">
-              <div key={comment.id} className="flex items-center gap-1">
-                <PostCommentDeleteConfirm />
-                <img
-                  className="w-10 h-10 rounded-full"
-                  src={comment.author.avatar}
-                />
-                <span>{comment.author.nickname}</span>
-                <span>{comment.desc}</span>
-              </div>
-              <div className="flex gap-2">
-                <span
-                  onClick={() => {
-                    console.log("수정");
-                  }}
-                >
-                  수정
-                </span>
-                <span
-                  onClick={() => {
-                    dispatch(commentAcitons.deleteConfirmOpen(comment));
-                  }}
-                >
-                  삭제
-                </span>
-              </div>
-            </div>
-          ))}
-      </div>
-      <TextArea name="desc" control={control} errors={errors} label="답변" />
-      <Button label="댓글달기" onAction={handleSubmit(onValid)} /> */}
+      <GalleryCommentDeleteConfirm />
     </Container>
   );
 };

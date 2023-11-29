@@ -105,9 +105,6 @@ const fetchGalleryComment = async (
       },
       orderBy: { createAt: "desc" },
     });
-    console.log(1);
-    console.log(fetchGalleryComment);
-    console.log(2);
     return res.status(200).json(fetchGalleryComment);
   } catch (error) {
     return next(error);
@@ -241,6 +238,28 @@ const remove = async (
     console.log(error);
   }
 };
+const galleryRemoveComment = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    params: { galleryId },
+    user,
+  } = req;
+  console.log(req.params);
+  try {
+    const deleteComment = await prisma.comment.delete({
+      where: {
+        id: galleryId,
+        authorId: user?.id,
+      },
+    });
+    return res.status(200).json(deleteComment);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export default {
   create,
@@ -249,4 +268,5 @@ export default {
   fetchGalleryComment,
   updatePostComment,
   updateGalleryComment,
+  galleryRemoveComment,
 };

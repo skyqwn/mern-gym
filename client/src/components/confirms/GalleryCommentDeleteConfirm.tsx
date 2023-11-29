@@ -3,13 +3,12 @@ import React, { useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import Confirm from "./Confirm";
 import useToast from "../../hooks/useToast";
-import { removeComment } from "../../reducers/comment/commentThunk";
+import { removeGalleryComment } from "../../reducers/comment/commentThunk";
 import { commentAcitons } from "../../reducers/comment/commentSlice";
 
-const PostCommentDeleteConfirm = () => {
+const GalleryCommentDeleteConfirm = () => {
   const dispatch = useAppDispatch();
   const commentState = useAppSelector((state) => state.commentSlice);
-
   console.log(commentState.deleteTargetId);
 
   const { toastStart } = useToast({
@@ -26,7 +25,7 @@ const PostCommentDeleteConfirm = () => {
 
   const onAction = async () => {
     toastStart();
-    dispatch(removeComment(commentState.deleteTargetId));
+    dispatch(removeGalleryComment(commentState.deleteTargetId));
     dispatch(commentAcitons.deleteConfirmClose({}));
   };
 
@@ -48,4 +47,4 @@ const PostCommentDeleteConfirm = () => {
   );
 };
 
-export default PostCommentDeleteConfirm;
+export default GalleryCommentDeleteConfirm;

@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import {
   createGalleryComment,
   fetchGalleryComment,
-  updatePostComment,
+  updateGalleryComment,
 } from "../../reducers/comment/commentThunk";
 import { commentAcitons } from "../../reducers/comment/commentSlice";
 import TextArea from "../Inputs/TextArea";
@@ -15,6 +15,7 @@ import Loader from "../Loader";
 const GalleryComment = () => {
   const dispatch = useAppDispatch();
   const commentState = useAppSelector((state) => state.commentSlice);
+  console.log(commentState);
   const galleryState = useAppSelector((state) => state.gallerySlice);
   const [edit, setEdit] = useState(false);
   const params = useParams() as { id: string };
@@ -24,7 +25,6 @@ const GalleryComment = () => {
   const {
     handleSubmit,
     control,
-    reset,
     setValue,
     formState: { errors },
   } = useForm<FieldValues>({
@@ -48,7 +48,7 @@ const GalleryComment = () => {
   };
   const onValidEdit: SubmitHandler<FieldValues> = (data) => {
     data.commentId = commentState.galleryComment?.id;
-    dispatch(updatePostComment(data));
+    dispatch(updateGalleryComment(data));
     setEdit(false);
     setValue("desc", "");
   };
@@ -71,14 +71,16 @@ const GalleryComment = () => {
               <span
                 onClick={() => {
                   setEdit(true);
-                  dispatch(commentAcitons.editCommentInit(comment));
+                  dispatch(commentAcitons.editGalleryCommentInit(comment));
                 }}
               >
                 수정
               </span>
               <span
                 onClick={() => {
-                  dispatch(commentAcitons.deleteConfirmOpen(comment));
+                  dispatch(
+                    commentAcitons.deleteGalleryCommnetConfirmOpen(comment.id)
+                  );
                 }}
               >
                 삭제
@@ -102,7 +104,6 @@ const GalleryComment = () => {
           수정취소
         </button>
       )}
-      {/* <Button label="댓글달기" onAction={handleSubmit(onValid)} /> */}
     </div>
   );
 };
