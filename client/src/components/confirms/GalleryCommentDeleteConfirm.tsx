@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../store";
 import Confirm from "./Confirm";
@@ -9,7 +9,6 @@ import { commentAcitons } from "../../reducers/comment/commentSlice";
 const GalleryCommentDeleteConfirm = () => {
   const dispatch = useAppDispatch();
   const commentState = useAppSelector((state) => state.commentSlice);
-  console.log(commentState.deleteTargetId);
 
   const { toastStart } = useToast({
     status: commentState.deleteStatus,

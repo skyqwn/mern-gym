@@ -37,6 +37,7 @@ const Gallery = () => {
   }, [page]);
 
   const totalPage = galleryState.totalPage;
+  console.log(totalPage);
   return (
     <Container>
       <GalleryCreateModal />

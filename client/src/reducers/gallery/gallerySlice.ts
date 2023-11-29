@@ -74,7 +74,6 @@ export const gallerySlice = createSlice({
     resetStatus: (state, action) => {
       state.createStatus = "";
       state.editStatus = "";
-      // state.deleteStatus = "";
       state.favStatus = "";
       state.fetchStatus = "";
     },
@@ -87,7 +86,6 @@ export const gallerySlice = createSlice({
     builder.addCase(galleryThunk.createGallery.fulfilled, (state, action) => {
       state.createStatus = "SUCCESS";
       state.galleries = [action.payload, ...state.galleries].slice(0, 2);
-      state.totalPage = action.payload.totalPage;
       state.createModalIsOpen = false;
     });
     builder.addCase(galleryThunk.createGallery.rejected, (state, action) => {

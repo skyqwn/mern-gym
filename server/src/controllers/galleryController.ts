@@ -16,7 +16,6 @@ const create = async (
     const {
       body: { title, desc, images },
       user,
-      params,
     } = req;
     if (!user) {
       return next(
@@ -60,21 +59,6 @@ const create = async (
     });
 
     console.log(newGallery);
-    // const newGallery = await prisma.gallery.create({
-    //   data: {
-    //     title,
-    //     desc,
-    //     thumbnail: "",
-    //     images: [files as any],
-    //     author: {
-    //       connect: {
-    //         id: user?.id,
-    //       },
-    //     },
-    //     // authorId: user.id,
-    //   },
-    // });
-
     return res.status(200).json(newGallery);
   } catch (error) {
     return next(error);
@@ -91,11 +75,11 @@ const fetch = async (
       query: { page },
     } = req;
     const allGalleries = await prisma.gallery.count();
-    const take = 2;
+    const take = 5;
     const totalPage = Math.ceil(allGalleries / take);
     const galleries = await prisma.gallery.findMany({
       take,
-      skip: 2 * (+page! - 1),
+      skip: 5 * (+page! - 1),
       include: { author: { select: { id: true, nickname: true } } },
       orderBy: { createAt: "desc" },
     });
