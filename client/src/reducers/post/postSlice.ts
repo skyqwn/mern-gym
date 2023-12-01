@@ -159,7 +159,6 @@ export const postSlice = createSlice({
     });
     builder.addCase(favPost.fulfilled, (state, action) => {
       state.favStatus = "SUCCESS";
-      console.log(action.payload);
       state.fetchPost = state.fetchPost.map((post) => {
         if (post.id === action.payload.id) {
           post = action.payload;

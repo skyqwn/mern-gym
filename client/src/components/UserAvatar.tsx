@@ -9,7 +9,7 @@ const UserAvatar = ({ big }: UserAvatarProps) => {
   const userState = useAppSelector((state) => state.userSlice);
   return (
     <img
-      className={cls("rounded-full", big ? "w-20 h-20" : "w-8 h-8")}
+      className={cls("rounded-full", big ? "w-40 h-40" : "w-8 h-8")}
       src={userState.user.avatar ? userState.user.avatar : "imgs/user.png"}
     />
   );

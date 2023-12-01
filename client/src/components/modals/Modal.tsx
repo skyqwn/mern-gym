@@ -35,7 +35,7 @@ const Modal = ({
           initial={modalContainerVariants.start}
           animate={modalContainerVariants.end}
           exit={modalContainerVariants.exit}
-          className="absolute top-0 left-0 w-screen h-screen z-10 bg-black/50 flex items-center justify-center overflow-hidden"
+          className="absolute top-0 left-0 w-screen h-screen z-10 bg-black/50 flex items-center justify-center overflow-hidden "
         >
           {/* modal body */}
           <motion.div
@@ -43,7 +43,7 @@ const Modal = ({
             initial={modalItemVariants.start}
             animate={modalItemVariants.end}
             exit={modalItemVariants.exit}
-            className="h-full sm:h-2/3 w-full sm:w-2/3 lg:w-1/2 bg-white rounded flex flex-col"
+            className="h-full  sm:h-2/3 w-full sm:w-2/3 lg:w-1/2 bg-white rounded flex flex-col "
           >
             {/* modal head */}
             <div className="relative h-16 font-bold text-xl flex items-center justify-center">

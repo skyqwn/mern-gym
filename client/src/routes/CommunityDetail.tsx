@@ -1,40 +1,26 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
-import { IoMdHeart } from "react-icons/io";
 
 import { useAppDispatch, useAppSelector } from "../store";
 import Container from "../components/Container";
 import { postActions } from "../reducers/post/postSlice";
 import PostEditModal from "../components/modals/PostEditModal";
-import { detailPost, favPost } from "../reducers/post/postThunk";
+import { detailPost } from "../reducers/post/postThunk";
 import PostDeleteConfirm from "../components/confirms/PostDeleteConfirm";
 import Loader from "../components/Loader";
-import { cls } from "../libs/util";
 import CheckAuthor from "../components/CheckAuthor";
 import PostComment from "../components/comment/PostComment";
 import PostCommentDeleteConfirm from "../components/confirms/PostCommentDeleteConfirm";
+import HeartButton from "../components/HeartButton";
 
 const CommunityDetail = () => {
   const dispatch = useAppDispatch();
   const params = useParams() as { id: string };
   const postState = useAppSelector((state) => state.postSlice);
-  const userState = useAppSelector((state) => state.userSlice);
   const postId = postState.post?.authorId;
+  const userState = useAppSelector((state) => state.userSlice);
   const userId = userState.user.id;
-  // const {
-  //   handleSubmit,
-  //   control,
-  //   formState: { errors },
-  // } = useForm<FieldValues>({
-  //   values: React.useMemo(() => {
-  //     if (postState.post) {
-  //       return {
-  //         ...postState.post,
-  //         type: "post",
-  //       };
-  //     }
-  //   }, [postState.post]),
-  // });
+
   const postEditAction = () => {
     dispatch(postActions.editModalOpen(postState.post));
   };
@@ -43,7 +29,7 @@ const CommunityDetail = () => {
     dispatch(postActions.deleteConfirmOpen(postState.post));
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     dispatch(detailPost(params.id));
   }, []);
 
@@ -65,8 +51,14 @@ const CommunityDetail = () => {
         deleteLabel="삭제"
       />
       <PostCommentDeleteConfirm />
-      <PostComment />
-      <button
+      <div className="mt-52">
+        <PostComment />
+      </div>
+      <HeartButton
+        targetId={postState.post.id}
+        isLike={postState.post.likeUsers.includes(userId)}
+      />
+      {/* <button
         onClick={async () => {
           // let dataUsers = [] as string[];
           // const likeUsers = [...postState.post?.likeUsers!];
@@ -89,7 +81,7 @@ const CommunityDetail = () => {
         )}
       >
         <IoMdHeart className="w-20 h-20" />
-      </button>
+      </button> */}
     </Container>
   );
 };

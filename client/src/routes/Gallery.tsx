@@ -1,12 +1,5 @@
-import React, { useEffect, useMemo } from "react";
-import {
-  Link,
-  Navigate,
-  createSearchParams,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import React from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import Container from "../components/Container";
 import { Button } from "../components/Button";
@@ -15,6 +8,7 @@ import GalleryCreateModal from "../components/modals/GalleryCreateModal";
 import { galleryActions } from "../reducers/gallery/gallerySlice";
 import { fetchGallery } from "../reducers/gallery/galleryThunk";
 import Pagination from "../components/Pagination";
+import GalleryBlock from "../components/block/GalleryBlock";
 
 const Gallery = () => {
   const dispatch = useAppDispatch();
@@ -23,12 +17,12 @@ const Gallery = () => {
   const queryPage = Number(searchParams.get("page"));
   const navigate = useNavigate();
 
-  const page = useMemo(() => {
+  const page = React.useMemo(() => {
     if (queryPage) return queryPage;
     return 1;
   }, [queryPage]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (page > 0) {
       dispatch(fetchGallery(page));
     } else {
@@ -36,28 +30,24 @@ const Gallery = () => {
     }
   }, [page]);
 
+  const modalOpen = () => {
+    dispatch(galleryActions.createModalOpen({}));
+  };
+
   const totalPage = galleryState.totalPage;
-  console.log(totalPage);
   return (
     <Container>
       <GalleryCreateModal />
-      <Button
-        label="갤러리 업로드"
-        onAction={() => {
-          dispatch(galleryActions.createModalOpen({}));
-        }}
-      />
+      <button
+        onClick={modalOpen}
+        className="fixed bottom-24 right-5 shadow-xl  rounded-full w-14 h-14 flex items-center justify-center bg-red-400"
+      >
+        📸
+      </button>
       <div className="flex space-x-10">
         {galleryState.galleries.length > 0 &&
           galleryState.galleries.map((gallery) => (
-            <Link key={gallery.id} to={`${gallery.id}`} state={{ gallery }}>
-              <div key={gallery.id} className="text-red-500">
-                <div>
-                  <img className="w-20 h-52" src={gallery.thumbnail} />
-                </div>
-                <div>{gallery.title}</div>
-              </div>
-            </Link>
+            <GalleryBlock gallery={gallery} />
           ))}
       </div>
 

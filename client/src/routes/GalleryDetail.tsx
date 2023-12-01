@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
-import { FieldValues, SubmitHandler } from "react-hook-form";
+import React from "react";
 import { useParams } from "react-router-dom";
-import { IoMdHeart } from "react-icons/io";
-import { cls } from "../libs/util";
 
 import { useAppDispatch, useAppSelector } from "../store";
 import { fetchGalleryComment } from "../reducers/comment/commentThunk";
 import { galleryActions } from "../reducers/gallery/gallerySlice";
-import { detailGallery, favGallery } from "../reducers/gallery/galleryThunk";
+import { detailGallery } from "../reducers/gallery/galleryThunk";
 
 import Container from "../components/Container";
 import GalleryEditModal from "../components/modals/GalleryEditModal";
@@ -17,6 +14,7 @@ import Loader from "../components/Loader";
 import GalleryComment from "../components/comment/GalleryComment";
 import GalleryDeleteConfirm from "../components/confirms/GalleryDeleteConfirm";
 import GalleryCommentDeleteConfirm from "../components/confirms/GalleryCommentDeleteConfirm";
+import HeartButton from "../components/HeartButton";
 
 const GalleryDetail = () => {
   const dispatch = useAppDispatch();
@@ -34,11 +32,11 @@ const GalleryDetail = () => {
     dispatch(galleryActions.deleteConfirmOpen(galleryState.gallery));
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     dispatch(detailGallery(params.id));
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     dispatch(fetchGalleryComment(params.id));
   }, []);
 
@@ -69,7 +67,11 @@ const GalleryDetail = () => {
         deleteAction={galleryDeleteAction}
         deleteLabel="삭제"
       />
-      <button
+      <HeartButton
+        targetId={galleryState.gallery.id}
+        isLike={galleryState.gallery.likeUsers.includes(userId)}
+      />
+      {/* <button
         onClick={async () => {
           // let dataUsers = [] as string[];
           // const likeUsers = [...postState.post?.likeUsers!];
@@ -92,7 +94,7 @@ const GalleryDetail = () => {
         )}
       >
         <IoMdHeart className="w-20 h-20" />
-      </button>
+      </button> */}
       <GalleryComment />
       <GalleryCommentDeleteConfirm />
     </Container>

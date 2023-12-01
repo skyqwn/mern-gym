@@ -11,12 +11,16 @@ interface UserStateType {
   user: UserType;
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
   error?: any;
+  editModalIsOpen: boolean;
+  editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
 }
 
 const initialState: UserStateType = {
   user: { nickname: "", id: "", avatar: "" },
   status: "",
   error: "",
+  editModalIsOpen: false,
+  editStatus: "",
 };
 
 export const userSlice = createSlice({
@@ -27,6 +31,15 @@ export const userSlice = createSlice({
       state.user.nickname = action.payload.nickname;
       state.user.id = action.payload.id;
       state.user.avatar = action.payload.avatar;
+    },
+    editMoadlOpen: (state, action) => {
+      state.editModalIsOpen = true;
+    },
+    editModalClose: (state, action) => {
+      state.editModalIsOpen = false;
+    },
+    resetStatus: (state, action) => {
+      state.editStatus = "";
     },
   },
   extraReducers: (builder) => {
@@ -79,21 +92,28 @@ export const userSlice = createSlice({
 
     /*Update */
     builder.addCase(editUser.pending, (state, action) => {
-      state.status = "LOADING";
+      state.editStatus = "LOADING";
     });
     builder.addCase(editUser.fulfilled, (state, action) => {
-      state.status = "SUCCESS";
+      state.editStatus = "SUCCESS";
+      state.editModalIsOpen = false;
       state.user = action.payload;
     });
     builder.addCase(editUser.rejected, (state, action) => {
-      state.status = "ERROR";
+      state.editStatus = "ERROR";
       state.error = action.error;
     });
   },
 });
 
-const { userFetch } = userSlice.actions;
+const { userFetch, editMoadlOpen, editModalClose, resetStatus } =
+  userSlice.actions;
 
-export const userActions = { userFetch };
+export const userActions = {
+  userFetch,
+  editMoadlOpen,
+  editModalClose,
+  resetStatus,
+};
 
 export default userSlice;

@@ -34,6 +34,9 @@ export default ({
     if ((type = "comment")) {
       dispatch(commentAcitons.resetStatus({}));
     }
+    if ((type = "user")) {
+      dispatch(commentAcitons.resetStatus({}));
+    }
   };
   useEffect(() => {
     if (status === "SUCCESS") {

@@ -6,7 +6,7 @@ import UserAvatar from "./UserAvatar";
 
 const Header = () => {
   return (
-    <div className="bg-rose-300 h-14">
+    <div className="bg-[#a29bfe] h-14">
       <Container>
         <div className="h-full flex items-center justify-between mx-auto">
           <Link to={"/"}>
