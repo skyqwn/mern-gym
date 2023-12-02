@@ -55,28 +55,34 @@ const ProfileEditModal = () => {
 
   const body = (
     <div className="space-y-5">
-      <div className="relative flex items-center justify-center mt-28">
-        {previewImage ? (
-          <img className="w-40 h-40 rounded-full" src={previewImage} />
-        ) : (
-          <UserAvatar big />
-        )}
-      </div>
-      <label htmlFor="avatar" className="">
-        <div>
-          <div className="flex items-center justify-center w-8 h-8 border hover:bg-gr ay-50 border-gray-300 rounded-full shadow-sm text-sm font-medium  text-[#a29bfe] bg-white cursor-pointer absolute top-12 left-12">
-            <MdAddAPhoto />
-          </div>
-          <FileInput
-            id="avatar"
-            name="file"
-            control={control}
-            errors={errors}
-            label=""
-            onlyOne
-          />
+      <div className="relative flex items-center justify-center mt-10 mb-24 ">
+        <label htmlFor="avatar" className="">
+          {previewImage ? (
+            <img
+              className="w-40 h-40 rounded-full hover:ring-4 hover:ring-purple-300 cursor-pointer"
+              src={previewImage}
+            />
+          ) : (
+            <UserAvatar big />
+          )}
+        </label>
+        <div
+          onClick={() => {
+            setValue("previewImage", "");
+          }}
+          className="absolute top-2 right-36 text-lg cursor-pointer bg-white border rounded-full w-8 h-8 flex items-center justify-center hover:ring-2 hover:ring-purple-300 "
+        >
+          ❌
         </div>
-      </label>
+      </div>
+      <FileInput
+        id="avatar"
+        name="file"
+        control={control}
+        errors={errors}
+        label=""
+        onlyOne
+      />
       <Input name="nickname" control={control} errors={errors} label="닉네임" />
     </div>
   );

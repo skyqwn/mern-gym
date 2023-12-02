@@ -193,23 +193,22 @@ const fav = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   }
 };
 
-const comment = async (
+const userByPost = async (
   req: RequestWithUser,
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    user,
-    params: { id },
-  } = req;
+  const { user } = req;
   try {
     if (!user) return;
-
-    const post = await prisma.post.findUnique({
-      where: { id },
+    const userByPost = await prisma.post.findFirst({
+      where: { authorId: user.id },
+      take: 3,
     });
-    if (!post) return;
-  } catch (error) {}
+    console.log(userByPost);
+    // return res.status(200).json(userByPost);
+  } catch (error) {
+    console.log(error);
+  }
 };
-
-export default { create, fetch, detail, edit, remove, fav };
+export default { create, fetch, detail, edit, remove, fav, userByPost };

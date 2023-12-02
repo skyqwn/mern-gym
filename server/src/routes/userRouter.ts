@@ -19,6 +19,10 @@ userRouter.put(
 
 userRouter.post("/refresh", userControllers.refresh);
 
+userRouter.get("/postByUser", onlyUser, userControllers.postByUser);
+
+userRouter.get("/galleryByUser", onlyUser, userControllers.galleryByUser);
+
 userRouter.get("/oauth/google", userControllers.googleOauth);
 
 userRouter.get("/oauth/kakao/callback", userControllers.kakaoOauth);

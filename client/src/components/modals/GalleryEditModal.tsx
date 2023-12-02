@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import TextArea from "../Inputs/TextArea";
 import { Input } from "../Inputs/Input";
-import toast from "react-hot-toast";
 import { galleryActions } from "../../reducers/gallery/gallerySlice";
 import galleryThunk from "../../reducers/gallery/galleryThunk";
 import FileInput from "../Inputs/FileInput";

@@ -43,4 +43,19 @@ export const editUser = createAsyncThunk(
   }
 );
 
-export default { signInUser, editUser, refreshUser };
+export const PostByUser = createAsyncThunk("User/PostByUser", async () => {
+  const res = await instance.get(`/api/user/postByUser`);
+  console.log(res);
+  return res.data;
+});
+
+export const GalleryByUser = createAsyncThunk(
+  "User/GalleryByUser",
+  async () => {
+    const res = await instance.get(`/api/user/GalleryByUser`);
+    console.log(res);
+    return res.data;
+  }
+);
+
+export default { signInUser, editUser, refreshUser, GalleryByUser };

@@ -1,5 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { editUser, refreshUser, signInUser } from "./userThunk";
+import {
+  GalleryByUser,
+  PostByUser,
+  editUser,
+  refreshUser,
+  signInUser,
+} from "./userThunk";
+import { PostType } from "../../types/postTypes";
 
 interface UserType {
   nickname: string;
@@ -13,6 +20,10 @@ interface UserStateType {
   error?: any;
   editModalIsOpen: boolean;
   editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  postByUser: any;
+  postByUserStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  galleryByUser: any;
+  galleryByUserStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
 }
 
 const initialState: UserStateType = {
@@ -21,6 +32,10 @@ const initialState: UserStateType = {
   error: "",
   editModalIsOpen: false,
   editStatus: "",
+  postByUser: [],
+  postByUserStatus: "",
+  galleryByUser: [],
+  galleryByUserStatus: "",
 };
 
 export const userSlice = createSlice({
@@ -48,7 +63,6 @@ export const userSlice = createSlice({
       state.status = "LOADING";
     });
     builder.addCase(signInUser.fulfilled, (state, action) => {
-      console.log(action);
       state.status = "SUCCESS";
       state.user.nickname = action.payload.nickname;
       state.user.id = action.payload.id;
@@ -101,6 +115,33 @@ export const userSlice = createSlice({
     });
     builder.addCase(editUser.rejected, (state, action) => {
       state.editStatus = "ERROR";
+      state.error = action.error;
+    });
+
+    /*PostByUser Fetch */
+    builder.addCase(PostByUser.pending, (state, action) => {
+      state.postByUserStatus = "LOADING";
+    });
+    builder.addCase(PostByUser.fulfilled, (state, action) => {
+      state.postByUserStatus = "SUCCESS";
+      console.log(action.payload);
+      state.postByUser = action.payload;
+    });
+    builder.addCase(PostByUser.rejected, (state, action) => {
+      state.postByUserStatus = "ERROR";
+      state.error = action.error;
+    });
+    /*PostByUser Fetch */
+    builder.addCase(GalleryByUser.pending, (state, action) => {
+      state.galleryByUserStatus = "LOADING";
+    });
+    builder.addCase(GalleryByUser.fulfilled, (state, action) => {
+      state.galleryByUserStatus = "SUCCESS";
+      console.log(action.payload);
+      state.galleryByUser = action.payload;
+    });
+    builder.addCase(GalleryByUser.rejected, (state, action) => {
+      state.galleryByUserStatus = "ERROR";
       state.error = action.error;
     });
   },

@@ -141,16 +141,9 @@ const logout = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { user } = req;
   try {
     res.clearCookie("refreshToken");
     res.send("remove cookie");
-    // await prisma.user.update({
-    //   where: { id: user?.id },
-    //   data: {
-    //     refreshToken: null,
-    //   },
-    // });
   } catch (error) {
     console.log(error);
   }
@@ -371,6 +364,50 @@ const kakaoOauth = async (req: Request, res: Response, next: NextFunction) => {
   return res.redirect(`http://localhost:3000${req.query.state}`);
 };
 
+const postByUser = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user } = req;
+  try {
+    if (!user) return;
+    const postByUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        posts: {
+          take: 3,
+        },
+      },
+    });
+    return res.status(200).json(postByUser);
+  } catch (error) {
+    console.log(error);
+  }
+};
+const galleryByUser = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user } = req;
+  try {
+    if (!user) return;
+    const galleryByUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        galleries: {
+          take: 3,
+        },
+      },
+    });
+    console.log(galleryByUser);
+    return res.status(200).json(galleryByUser);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export default {
   signin,
   signup,
@@ -379,4 +416,6 @@ export default {
   edit,
   googleOauth,
   kakaoOauth,
+  postByUser,
+  galleryByUser,
 };
