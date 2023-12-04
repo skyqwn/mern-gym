@@ -68,7 +68,7 @@ const ProfileEditModal = () => {
         </label>
         <div
           onClick={() => {
-            setValue("previewImage", "");
+            dispatch(userActions.deleteAvatar({}));
           }}
           className="absolute top-2 right-36 text-lg cursor-pointer bg-white border rounded-full w-8 h-8 flex items-center justify-center hover:ring-2 hover:ring-purple-300 "
         >

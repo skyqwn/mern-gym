@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import galleryThunk from "./galleryThunk";
 
 export interface GalleryTypes {
-  author: { id: string; nickname: string };
+  author: { id: string; nickname: string; avatar: string };
   authorId: string;
   createAt: string;
   desc: string;
@@ -12,6 +12,7 @@ export interface GalleryTypes {
   title: string;
   updateAt: string;
   likeUsers: string[];
+  link?: string;
 }
 
 interface GalleryStateType {

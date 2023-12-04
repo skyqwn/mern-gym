@@ -16,7 +16,6 @@ import useToast from "../../hooks/useToast";
 const GalleryComment = () => {
   const dispatch = useAppDispatch();
   const commentState = useAppSelector((state) => state.commentSlice);
-  console.log(commentState);
   const galleryState = useAppSelector((state) => state.gallerySlice);
   const [edit, setEdit] = useState(false);
   const params = useParams() as { id: string };

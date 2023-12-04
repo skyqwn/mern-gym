@@ -22,6 +22,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       .post("/api/user/refresh")
       .then((res) => {
         const { data } = res;
+        console.log(data);
         onSignin(data);
       })
       .catch((err) => {
@@ -33,7 +34,14 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       });
   }, []);
 
-  const onSignin = ({ accessToken, nickname, id, avatar }: SigninProps) => {
+  const onSignin = ({
+    accessToken,
+    nickname,
+    id,
+    avatar,
+    galleries,
+    posts,
+  }: SigninProps) => {
     if (accessToken) {
       instance.defaults.headers.common[
         "Authorization"
@@ -43,6 +51,8 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
           nickname,
           id,
           avatar,
+          galleries,
+          posts,
         })
       );
       setAuth(true);

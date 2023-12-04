@@ -54,7 +54,7 @@ const create = async (
     const newGallery = await prisma.gallery.create({
       data: { ...data },
       include: {
-        author: { select: { id: true, nickname: true } },
+        author: { select: { id: true, nickname: true, avatar: true } },
       },
     });
 
@@ -80,7 +80,9 @@ const fetch = async (
     const galleries = await prisma.gallery.findMany({
       take,
       skip: 5 * (+page! - 1),
-      include: { author: { select: { id: true, nickname: true } } },
+      include: {
+        author: { select: { id: true, nickname: true, avatar: true } },
+      },
       orderBy: { createAt: "desc" },
     });
     return res.status(200).json({ galleries, totalPage });
@@ -102,8 +104,11 @@ const detail = async (
       where: {
         id,
       },
-      include: { author: { select: { id: true, nickname: true } } },
+      include: {
+        author: { select: { id: true, nickname: true, avatar: true } },
+      },
     });
+    console.log(gallery);
 
     res.status(200).json(gallery);
   } catch (error) {
@@ -155,7 +160,9 @@ const edit = async (
         images: imageLocations,
         thumbnail: imageLocations[0],
       },
-      include: { author: { select: { id: true, nickname: true } } },
+      include: {
+        author: { select: { id: true, nickname: true, avatar: true } },
+      },
     });
     return res.status(200).json(updateGallery);
   } catch (error) {

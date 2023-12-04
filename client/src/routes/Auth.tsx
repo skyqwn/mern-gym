@@ -18,7 +18,6 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const { auth, onSignin } = useContext(UserContext) as UserContextTypes;
   const navigate = useNavigate();
-  console.log(auth);
 
   let from = (location.state?.from as string) || "/";
   const {

@@ -6,6 +6,7 @@ export const signInUser = createAsyncThunk(
   "User/signInUser",
   async (data: FieldValues) => {
     const res = await instance.post(`/api/user/signin`, data);
+    console.log(res.data);
     // const { accessToken, avatar, id, nickname, refreshToken, userEmail } =
     //   res.data;
     // if (accessToken) {
@@ -24,6 +25,7 @@ export const signUpUser = createAsyncThunk(
 );
 export const refreshUser = createAsyncThunk("User/refreshUser", async () => {
   const res = await instance.post(`/api/user/refresh`);
+  console.log(res.data);
   return res.data;
 });
 
@@ -45,7 +47,6 @@ export const editUser = createAsyncThunk(
 
 export const PostByUser = createAsyncThunk("User/PostByUser", async () => {
   const res = await instance.get(`/api/user/postByUser`);
-  console.log(res);
   return res.data;
 });
 
@@ -53,9 +54,18 @@ export const GalleryByUser = createAsyncThunk(
   "User/GalleryByUser",
   async () => {
     const res = await instance.get(`/api/user/GalleryByUser`);
-    console.log(res);
     return res.data;
   }
 );
 
-export default { signInUser, editUser, refreshUser, GalleryByUser };
+export const LikeByUser = createAsyncThunk("User/LikeByUser", async () => {
+  const res = await instance.get(`/api/user/LikeByUser`);
+  return res.data;
+});
+
+export const FetchUser = createAsyncThunk("User/FetchUser", async () => {
+  const res = await instance.get(`/api/user/FetchUser`);
+  return res.data;
+});
+
+export default { signInUser, editUser, refreshUser, GalleryByUser, LikeByUser };

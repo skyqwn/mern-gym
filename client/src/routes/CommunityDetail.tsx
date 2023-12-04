@@ -20,6 +20,7 @@ const CommunityDetail = () => {
   const postId = postState.post?.authorId;
   const userState = useAppSelector((state) => state.userSlice);
   const userId = userState.user.id;
+  console.log(postState);
 
   const postEditAction = () => {
     dispatch(postActions.editModalOpen(postState.post));

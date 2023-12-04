@@ -5,6 +5,7 @@ import { useAppDispatch } from "../store";
 import { postActions } from "../reducers/post/postSlice";
 import { galleryActions } from "../reducers/gallery/gallerySlice";
 import { commentAcitons } from "../reducers/comment/commentSlice";
+import { userActions } from "../reducers/user/userSlice";
 
 interface useToastProps {
   status: "" | "LOADING" | "SUCCESS" | "ERROR";
@@ -35,7 +36,7 @@ export default ({
       dispatch(commentAcitons.resetStatus({}));
     }
     if ((type = "user")) {
-      dispatch(commentAcitons.resetStatus({}));
+      dispatch(userActions.resetStatus({}));
     }
   };
   useEffect(() => {

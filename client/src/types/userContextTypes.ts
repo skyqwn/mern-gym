@@ -5,6 +5,8 @@ export interface SigninProps {
   nickname: string;
   id: string;
   avatar: string;
+  galleries: object[];
+  posts: object[];
 }
 export interface UserContextTypes {
   auth: boolean;

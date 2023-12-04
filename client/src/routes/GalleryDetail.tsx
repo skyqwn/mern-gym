@@ -23,6 +23,7 @@ const GalleryDetail = () => {
   const userState = useAppSelector((state) => state.userSlice);
   const userId = userState.user.id;
   const galleryId = galleryState.gallery?.authorId;
+  console.log(galleryState);
 
   const galleryEditAction = () => {
     dispatch(galleryActions.editModalOpen(galleryState.gallery));
@@ -47,7 +48,14 @@ const GalleryDetail = () => {
       <GalleryEditModal />
       <GalleryDeleteConfirm />
 
-      <UserAvatar />
+      <img
+        className="w-8 h-8 rounded-full"
+        src={
+          galleryState.gallery.author.avatar
+            ? galleryState.gallery.author.avatar
+            : "imgs/user.png"
+        }
+      />
       <div>작성자: {galleryState.gallery?.author.nickname}</div>
       <div>작성일: {galleryState.gallery?.createAt}</div>
       <h3 className="font-bold">{galleryState.gallery?.title}</h3>

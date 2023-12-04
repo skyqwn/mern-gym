@@ -9,6 +9,7 @@ import { galleryActions } from "../reducers/gallery/gallerySlice";
 import { fetchGallery } from "../reducers/gallery/galleryThunk";
 import Pagination from "../components/Pagination";
 import GalleryBlock from "../components/block/GalleryBlock";
+import Loader from "../components/Loader";
 
 const Gallery = () => {
   const dispatch = useAppDispatch();
@@ -33,8 +34,9 @@ const Gallery = () => {
   const modalOpen = () => {
     dispatch(galleryActions.createModalOpen({}));
   };
-
+  console.log(galleryState);
   const totalPage = galleryState.totalPage;
+  // if (galleryState.galleries.length === 0) return <Loader />;
   return (
     <Container>
       <GalleryCreateModal />

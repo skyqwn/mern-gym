@@ -9,6 +9,7 @@ import PostCreateModal from "../components/modals/PostCreateModal";
 import { fetchPost } from "../reducers/post/postThunk";
 import Pagination from "../components/Pagination";
 import PostBlock from "../components/block/PostBlock";
+import Loader from "../components/Loader";
 
 const Community = () => {
   const dispatch = useAppDispatch();
@@ -34,7 +35,7 @@ const Community = () => {
   const modalOpen = () => {
     dispatch(postActions.createModalOpen({}));
   };
-
+  // if (postState.fetchPost.length === 0) return <Loader />;
   return (
     <Container>
       <PostCreateModal />

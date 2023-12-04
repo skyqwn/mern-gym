@@ -105,7 +105,7 @@ export const commentSlice = createSlice({
     });
     builder.addCase(createPostComment.fulfilled, (state, action) => {
       state.postCreateCommentStatus = "SUCCESS";
-      console.log(action.payload);
+
       state.postComments = [action.payload, ...state.postComments];
       console.log(state.postComments);
       state.postComment = undefined;
@@ -120,6 +120,7 @@ export const commentSlice = createSlice({
       state.postFetchCommentStatus = "LOADING";
     });
     builder.addCase(fetchPostComment.fulfilled, (state, action) => {
+      console.log(action.type);
       state.postFetchCommentStatus = "SUCCESS";
       state.postComments = action.payload;
     });

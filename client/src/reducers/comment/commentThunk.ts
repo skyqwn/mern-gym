@@ -59,7 +59,6 @@ export const fetchGalleryComment = createAsyncThunk(
   async (galleryId: string) => {
     if (galleryId) {
       const res = await instance.get(`/api/comment/gallery/${galleryId}`);
-      console.log(res.data);
       return res.data;
     }
   }

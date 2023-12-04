@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Gallery, Post, PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -34,8 +34,6 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
     const user = await prisma.user.findUnique({
       where: { email: bodyEmail },
     });
-
-    console.log(user);
 
     if (!user) {
       return next(
@@ -73,8 +71,11 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
         nickname: true,
         id: true,
         avatar: true,
+        posts: true,
+        galleries: true,
       },
     });
+    console.log(tokenUser);
 
     res.cookie("refreshToken", refreshToken, {
       maxAge: 1000 * 60 * 60 * 24 * 7,
@@ -171,6 +172,9 @@ const edit = async (
       });
       updateData.avatar = location;
     }
+    // if (!multerFiles.file) {
+    //   updateData.avatar = "";
+    // }
 
     const updateUser = await prisma.user.update({
       where: {
@@ -181,9 +185,10 @@ const edit = async (
         nickname: true,
         id: true,
         avatar: true,
+        posts: true,
+        galleries: true,
       },
     });
-    console.log(updateUser);
     return res.status(200).json(updateUser);
   } catch (error) {
     console.log(error);
@@ -229,8 +234,11 @@ const refresh = async (req: Request, res: Response, next: NextFunction) => {
           email: true,
           avatar: true,
           nickname: true,
+          posts: true,
+          galleries: true,
         },
       });
+      console.log(updataUser);
 
       res.cookie("refreshToken", newRefreshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 7,
@@ -380,6 +388,9 @@ const postByUser = async (
         },
       },
     });
+    console.log(1);
+    console.log(postByUser);
+    console.log(2);
     return res.status(200).json(postByUser);
   } catch (error) {
     console.log(error);
@@ -401,8 +412,79 @@ const galleryByUser = async (
         },
       },
     });
-    console.log(galleryByUser);
     return res.status(200).json(galleryByUser);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+type PostWithLink = Post & { link?: string };
+type GalleryWithLink = Gallery & { link?: string };
+const likeByUser = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user } = req;
+  try {
+    if (!user) return;
+
+    const postLikeByUser = await prisma.post.findMany({
+      where: {
+        likeUsers: {
+          has: user.id,
+        },
+      },
+    });
+    const linkPosts = postLikeByUser.map((post: PostWithLink) => {
+      post.link = `/community/${post.id}`;
+      return post;
+    });
+
+    const galleryLikeByUser = await prisma.gallery.findMany({
+      where: {
+        likeUsers: {
+          has: user.id,
+        },
+      },
+    });
+    const linkGalleries = galleryLikeByUser.map((gallery: GalleryWithLink) => {
+      gallery.link = `/gallery/${gallery.id}`;
+      return gallery;
+    });
+    const likeByUserArr = [...linkPosts, ...linkGalleries];
+
+    return res.status(200).json(likeByUserArr);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const fetchUser = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user } = req;
+  try {
+    if (!user) return;
+    const fetchUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      select: {
+        email: true,
+        nickname: true,
+        id: true,
+        avatar: true,
+        posts: true,
+        galleries: true,
+      },
+    });
+    console.log(1);
+    console.log(fetchUser);
+    console.log(2);
+    return res.status(200).json(fetchUser);
   } catch (error) {
     console.log(error);
   }
@@ -418,4 +500,6 @@ export default {
   kakaoOauth,
   postByUser,
   galleryByUser,
+  likeByUser,
+  fetchUser,
 };

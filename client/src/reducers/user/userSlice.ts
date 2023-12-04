@@ -1,6 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
+  FetchUser,
   GalleryByUser,
+  LikeByUser,
   PostByUser,
   editUser,
   refreshUser,
@@ -12,6 +14,8 @@ interface UserType {
   nickname: string;
   id: string;
   avatar: string;
+  galleries: any;
+  posts: any;
 }
 
 interface UserStateType {
@@ -20,22 +24,22 @@ interface UserStateType {
   error?: any;
   editModalIsOpen: boolean;
   editStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
-  postByUser: any;
-  postByUserStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
-  galleryByUser: any;
-  galleryByUserStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  likeByUser: any;
+  likeByUserStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  fetchUserStatus: "" | "LOADING" | "SUCCESS" | "ERROR";
+  fetchUser: UserType;
 }
 
 const initialState: UserStateType = {
-  user: { nickname: "", id: "", avatar: "" },
+  user: { nickname: "", id: "", avatar: "", galleries: [], posts: [] },
   status: "",
   error: "",
   editModalIsOpen: false,
   editStatus: "",
-  postByUser: [],
-  postByUserStatus: "",
-  galleryByUser: [],
-  galleryByUserStatus: "",
+  likeByUser: [],
+  likeByUserStatus: "",
+  fetchUserStatus: "",
+  fetchUser: { nickname: "", id: "", avatar: "", galleries: [], posts: [] },
 };
 
 export const userSlice = createSlice({
@@ -43,9 +47,12 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     userFetch: (state, action: PayloadAction<any>) => {
-      state.user.nickname = action.payload.nickname;
-      state.user.id = action.payload.id;
-      state.user.avatar = action.payload.avatar;
+      state.user = action.payload;
+      // state.user.nickname = action.payload.nickname;
+      // state.user.id = action.payload.id;
+      // state.user.avatar = action.payload.avatar;
+      // state.user.galleries = action.payload.galleries;
+      // state.user.posts = action.payload.posts;
     },
     editMoadlOpen: (state, action) => {
       state.editModalIsOpen = true;
@@ -56,6 +63,9 @@ export const userSlice = createSlice({
     resetStatus: (state, action) => {
       state.editStatus = "";
     },
+    deleteAvatar: (state, action) => {
+      state.user.avatar = "";
+    },
   },
   extraReducers: (builder) => {
     /*Login */
@@ -64,9 +74,12 @@ export const userSlice = createSlice({
     });
     builder.addCase(signInUser.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      state.user.nickname = action.payload.nickname;
-      state.user.id = action.payload.id;
-      state.user.avatar = action.payload.avatar;
+      // state.user.nickname = action.payload.nickname;
+      // state.user.id = action.payload.id;
+      // state.user.avatar = action.payload.avatar;
+      // state.postByUser = action.payload.posts;
+      // state.galleryByUser = action.payload.galleries;
+      state.user = action.payload;
     });
     builder.addCase(signInUser.rejected, (state, action) => {
       state.status = "ERROR";
@@ -77,11 +90,14 @@ export const userSlice = createSlice({
       state.status = "LOADING";
     });
     builder.addCase(refreshUser.fulfilled, (state, action) => {
-      console.log(action);
+      console.log(action.payload);
       state.status = "SUCCESS";
-      state.user.nickname = action.payload.nickname;
-      state.user.id = action.payload.id;
-      state.user.avatar = action.payload.avatar;
+      // state.user.nickname = action.payload.nickname;
+      // state.user.id = action.payload.id;
+      // state.user.avatar = action.payload.avatar;
+      // state.user.posts = action.payload.posts;
+      // state.user.galleries = action.payload.galleries;
+      state.user = action.payload;
     });
     builder.addCase(refreshUser.rejected, (state, action) => {
       state.status = "ERROR";
@@ -110,6 +126,7 @@ export const userSlice = createSlice({
     });
     builder.addCase(editUser.fulfilled, (state, action) => {
       state.editStatus = "SUCCESS";
+      console.log(action.payload);
       state.editModalIsOpen = false;
       state.user = action.payload;
     });
@@ -118,36 +135,34 @@ export const userSlice = createSlice({
       state.error = action.error;
     });
 
-    /*PostByUser Fetch */
-    builder.addCase(PostByUser.pending, (state, action) => {
-      state.postByUserStatus = "LOADING";
+    /*LikeByUser Fetch */
+    builder.addCase(LikeByUser.pending, (state, action) => {
+      state.likeByUserStatus = "LOADING";
     });
-    builder.addCase(PostByUser.fulfilled, (state, action) => {
-      state.postByUserStatus = "SUCCESS";
-      console.log(action.payload);
-      state.postByUser = action.payload;
+    builder.addCase(LikeByUser.fulfilled, (state, action) => {
+      state.likeByUserStatus = "SUCCESS";
+      state.likeByUser = action.payload.slice(0, 3);
     });
-    builder.addCase(PostByUser.rejected, (state, action) => {
-      state.postByUserStatus = "ERROR";
+    builder.addCase(LikeByUser.rejected, (state, action) => {
+      state.likeByUserStatus = "ERROR";
       state.error = action.error;
     });
-    /*PostByUser Fetch */
-    builder.addCase(GalleryByUser.pending, (state, action) => {
-      state.galleryByUserStatus = "LOADING";
+    /*User Fetch */
+    builder.addCase(FetchUser.pending, (state, action) => {
+      state.fetchUserStatus = "LOADING";
     });
-    builder.addCase(GalleryByUser.fulfilled, (state, action) => {
-      state.galleryByUserStatus = "SUCCESS";
-      console.log(action.payload);
-      state.galleryByUser = action.payload;
+    builder.addCase(FetchUser.fulfilled, (state, action) => {
+      state.fetchUserStatus = "SUCCESS";
+      state.fetchUser = action.payload;
     });
-    builder.addCase(GalleryByUser.rejected, (state, action) => {
-      state.galleryByUserStatus = "ERROR";
+    builder.addCase(FetchUser.rejected, (state, action) => {
+      state.fetchUserStatus = "ERROR";
       state.error = action.error;
     });
   },
 });
 
-const { userFetch, editMoadlOpen, editModalClose, resetStatus } =
+const { userFetch, editMoadlOpen, editModalClose, resetStatus, deleteAvatar } =
   userSlice.actions;
 
 export const userActions = {
@@ -155,6 +170,7 @@ export const userActions = {
   editMoadlOpen,
   editModalClose,
   resetStatus,
+  deleteAvatar,
 };
 
 export default userSlice;

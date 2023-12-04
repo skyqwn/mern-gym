@@ -19,9 +19,13 @@ userRouter.put(
 
 userRouter.post("/refresh", userControllers.refresh);
 
+userRouter.get("/fetchUser", onlyUser, userControllers.fetchUser);
+
 userRouter.get("/postByUser", onlyUser, userControllers.postByUser);
 
 userRouter.get("/galleryByUser", onlyUser, userControllers.galleryByUser);
+
+userRouter.get("/likeByUser", onlyUser, userControllers.likeByUser);
 
 userRouter.get("/oauth/google", userControllers.googleOauth);
 
