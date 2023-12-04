@@ -21,6 +21,7 @@ const ProfileEditModal = () => {
     loadingMessage: "수정중...",
     type: "user",
   });
+  const NO_USER_IMAGE_SRC = "imgs/user.png";
 
   const {
     control,
@@ -30,11 +31,20 @@ const ProfileEditModal = () => {
     formState: { errors },
   } = useForm<FieldValues>({
     values: React.useMemo(() => {
-      return { ...userState.user, previewImage: "", file: [] };
+      return {
+        ...userState.user,
+        previewImage: userState.user.avatar
+          ? userState.user.avatar
+          : NO_USER_IMAGE_SRC,
+        file: [],
+      };
     }, [userState.user]),
   });
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
+    if (previewImage === NO_USER_IMAGE_SRC) {
+      data.previewImage = "";
+    }
     toastStart();
     dispatch(userThunk.editUser(data));
   };
@@ -57,18 +67,18 @@ const ProfileEditModal = () => {
     <div className="space-y-5">
       <div className="relative flex items-center justify-center mt-10 mb-24 ">
         <label htmlFor="avatar" className="">
-          {previewImage ? (
-            <img
-              className="w-40 h-40 rounded-full hover:ring-4 hover:ring-purple-300 cursor-pointer"
-              src={previewImage}
-            />
+          <img
+            className="w-40 h-40 rounded-full hover:ring-4 hover:ring-purple-300 cursor-pointer"
+            src={previewImage}
+          />
+          {/* {previewImage ? (
           ) : (
             <UserAvatar big />
-          )}
+          )} */}
         </label>
         <div
           onClick={() => {
-            dispatch(userActions.deleteAvatar({}));
+            setValue("previewImage", NO_USER_IMAGE_SRC);
           }}
           className="absolute top-2 right-36 text-lg cursor-pointer bg-white border rounded-full w-8 h-8 flex items-center justify-center hover:ring-2 hover:ring-purple-300 "
         >

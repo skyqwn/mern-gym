@@ -75,7 +75,6 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
         galleries: true,
       },
     });
-    console.log(tokenUser);
 
     res.cookie("refreshToken", refreshToken, {
       maxAge: 1000 * 60 * 60 * 24 * 7,
@@ -172,9 +171,9 @@ const edit = async (
       });
       updateData.avatar = location;
     }
-    // if (!multerFiles.file) {
-    //   updateData.avatar = "";
-    // }
+    if (!previewImage) {
+      updateData.avatar = "";
+    }
 
     const updateUser = await prisma.user.update({
       where: {
@@ -238,7 +237,6 @@ const refresh = async (req: Request, res: Response, next: NextFunction) => {
           galleries: true,
         },
       });
-      console.log(updataUser);
 
       res.cookie("refreshToken", newRefreshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 7,
@@ -388,9 +386,7 @@ const postByUser = async (
         },
       },
     });
-    console.log(1);
-    console.log(postByUser);
-    console.log(2);
+
     return res.status(200).json(postByUser);
   } catch (error) {
     console.log(error);
@@ -481,9 +477,7 @@ const fetchUser = async (
         galleries: true,
       },
     });
-    console.log(1);
-    console.log(fetchUser);
-    console.log(2);
+
     return res.status(200).json(fetchUser);
   } catch (error) {
     console.log(error);

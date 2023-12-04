@@ -38,7 +38,6 @@ export const editUser = createAsyncThunk(
       fd.append("nickname", data.nickname);
       fd.append("file", data.file[0]);
       fd.append("previewImage", data.previewImage);
-      console.log(Array.from(fd));
       const res = await instance.put(`/api/user/${data.id}`, fd);
       return res.data;
     }
