@@ -6,7 +6,7 @@
   "scripts": {
     "constant": "cd ../ && npm run constant && cd server",
     "dev": "npm run constant && nodemon index.ts",
-    "start": "nodemon index.ts",
+    "start": "index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
