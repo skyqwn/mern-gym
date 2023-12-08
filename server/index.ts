@@ -12,7 +12,9 @@ import path from "path";
 
 const app = express();
 
-app.use(cors({ origin: ["http://localhost:3000"], credentials: true })); // 클라이언트랑 cors설정
+app.use(
+  cors({ origin: ["http://localhost:3000", "3.34.137.100"], credentials: true })
+); // 클라이언트랑 cors설정
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
