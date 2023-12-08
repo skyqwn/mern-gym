@@ -22,7 +22,7 @@ app.use("/api/post", postRouter);
 app.use("/api/gallery", galleryRouter);
 app.use("/api/comment", commentRouter);
 
-app.use(express.static(path.join(__dirname, "build")));
+app.use(express.static(path.join(__dirname, "../client/build")));
 
 app.get("/*", (req, res) => {
   res.set({
