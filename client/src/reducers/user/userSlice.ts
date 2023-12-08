@@ -1,14 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
   FetchUser,
-  GalleryByUser,
   LikeByUser,
-  PostByUser,
   editUser,
   refreshUser,
   signInUser,
 } from "./userThunk";
-import { PostType } from "../../types/postTypes";
 
 interface UserType {
   nickname: string;

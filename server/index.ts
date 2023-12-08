@@ -4,18 +4,13 @@ import userRouter from "./src/routes/userRouter";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 dotenv.config();
-import { PrismaClient } from "@prisma/client";
 import CONSTANT from "./src/constant";
 import postRouter from "./src/routes/postRouter";
 import galleryRouter from "./src/routes/galleryRouter";
 import commentRouter from "./src/routes/commentRouter";
+import path from "path";
 
 const app = express();
-const prisma = new PrismaClient();
-
-app.get("/welcome", (req: Request, res: Response, next: NextFunction) => {
-  res.send("welcome!");
-});
 
 app.use(cors({ origin: ["http://localhost:3000"], credentials: true })); // 클라이언트랑 cors설정
 app.use(express.json());
@@ -26,6 +21,17 @@ app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/gallery", galleryRouter);
 app.use("/api/comment", commentRouter);
+
+app.use(express.static(path.join(__dirname, "build")));
+
+app.get("/*", (req, res) => {
+  res.set({
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Date: Date.now(),
+  });
+  res.sendFile(path.join(__dirname, "../client/build/index.html"));
+});
 
 app.listen("8000", () => {
   console.log(`
