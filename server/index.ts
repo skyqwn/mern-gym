@@ -9,11 +9,19 @@ import postRouter from "./src/routes/postRouter";
 import galleryRouter from "./src/routes/galleryRouter";
 import commentRouter from "./src/routes/commentRouter";
 import path from "path";
-
 const app = express();
 
 app.use(
-  cors({ origin: ["http://localhost:3000", "3.34.137.100"], credentials: true })
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://3.34.137.100",
+      "https://www.modong.site",
+      "https://modong.site",
+      "http://modong.site",
+    ],
+    credentials: true,
+  })
 ); // 클라이언트랑 cors설정
 app.use(express.json());
 app.use(cookieParser());
