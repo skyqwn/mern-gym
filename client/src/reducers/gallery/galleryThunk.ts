@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { FieldValues } from "react-hook-form";
-// import { instance } from "../../api/apiconfig";
 
 const createGallery = createAsyncThunk(
   "Gallery/createGallery",

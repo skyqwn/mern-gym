@@ -5,7 +5,6 @@ import React, {
   useState,
 } from "react";
 
-// import { instance } from "../api/apiconfig";
 import { useAppDispatch } from "../store";
 import { userActions } from "../reducers/user/userSlice";
 import { SigninProps } from "../types/userContextTypes";
