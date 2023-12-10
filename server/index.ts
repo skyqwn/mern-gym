@@ -32,16 +32,16 @@ app.use("/api/post", postRouter);
 app.use("/api/gallery", galleryRouter);
 app.use("/api/comment", commentRouter);
 
-app.use(express.static(path.join(__dirname, "../client/build")));
+// app.use(express.static(path.join(__dirname, "../client/build")));
 
-app.get("/*", (req, res) => {
-  res.set({
-    "Cache-Control": "no-cache, no-store, must-revalidate",
-    Pragma: "no-cache",
-    Date: Date.now(),
-  });
-  res.sendFile(path.join(__dirname, "../client/build/index.html"));
-});
+// app.get("/*", (req, res) => {
+//   res.set({
+//     "Cache-Control": "no-cache, no-store, must-revalidate",
+//     Pragma: "no-cache",
+//     Date: Date.now(),
+//   });
+//   res.sendFile(path.join(__dirname, "../client/build/index.html"));
+// });
 
 app.listen("8000", () => {
   console.log(`

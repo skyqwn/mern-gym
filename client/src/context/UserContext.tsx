@@ -5,11 +5,10 @@ import React, {
   useState,
 } from "react";
 
-// import { axios } from "../api/apiconfig";
+import { instance } from "../api/apiconfig";
 import { useAppDispatch } from "../store";
 import { userActions } from "../reducers/user/userSlice";
 import { SigninProps } from "../types/userContextTypes";
-import axios from "axios";
 
 export const UserContext = createContext({});
 
@@ -19,7 +18,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
+    instance
       .post("/api/user/refresh")
       .then((res) => {
         const { data } = res;
@@ -44,7 +43,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     posts,
   }: SigninProps) => {
     if (accessToken) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+      instance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${accessToken}`;
       dispatch(
         userActions.userFetch({
           nickname,
@@ -60,10 +61,10 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   };
 
   const onSignout = async () => {
-    axios.defaults.headers.common["Authorization"] = "";
+    instance.defaults.headers.common["Authorization"] = "";
     setAuth(false);
     dispatch(userActions.userFetch({ avatar: "", id: "", nickname: "" }));
-    await axios.post(`/api/user/logout`);
+    await instance.post(`/api/user/logout`);
   };
 
   const value = React.useMemo(() => {

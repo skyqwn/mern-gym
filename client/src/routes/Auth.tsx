@@ -7,11 +7,10 @@ import userErrorHandler from "../hooks/userErrorHandler";
 import { Input } from "../components/Inputs/Input";
 import { Button } from "../components/Button";
 import { UserContextTypes } from "../types/userContextTypes";
-// import { axios } from "../api/apiconfig";
+import { instance } from "../api/apiconfig";
 import { UserContext } from "../context/UserContext";
 import { getGoogleUrl } from "../utils/getGoogleUrl";
 import { getKakaoUrl } from "../utils/getKakaoUrl";
-import axios from "axios";
 
 const Auth = () => {
   const errorHandler = userErrorHandler();
@@ -36,7 +35,7 @@ const Auth = () => {
 
   const onValid: SubmitHandler<FieldValues> = (data) => {
     if (isLogin) {
-      axios
+      instance
         .post("/api/user/signin", data)
         .then((res) => {
           const { data } = res;
@@ -49,7 +48,7 @@ const Auth = () => {
           console.log(error);
         });
     } else {
-      axios.post("/api/user/signup", data);
+      instance.post("/api/user/signup", data);
       toast.success("회원가입 성공");
     }
   };
