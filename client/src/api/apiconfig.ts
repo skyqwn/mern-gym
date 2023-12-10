@@ -2,7 +2,7 @@ import axios from "axios";
 import CONSTNAT from "../constant";
 
 export const instance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "/api",
   withCredentials: true,
 });
 
