@@ -41,7 +41,7 @@ const Auth = () => {
         .then((res) => {
           const { data } = res;
           onSignin(data);
-          toast.success("로그인 성공");
+          toast.success("로그인 성공!!");
           navigate(from);
         })
         .catch((error) => {
